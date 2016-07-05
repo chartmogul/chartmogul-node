@@ -1,0 +1,5 @@
+--reporter spec
+--colors
+--timeout  10000
+--grep .*
+--recursive
