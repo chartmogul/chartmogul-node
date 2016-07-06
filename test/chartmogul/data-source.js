@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
-const ChartMogul = require("../../lib/chartmogul");
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
-const expect = require("chai").expect;
-const nock = require("nock");
+const expect = require('chai').expect;
+const nock = require('nock');
 const DataSource = ChartMogul.Import.DataSource;
 
 describe('Data Source', () => {
-  it('should create a new data source', done => {
+  it('should create a new data source', () => {
     const postBody = {
-      name: "In-house billing"
+      name: 'In-house billing'
     };
     nock(config.API_BASE)
       .post(DataSource.path, postBody)
@@ -22,15 +22,13 @@ describe('Data Source', () => {
         /* eslint-enable camelcase*/
       });
 
-    DataSource.create(config, postBody)
+    return DataSource.create(config, postBody)
     .then(res => {
       expect(res).to.have.property('uuid');
-      done();
-    })
-    .catch(e => done(e));
+    });
   });
 
-  it('should get all data sources', done => {
+  it('should get all data sources', () => {
     nock(config.API_BASE)
     .get(DataSource.path)
     .reply(200, {
@@ -44,26 +42,20 @@ describe('Data Source', () => {
       /* eslint-enable camelcase*/
     });
 
-    DataSource.all(config)
+    return DataSource.all(config)
     .then(res => {
       expect(res).to.have.property('data_sources');
       expect(res.data_sources).to.be.instanceof(Array);
-      done();
-    })
-    .catch(e => done(e));
+    });
   });
 
-  it('should delete a data source', done => {
+  it('should delete a data source', () => {
     const uuid = 'ds_6f8de69c-56e3-4cb3-83ad-17e6715d03fb';
 
     nock(config.API_BASE)
     .delete(DataSource.path + '/' + uuid)
     .reply(204);
 
-    DataSource.destroy(config, uuid)
-    .then(res => {
-      done();
-    })
-    .catch(e => done(e));
+    return DataSource.destroy(config, uuid);
   });
 });
