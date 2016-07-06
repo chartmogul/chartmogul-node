@@ -9,7 +9,7 @@ const ChartMogul = require("../../lib/chartmogul");
 const config = new ChartMogul.Config('token', 'secret');
 
 describe('Resource', () => {
-  it('should send basicAuth headers', (done) => {
+  it('should send basicAuth headers', done => {
     nock(ChartMogul.API_BASE)
       .get('/')
       .basicAuth({
@@ -17,13 +17,13 @@ describe('Resource', () => {
         pass: config.getSecretKey()
       })
       .reply(200, 'OK');
-      
+
     return Resource.request(config, 'GET', '/')
       .then(res => done())
-      .catch(e => done(e))
+      .catch(e => done(e));
   });
-  
-  it('should throw SchemaInvalidError', (done) => {
+
+  it('should throw SchemaInvalidError', done => {
     nock(ChartMogul.API_BASE)
       .get('/')
       .reply(400, 'error message');
@@ -34,10 +34,10 @@ describe('Resource', () => {
         expect(e.httpStatus).to.equal(400);
         expect(e.response).to.equal('error message');
         done();
-      })
+      });
   });
-  
-  it('should throw ResourceInvalidError', (done) => {
+
+  it('should throw ResourceInvalidError', done => {
     nock(ChartMogul.API_BASE)
       .get('/')
       .reply(422, 'error message');
@@ -47,7 +47,8 @@ describe('Resource', () => {
         expect(e).to.be.instanceOf(ChartMogul.ResourceInvalidError);
         expect(e.httpStatus).to.equal(422);
         expect(e.response).to.equal('error message');
-        expect(e.message).to.equal('The Customer  could not be created or updated.');
+        expect(e.message)
+          .to.equal('The Customer  could not be created or updated.');
         done();
       });
   });
