@@ -46,6 +46,18 @@ describe('Resource', () => {
     });
   });
 
+  it('should throw Error', done => {
+    nock(config.API_BASE)
+      .get('/')
+      .replyWithError('something awful happened');
+    return Resource.request(config, 'GET', '/')
+      .then(res => done(new Error('Should throw error')))
+      .catch(e => {
+        expect(e).to.be.instanceOf(Error);
+        done();
+      });
+  });
+
   it('should throw ResourceInvalidError', done => {
     nock(config.API_BASE)
       .get('/')
