@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-const expect = require("chai").expect;
+const expect = require('chai').expect;
 const nock = require('nock');
-const ChartMogul = require("../../lib/chartmogul");
-const Resource = require("../../lib/chartmogul/resource");
-const Customer = require("../../lib/chartmogul/import/customer");
+const ChartMogul = require('../../lib/chartmogul');
+const Resource = require('../../lib/chartmogul/resource');
+const Customer = require('../../lib/chartmogul/import/customer');
 
 const config = new ChartMogul.Config('token', 'secret');
 
@@ -30,7 +30,7 @@ describe('Resource', () => {
     422: 'ResourceInvalidError',
     500: 'ChartMogulError'
   };
-  Object.keys(errorCodes).forEach(function(code) {
+  Object.keys(errorCodes).forEach(function (code) {
     it(`should throw ${errorCodes[code]}`, done => {
       nock(config.API_BASE)
         .get('/')
