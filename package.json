@@ -4,7 +4,9 @@
   "description": "Official Chartmogul API Node.js Client",
   "main": "lib/chartmogul.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint --fix .",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha"
   },
   "repository": {
     "type": "git",
@@ -28,6 +30,7 @@
     "eslint": "^3.0.1",
     "eslint-config-google": "^0.6.0",
     "gulp": "^3.9.1",
+    "istanbul": "^0.4.4",
     "mocha": "^2.5.3",
     "nock": "^8.0.0"
   }
