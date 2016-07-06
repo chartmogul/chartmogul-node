@@ -1,21 +1,21 @@
-"use strict";
+'use strict';
 
-const ChartMogul = require("../../lib/chartmogul");
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
-const expect = require("chai").expect;
-const nock = require("nock");
+const expect = require('chai').expect;
+const nock = require('nock');
 const Customer = ChartMogul.Import.Customer;
 
 describe('Customer', () => {
-  it('should create a new customer', done => {
+  it('should create a new customer', () => {
     const postBody = {
       /* eslint-disable camelcase */
-      data_source_uuid: "ds_e243129a-12c0-4e29-8f54-07da7905fbd1",
-      external_id: "cus_0002",
-      name: "Adam Smith",
-      email: "adam@smith.com",
-      country: "US",
-      city: "New York"
+      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+      external_id: 'cus_0002',
+      name: 'Adam Smith',
+      email: 'adam@smith.com',
+      country: 'US',
+      city: 'New York'
       /* eslint-enable camelcase */
     };
 
@@ -39,12 +39,10 @@ describe('Customer', () => {
     Customer.create(config, postBody)
     .then(res => {
       expect(res).to.have.property('uuid');
-      done();
-    })
-    .catch(e => done(e));
+    });
   });
 
-  it('should get all customers', done => {
+  it('should get all customers', () => {
     nock(config.API_BASE)
     .get(Customer.path)
     .reply(200, {
@@ -64,26 +62,20 @@ describe('Customer', () => {
       /* eslint-enable camelcase */
     });
 
-    Customer.all(config)
+    return Customer.all(config)
     .then(res => {
       expect(res).to.have.property('customers');
       expect(res.customers).to.be.instanceof(Array);
-      done();
-    })
-    .catch(e => done(e));
+    });
   });
 
-  it('should delete a customer', done => {
+  it('should delete a customer', () => {
     const uuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
 
     nock(config.API_BASE)
     .delete(Customer.path + '/' + uuid)
     .reply(204);
 
-    Customer.destroy(config, uuid)
-    .then(res => {
-      done();
-    })
-    .catch(e => done(e));
+    return Customer.destroy(config, uuid);
   });
 });
