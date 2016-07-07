@@ -12,7 +12,7 @@ describe('Data Source', () => {
       name: 'In-house billing'
     };
     nock(config.API_BASE)
-      .post(DataSource.path, postBody)
+      .post('/v1/import/data_sources', postBody)
       .reply(200, {
         /* eslint-disable camelcase*/
         uuid: 'ds_36a19126-1bc6-4d9e-af36-db06c55f576c',
@@ -30,7 +30,7 @@ describe('Data Source', () => {
 
   it('should get all data sources', () => {
     nock(config.API_BASE)
-    .get(DataSource.path)
+    .get('/v1/import/data_sources')
     .reply(200, {
       /* eslint-disable camelcase*/
       data_sources: [{
@@ -53,7 +53,7 @@ describe('Data Source', () => {
     const uuid = 'ds_6f8de69c-56e3-4cb3-83ad-17e6715d03fb';
 
     nock(config.API_BASE)
-    .delete(DataSource.path + '/' + uuid)
+    .delete('/v1/import/data_sources' + '/' + uuid)
     .reply(204);
 
     return DataSource.destroy(config, uuid);
