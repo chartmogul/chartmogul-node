@@ -93,7 +93,7 @@ describe('Customer Invoice', () => {
       });
 
     CustomerInvoice.create(config, customerUUID, postBody, (err, res) => {
-      if(err) {
+      if (err) {
         return done(err);
       }
       expect(res).to.have.property('invoices');
@@ -137,7 +137,7 @@ describe('Customer Invoice', () => {
     });
 
     CustomerInvoice.all(config, customerUUID, (err, res) => {
-      if(err){
+      if (err) {
         return done(err);
       }
       expect(res).to.have.property('invoices');
