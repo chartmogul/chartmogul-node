@@ -25,6 +25,7 @@ describe('Resource', () => {
 
   const errorCodes = {
     400: 'SchemaInvalidError',
+    401: 'ForbiddenError',
     403: 'ForbiddenError',
     404: 'NotFoundError',
     422: 'ResourceInvalidError',

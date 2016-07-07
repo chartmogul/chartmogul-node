@@ -19,7 +19,7 @@ describe('Plan', () => {
     /* eslint-enable camelcase*/
 
     nock(config.API_BASE)
-      .post(Plan.path, postBody)
+      .post('/v1/import/plans', postBody)
       .reply(200, {
         /* eslint-disable camelcase*/
         uuid: 'pl_cff3a63c-3915-435e-a675-85a8a8ef4454',
@@ -39,7 +39,7 @@ describe('Plan', () => {
 
   it('should get all plans', () => {
     nock(config.API_BASE)
-    .get(Plan.path)
+    .get('/v1/import/plans')
     .reply(200, {
       /* eslint-disable camelcase*/
       plans: [],
@@ -50,7 +50,6 @@ describe('Plan', () => {
 
     return Plan.all(config)
     .then(res => {
-      console.log(res);
       expect(res).to.have.property('plans');
       expect(res.plans).to.be.instanceof(Array);
     });
