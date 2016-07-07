@@ -1,0 +1,37 @@
+{
+  "name": "chartmogul-node",
+  "version": "0.1.0",
+  "description": "Official Chartmogul API Node.js Client",
+  "main": "lib/chartmogul.js",
+  "scripts": {
+    "test": "mocha",
+    "lint": "eslint --fix .",
+    "cover": "istanbul cover ./node_modules/mocha/bin/_mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chartmogul/chartmogul-js.git"
+  },
+  "keywords": [
+    "chartmogul",
+    "api"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chartmogul/chartmogul-js/issues"
+  },
+  "homepage": "https://github.com/chartmogul/chartmogul-js#readme",
+  "dependencies": {
+    "request": "^2.72.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.0.1",
+    "eslint-config-google": "^0.6.0",
+    "gulp": "^3.9.1",
+    "istanbul": "^0.4.4",
+    "mocha": "^2.5.3",
+    "nock": "^8.0.0"
+  }
+}
