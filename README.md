@@ -30,7 +30,7 @@
 
 This library requires node.js 4.x or above.
 
-```js
+```sh
 npm install --save chartmogul-node
 ```
 
@@ -49,7 +49,7 @@ You need to pass this config object as the first argument to each request.
 
 The library can be used both with promise and callback patterns. Supply the callback function as the last argmunent.
 
-Here is are complete examples:
+Here are sample examples:
 
 **Using as promise**
 
@@ -58,7 +58,14 @@ const ChartMogul = require('chartmogul-node');
 
 const config = new ChartMogul.Config('accountToken', 'secretKey');
 
-ChartMogul.Import.Customer.create(config, data)
+ChartMogul.Import.Customer.create(config, {
+  data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+  external_id: 'cus_0001',
+  name: 'Adam Smith',
+  email: 'adam@smith.com',
+  country: 'US',
+  city: 'New York'
+})
 .then(res => {
   console.log(res);
 })
@@ -85,14 +92,46 @@ ChartMogul.Import.Customer.create(config, data, (err, res) => {
 
 Available methods in Import API:
 
-#### Data Source
+#### [Data Sources](https://dev.chartmogul.com/docs/data-sources)
 
-```js
-ChartMogul.Import.DataSource.create(config, data);
+```js 
+ChartMogul.Import.DataSource.create(config, data)
+ChartMogul.Import.DataSource.all(config, query)
+ChartMogul.Import.DataSource.delete(config, dataSourceUuid)
 ```
-```js
-ChartMogul.Import.DataSource.all(config, query);
+ 
+#### [Customers](https://dev.chartmogul.com/docs/customers)
+
+```js 
+ChartMogul.Import.Customer.create(config, data)
+ChartMogul.Import.Customer.all(config, query)
+ChartMogul.Import.Customer.delete(config, customerUuid)
 ```
-```js
-ChartMogul.Import.DataSource.delete(config, dataSourceId);
+
+#### [Plans](https://dev.chartmogul.com/docs/plans)
+
+```js 
+ChartMogul.Import.Plan.create(config, data)
+ChartMogul.Import.Plan.all(config, query)
 ```
+
+#### [Invoices](https://dev.chartmogul.com/docs/invoices)
+
+```js 
+ChartMogul.Import.CustomerInvoice.create(config, customerUuid, data)
+ChartMogul.Import.CustomerInvoice.all(config, customerUuid, query)
+```
+
+#### [Transactions](https://dev.chartmogul.com/docs/transactions)
+
+```js 
+ChartMogul.Import.Transaction.create(config, invoiceUuid, data)
+```
+
+#### [Subscriptions](https://dev.chartmogul.com/docs/subscriptions)
+
+```js 
+ChartMogul.Import.Subscription.cancel(config, subscriptionUuid, data)
+ChartMogul.Import.Subscription.all(config, customerUuid, query)
+```
+  
