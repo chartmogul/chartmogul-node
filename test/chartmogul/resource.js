@@ -76,7 +76,6 @@ describe('Resource', () => {
   });
 
   it('should throw ConfigurationError', done => {
-
     return Customer.all()
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
