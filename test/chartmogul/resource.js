@@ -52,14 +52,14 @@ describe('Resource', () => {
       nock(config.API_BASE)
         .get('/')
         .reply(code, 'error message');
+
       return Resource.request(config, 'GET', '/', {}, (err, body) => {
-        if(err){
+        if (err) {
           expect(err).to.be.instanceOf(ChartMogul[errorCodes[code]]);
           expect(err.httpStatus).to.equal(Number(code));
           expect(err.response).to.equal('error message');
           done();
-        }
-        else{
+        } else {
           done(new Error('Should throw error'));
         }
       });
