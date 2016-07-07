@@ -47,6 +47,25 @@ describe('Resource', () => {
     });
   });
 
+  Object.keys(errorCodes).forEach(function (code) {
+    it(`should throw ${errorCodes[code]} in callback`, done => {
+      nock(config.API_BASE)
+        .get('/')
+        .reply(code, 'error message');
+      return Resource.request(config, 'GET', '/', {}, (err, body) => {
+        if(err){
+          expect(err).to.be.instanceOf(ChartMogul[errorCodes[code]]);
+          expect(err.httpStatus).to.equal(Number(code));
+          expect(err.response).to.equal('error message');
+          done();
+        }
+        else{
+          done(new Error('Should throw error'));
+        }
+      });
+    });
+  });
+
   it('should throw Error', done => {
     nock(config.API_BASE)
       .get('/')
