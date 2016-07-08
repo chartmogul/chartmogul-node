@@ -1,7 +1,7 @@
 'use strict';
 
 const ChartMogul = require('../../../lib/chartmogul');
-const config = new ChartMogul.Config('49d974a13658245259899b955ebfba90', 'b009838a8e690d821ea3b76657a6cc58');
+const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
 const Tag = ChartMogul.Enrichment.Tag;
