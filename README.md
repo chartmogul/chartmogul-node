@@ -135,3 +135,51 @@ ChartMogul.Import.Subscription.cancel(config, subscriptionUuid, data)
 ChartMogul.Import.Subscription.all(config, customerUuid, query)
 ```
   
+### Errors  
+
+The library throws following error objects.
+
+- `ChartMogul.ChartMogulError`
+- `ChartMogul.ConfigurationError`
+- `ChartMogul.ForbiddenError`
+- `ChartMogul.NotFoundError`
+- `ChartMogul.ResourceInvalidError`
+- `ChartMogul.SchemaInvalidError`
+
+The following table describes the properties of the error object.
+
+|  Property  |       Type       |                             Description                             |
+|:----------:|:----------------:|:-------------------------------------------------------------------:|
+| `message`  | string           | The error message                                                   |
+| `httpStatus`     | number           | When the error occurs during an HTTP request, the HTTP status code. |
+| `response` | object or string | HTTP response as JSON, or raw response if not parsable to JSON |
+  
+## Development
+
+To work on the library:
+
+* Fork it
+* Create your feature branch (`git checkout -b my-new-feature`)
+* Install dependencies: `npm install`
+* Fix bugs or add features. Make sure the changes pass the coding guidelines by runing: `npm run lint`
+* Write tests for your new features. For HTTP mocking `nock` library is used. Run tests with `npm test` and check test coverage with `npm run cover`
+* If all tests are passed, push to the branch (`git push origin my-new-feature`)
+* Create a new Pull Request
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/chartmogul/chartmogul-node.
+
+## License
+
+The library is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+### The MIT License (MIT)
+
+*Copyright (c) 2016 ChartMogul Ltd.*
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
