@@ -94,15 +94,15 @@ Available methods in Import API:
 
 #### [Data Sources](https://dev.chartmogul.com/docs/data-sources)
 
-```js 
+```js
 ChartMogul.Import.DataSource.create(config, data)
 ChartMogul.Import.DataSource.all(config, query)
 ChartMogul.Import.DataSource.delete(config, dataSourceUuid)
 ```
- 
+
 #### [Customers](https://dev.chartmogul.com/docs/customers)
 
-```js 
+```js
 ChartMogul.Import.Customer.create(config, data)
 ChartMogul.Import.Customer.all(config, query)
 ChartMogul.Import.Customer.delete(config, customerUuid)
@@ -110,32 +110,32 @@ ChartMogul.Import.Customer.delete(config, customerUuid)
 
 #### [Plans](https://dev.chartmogul.com/docs/plans)
 
-```js 
+```js
 ChartMogul.Import.Plan.create(config, data)
 ChartMogul.Import.Plan.all(config, query)
 ```
 
 #### [Invoices](https://dev.chartmogul.com/docs/invoices)
 
-```js 
-ChartMogul.Import.CustomerInvoice.create(config, customerUuid, data)
-ChartMogul.Import.CustomerInvoice.all(config, customerUuid, query)
+```js
+ChartMogul.Import.Invoice.create(config, customerUuid, data)
+ChartMogul.Import.Invoice.all(config, customerUuid, query)
 ```
 
 #### [Transactions](https://dev.chartmogul.com/docs/transactions)
 
-```js 
+```js
 ChartMogul.Import.Transaction.create(config, invoiceUuid, data)
 ```
 
 #### [Subscriptions](https://dev.chartmogul.com/docs/subscriptions)
 
-```js 
+```js
 ChartMogul.Import.Subscription.cancel(config, subscriptionUuid, data)
 ChartMogul.Import.Subscription.all(config, customerUuid, query)
 ```
-  
-### Errors  
+
+### Errors
 
 The library throws following error objects.
 
@@ -153,7 +153,7 @@ The following table describes the properties of the error object.
 | `message`  | string           | The error message                                                   |
 | `httpStatus`     | number           | When the error occurs during an HTTP request, the HTTP status code. |
 | `response` | object or string | HTTP response as JSON, or raw response if not parsable to JSON |
-  
+
 ## Development
 
 To work on the library:
