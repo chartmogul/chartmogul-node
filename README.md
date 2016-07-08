@@ -154,6 +154,21 @@ ChartMogul.Enrichment.Customer.search(config, {
 ChartMogul.Enrichment.Customer.attributes(config, customerUuid)
 ```
 
+#### [Tags](https://dev.chartmogul.com/docs/tags)
+
+```js
+ChartMogul.Enrichment.Tag.add(config, customerUuid, {
+  "tags": ["important", "Prio1"]
+});
+ChartMogul.Enrichment.Tag.add(config, {
+  "email": 'adam@smith.com',
+  "tags": ["important", "Prio1"]
+});
+ChartMogul.Enrichment.Tag.remove(config, customerUuid, {
+  "tags": ["Prio1", "discountable"]
+});
+```
+
 
 #### [Custom Attributes](https://dev.chartmogul.com/docs/custom-attributes)
 
