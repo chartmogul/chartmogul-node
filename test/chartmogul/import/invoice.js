@@ -4,7 +4,7 @@ const ChartMogul = require('../../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const CustomerInvoice = ChartMogul.Import.CustomerInvoice;
+const Invoice = ChartMogul.Import.Invoice;
 
 /* eslint-disable camelcase*/
 const postBody = {
@@ -67,7 +67,7 @@ describe('Customer Invoice', () => {
         /* eslint-enable camelcase*/
       });
 
-    return CustomerInvoice.create(config, customerUUID, postBody)
+    return Invoice.create(config, customerUUID, postBody)
     .then(res => {
       expect(res).to.have.property('invoices');
     });
@@ -92,7 +92,7 @@ describe('Customer Invoice', () => {
         /* eslint-enable camelcase*/
       });
 
-    CustomerInvoice.create(config, customerUUID, postBody, (err, res) => {
+    Invoice.create(config, customerUUID, postBody, (err, res) => {
       if (err) {
         return done(err);
       }
@@ -115,7 +115,7 @@ describe('Customer Invoice', () => {
       /* eslint-enable camelcase*/
     });
 
-    return CustomerInvoice.all(config, customerUUID)
+    return Invoice.all(config, customerUUID)
     .then(res => {
       expect(res).to.have.property('invoices');
       expect(res.invoices).to.be.instanceof(Array);
@@ -136,7 +136,7 @@ describe('Customer Invoice', () => {
       /* eslint-enable camelcase*/
     });
 
-    CustomerInvoice.all(config, customerUUID, (err, res) => {
+    Invoice.all(config, customerUUID, (err, res) => {
       if (err) {
         return done(err);
       }
