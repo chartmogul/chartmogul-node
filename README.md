@@ -135,6 +135,52 @@ ChartMogul.Import.Subscription.cancel(config, subscriptionUuid, data)
 ChartMogul.Import.Subscription.all(config, customerUuid, query)
 ```
 
+### Enrichment API
+
+
+#### [Customers](https://dev.chartmogul.com/docs/retrieve-customer)
+
+```js
+ChartMogul.Enrichment.Customer.retrieve(config, customerUuid)
+ChartMogul.Enrichment.Customer.all(config, query)
+ChartMogul.Enrichment.Customer.search(config, {
+  email: 'adam@smith.com'
+})
+```
+
+#### [Customer Attributes](https://dev.chartmogul.com/docs/customer-attributes)
+
+```js
+ChartMogul.Enrichment.Customer.attributes(config, customerUuid)
+```
+
+
+#### [Custom Attributes](https://dev.chartmogul.com/docs/custom-attributes)
+
+```js
+ChartMogul.Enrichment.CustomAttribute.add(config, customerUuid, {
+  'custom': [
+    {'type': 'Integer', 'key': 'age', 'value': 8}
+  ]
+});
+ChartMogul.Enrichment.CustomAttribute.add(config, {
+  'email': 'adam@smith.com',
+  'custom': [
+    {'type': 'Integer', 'key': 'age', 'value': 8}
+  ]
+});
+ChartMogul.Enrichment.CustomAttribute.update(config, customerUuid, {
+  'custom': {
+    'age': 20,
+    'channel': 'Twitter'
+  }
+});
+ChartMogul.Enrichment.CustomAttribute.remove(config, customerUuid, {
+  'custom': ['CAC']
+});
+```
+
+
 ### Errors
 
 The library throws following error objects.
