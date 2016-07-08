@@ -1,5 +1,5 @@
 --reporter spec
 --colors
 --timeout  10000
---grep Enrichment#Customer
+--grep .*
 --recursive

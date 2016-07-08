@@ -8,7 +8,6 @@ const Customer = ChartMogul.Enrichment.Customer;
 
 describe('Enrichment#Customer', () => {
   it('should retrieve a customer', () => {
-
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     nock(config.API_BASE)
@@ -69,7 +68,7 @@ describe('Enrichment#Customer', () => {
     const email = 'adam@smith.com';
 
     nock(config.API_BASE)
-    .get(`/v1/customers/search`)
+    .get('/v1/customers/search')
     .query({
       email
     })
@@ -92,17 +91,15 @@ describe('Enrichment#Customer', () => {
   });
 
   it('should retrieve customer attributes', () => {
-
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     nock(config.API_BASE)
     .get(`/v1/customers/${customerUuid}/attributes`)
     .reply(200, {
       /* eslint-disable camelcase */
-      tags: ['foo', 'bar'],
+      tags: ['foo', 'bar']
       /* eslint-enable camelcase */
     });
-
 
     return Customer.attributes(config, customerUuid)
     .then(res => {
