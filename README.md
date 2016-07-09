@@ -137,6 +137,8 @@ ChartMogul.Import.Subscription.all(config, customerUuid, query)
 
 ### Enrichment API
 
+Available methods in Enrichment API:
+
 
 #### [Customers](https://dev.chartmogul.com/docs/retrieve-customer)
 
