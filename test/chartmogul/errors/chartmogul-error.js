@@ -2,9 +2,9 @@ const assert = require('chai').assert;
 const errors = require('../../../lib/chartmogul/errors/');
 
 /**
- * Creates error object
- * @param {string} key  error type
- * @return {object} The error object
+ * Creates error object.
+ * @param {string} key  - Error type
+ * @returns {Object} - The error object
  */
 function createError (key) {
   return new errors[key]('This is a test error', 404);
