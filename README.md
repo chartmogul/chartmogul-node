@@ -82,7 +82,7 @@ const config = new ChartMogul.Config('accountToken', 'secretKey');
 
 ChartMogul.Import.Customer.create(config, data, (err, res) => {
   if(err){
-    console.error(e.message, .httpStatus, e.response)
+    console.error(err.message, err.httpStatus, err.response)
   }
   console.log(res);
 });
