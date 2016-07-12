@@ -198,6 +198,32 @@ ChartMogul.Enrichment.CustomAttribute.remove(config, customerUuid, {
 ```
 
 
+### [Metrics API](https://dev.chartmogul.com/docs/introduction-metrics-api)
+
+Available methods in Metrics API:
+
+
+```js
+ChartMogul.Metrics.all(config, {
+  'start-date': '2015-01-01',
+  'end-date': '2015-11-24',
+  'interval': 'month',
+  'geo': 'GB',
+  'plans': 'Bronze Plan'
+})
+ChartMogul.Metrics.mrr(config, query)
+ChartMogul.Metrics.arr(config, query)
+ChartMogul.Metrics.arpa(config, query)
+ChartMogul.Metrics.asp(config, query)
+ChartMogul.Metrics.customerCount(config, query)
+ChartMogul.Metrics.customerChurnRate(config, query)
+ChartMogul.Metrics.mrrChurnRate(config, query)
+ChartMogul.Metrics.ltv(config, query)
+ChartMogul.Metrics.Customer.activites(config, customerUuid)
+ChartMogul.Metrics.Customer.subscriptions(config, customerUuid)
+```
+
+
 ### Errors
 
 The library throws following error objects.
