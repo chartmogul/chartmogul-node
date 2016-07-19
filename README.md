@@ -2,7 +2,7 @@
 <a href="https://chartmogul.com"><img width="200" src="https://chartmogul.com/assets/img/logo.png"></a>
 </p>
 
-<h3 align="center">Official Chartmogul API Node.js Client</h3>
+<h3 align="center">Official ChartMogul API Node.js Client</h3>
 
 <p align="center"><code>chartmogul-node</code> provides convenient Node.js bindings for <a href="https://dev.chartmogul.com">ChartMogul's API</a>.</p>
 
