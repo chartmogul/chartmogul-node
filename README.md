@@ -5,7 +5,9 @@
 <h3 align="center">Official ChartMogul API Node.js Client</h3>
 
 <p align="center"><code>chartmogul-node</code> provides convenient Node.js bindings for <a href="https://dev.chartmogul.com">ChartMogul's API</a>.</p>
-
+<p align="center">
+  <a href="https://travis-ci.org/chartmogul/chartmogul-node"><img src="https://travis-ci.org/chartmogul/chartmogul-node.svg?branch=master" alt="Build Status"/></a>
+</p>
 <hr>
 
 <p align="center">
@@ -21,10 +23,8 @@
 |
 <b><a href="#license">License</a></b>
 </p>
-
 <hr>
 <br>
-
 
 ## Installation
 
