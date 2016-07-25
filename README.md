@@ -104,7 +104,10 @@ ChartMogul.Import.DataSource.destroy(config, dataSourceUuid)
 
 ```js
 ChartMogul.Import.Customer.create(config, data)
-ChartMogul.Import.Customer.all(config, query)
+ChartMogul.Import.Customer.all(config, {
+  page: 2,
+  per_page: 20
+})
 ChartMogul.Import.Customer.destroy(config, customerUuid)
 ```
 
