@@ -69,7 +69,7 @@ ChartMogul.Import.Customer.create(config, {
 .then(res => {
   console.log(res);
 })
-.catch(e => console.error(e.message, .httpStatus, e.response));
+.catch(e => console.error(e.message, e.httpStatus, e.response));
 
 ```
 
@@ -97,15 +97,18 @@ Available methods in Import API:
 ```js
 ChartMogul.Import.DataSource.create(config, data)
 ChartMogul.Import.DataSource.all(config, query)
-ChartMogul.Import.DataSource.delete(config, dataSourceUuid)
+ChartMogul.Import.DataSource.destroy(config, dataSourceUuid)
 ```
 
 #### [Customers](https://dev.chartmogul.com/docs/customers)
 
 ```js
 ChartMogul.Import.Customer.create(config, data)
-ChartMogul.Import.Customer.all(config, query)
-ChartMogul.Import.Customer.delete(config, customerUuid)
+ChartMogul.Import.Customer.all(config, {
+  page: 2,
+  per_page: 20
+})
+ChartMogul.Import.Customer.destroy(config, customerUuid)
 ```
 
 #### [Plans](https://dev.chartmogul.com/docs/plans)
@@ -219,7 +222,7 @@ ChartMogul.Metrics.customerCount(config, query)
 ChartMogul.Metrics.customerChurnRate(config, query)
 ChartMogul.Metrics.mrrChurnRate(config, query)
 ChartMogul.Metrics.ltv(config, query)
-ChartMogul.Metrics.Customer.activites(config, customerUuid)
+ChartMogul.Metrics.Customer.activities(config, customerUuid)
 ChartMogul.Metrics.Customer.subscriptions(config, customerUuid)
 ```
 
