@@ -11,21 +11,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chartmogul/chartmogul-js.git"
+    "url": "https://github.com/chartmogul/chartmogul-node.git"
   },
   "keywords": [
     "chartmogul",
     "api"
   ],
-  "author": "",
+  "author": "ChartMogul Ltd. <support@chartmogul.com>",
   "contributors": [
     "Mahmudul Hassan <rezatxe@gmail.com>"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chartmogul/chartmogul-js/issues"
+    "url": "https://github.com/chartmogul/chartmogul-node/issues"
   },
-  "homepage": "https://github.com/chartmogul/chartmogul-js#readme",
+  "homepage": "https://github.com/chartmogul/chartmogul-node",
   "engines": {
     "node": ">=4"
   },
