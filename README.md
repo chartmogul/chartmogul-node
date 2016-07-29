@@ -6,7 +6,7 @@
 
 <p align="center"><code>chartmogul-node</code> provides convenient Node.js bindings for <a href="https://dev.chartmogul.com">ChartMogul's API</a>.</p>
 <p align="center">
-  <a href="https://www.npmjs.com/package/chartmogul-node"><img src="https://img.shields.io/npm/v/chartmogul-node.svg?maxAge=2592000" alt="npm Package" /></a>
+  <a href="https://www.npmjs.com/package/chartmogul-node"><img src="https://badge.fury.io/js/chartmogul-node.svg" alt="npm Package" /></a>
   <a href="https://travis-ci.org/chartmogul/chartmogul-node"><img src="https://travis-ci.org/chartmogul/chartmogul-node.svg?branch=master" alt="Build Status"/></a>
 </p>
 <hr>
