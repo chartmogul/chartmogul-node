@@ -78,30 +78,4 @@ describe('Customer', () => {
 
     return Customer.destroy(config, uuid);
   });
-
-  it('should update a customer', () => {
-    const customerUuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
-
-    /* eslint-disable camelcase*/
-    const postBody = {
-      'lead_created_at': '2014-01-15 00:00:00'
-    };
-    /* eslint-enable camelcase*/
-
-    nock(config.API_BASE)
-      .patch(`/v1/import/customers/${customerUuid}`)
-      .reply(200, {
-        /* eslint-disable camelcase*/
-        uuid: 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc',
-        external_id: 'cus_0001',
-        name: 'Adam Smith',
-        data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
-        /* eslint-enable camelcase*/
-      });
-
-    return Customer.patch(config, customerUuid, postBody)
-    .then(res => {
-      expect(res).to.have.property('uuid');
-    });
-  });
 });
