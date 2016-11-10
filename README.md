@@ -152,6 +152,16 @@ ChartMogul.Enrichment.Customer.all(config, query)
 ChartMogul.Enrichment.Customer.search(config, {
   email: 'adam@smith.com'
 })
+
+ChartMogul.Enrichment.Customer.merge(config, {
+  "from": {"customer_uuid": "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb"},
+  "into": {"customer_uuid": "cus_2123290f-09c8-4628-a205-db5596bd58f7"}
+})
+
+ChartMogul.Enrichment.Customer.modify(config, "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb", {
+  "lead_created_at": "2015-01-01 00:00:00",
+  "free_trial_started_at": "2015-06-13 15:45:13"
+})
 ```
 
 #### [Customer Attributes](https://dev.chartmogul.com/docs/customer-attributes)

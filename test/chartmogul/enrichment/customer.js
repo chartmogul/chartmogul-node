@@ -117,7 +117,7 @@ describe('Enrichment#Customer', () => {
     /* eslint-enable camelcase*/
 
     nock(config.API_BASE)
-      .patch(`/v1/customers/${customerUuid}`)
+      .patch(`/v1/customers/${customerUuid}`, postBody)
       .reply(200, {
         /* eslint-disable camelcase*/
         uuid: 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc',
@@ -132,5 +132,23 @@ describe('Enrichment#Customer', () => {
       expect(res).to.have.property('uuid');
     });
   });
-  
+
+  it('should merge customers', () => {
+    /* eslint-disable camelcase*/
+    const postBody = {
+      'from': {'customer_uuid': 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc'},
+      'into': {'customer_uuid': 'cus_ab223d54-75b4-431b-adb2-eb6b9e234571'}
+    };
+    /* eslint-enable camelcase*/
+
+    nock(config.API_BASE)
+      .post('/v1/customers/merges', postBody)
+      .reply(202, {});
+
+    return Customer.merge(config, postBody)
+    .then(res => {
+      expect(202);
+      expect(res).to.be.instanceof(Object);
+    });
+  });
 });
