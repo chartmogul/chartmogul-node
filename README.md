@@ -97,6 +97,7 @@ Available methods in Import API:
 
 ```js
 ChartMogul.Import.DataSource.create(config, data)
+ChartMogul.Import.DataSource.retrieve(config, uuid)
 ChartMogul.Import.DataSource.all(config, query)
 ChartMogul.Import.DataSource.destroy(config, dataSourceUuid)
 ```
@@ -116,7 +117,12 @@ ChartMogul.Import.Customer.destroy(config, customerUuid)
 
 ```js
 ChartMogul.Import.Plan.create(config, data)
+ChartMogul.Import.Plan.retrieve(config, uuid)
+ChartMogul.Import.Plan.modify(config, uuid, {
+    name: "new name"
+})
 ChartMogul.Import.Plan.all(config, query)
+ChartMogul.Import.Plan.destroy(config, uuid)
 ```
 
 #### [Invoices](https://dev.chartmogul.com/docs/invoices)
