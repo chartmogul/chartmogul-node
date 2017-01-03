@@ -19,7 +19,7 @@ describe('Plan', () => {
     /* eslint-enable camelcase*/
 
     nock(config.API_BASE)
-      .post('/v1/import/plans', postBody)
+      .post('/v1/plans', postBody)
       .reply(200, {
         /* eslint-disable camelcase*/
         uuid: 'pl_cff3a63c-3915-435e-a675-85a8a8ef4454',
@@ -39,7 +39,7 @@ describe('Plan', () => {
 
   it('should get all plans', () => {
     nock(config.API_BASE)
-    .get('/v1/import/plans')
+    .get('/v1/plans')
     .reply(200, {
       /* eslint-disable camelcase*/
       plans: [],
