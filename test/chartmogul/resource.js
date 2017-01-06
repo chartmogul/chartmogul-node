@@ -81,15 +81,15 @@ describe('Resource', () => {
   it('should throw ResourceInvalidError', done => {
     nock(config.API_BASE)
       .get('/')
-      .reply(422, 'error message');
+      .reply(422, '{"error": "message"}');
     return Customer.request(config, 'GET', '/')
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.ResourceInvalidError);
         expect(e.httpStatus).to.equal(422);
-        expect(e.response).to.equal('error message');
+        expect(e.response.error).to.equal('message');
         expect(e.message)
-          .to.equal('The Customer  could not be created or updated.');
+          .to.equal('The Customer  could not be created or updated. {"error":"message"}');
         done();
       });
   });
