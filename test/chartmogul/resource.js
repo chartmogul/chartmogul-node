@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const nock = require('nock');
 const ChartMogul = require('../../lib/chartmogul');
 const Resource = require('../../lib/chartmogul/resource');
-const Customer = require('../../lib/chartmogul/import/customer');
+const Customer = require('../../lib/chartmogul/customer');
 
 const config = new ChartMogul.Config('token', 'secret');
 

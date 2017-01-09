@@ -59,7 +59,7 @@ const ChartMogul = require('chartmogul-node');
 
 const config = new ChartMogul.Config('accountToken', 'secretKey');
 
-ChartMogul.Import.Customer.create(config, {
+ChartMogul.Customer.create(config, {
   data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
   external_id: 'cus_0001',
   name: 'Adam Smith',
@@ -81,7 +81,7 @@ const ChartMogul = require('chartmogul-node');
 
 const config = new ChartMogul.Config('accountToken', 'secretKey');
 
-ChartMogul.Import.Customer.create(config, data, (err, res) => {
+ChartMogul.Customer.create(config, data, (err, res) => {
   if(err){
     console.error(err.message, err.httpStatus, err.response)
   }
@@ -96,27 +96,33 @@ Available methods in Import API:
 #### [Data Sources](https://dev.chartmogul.com/docs/data-sources)
 
 ```js
-ChartMogul.Import.DataSource.create(config, data)
-ChartMogul.Import.DataSource.all(config, query)
-ChartMogul.Import.DataSource.destroy(config, dataSourceUuid)
+ChartMogul.DataSource.create(config, data)
+ChartMogul.DataSource.retrieve(config, uuid)
+ChartMogul.DataSource.all(config, query)
+ChartMogul.DataSource.destroy(config, dataSourceUuid)
 ```
 
 #### [Customers](https://dev.chartmogul.com/docs/customers)
 
 ```js
-ChartMogul.Import.Customer.create(config, data)
-ChartMogul.Import.Customer.all(config, {
+ChartMogul.Customer.create(config, data)
+ChartMogul.Customer.all(config, {
   page: 2,
   per_page: 20
 })
-ChartMogul.Import.Customer.destroy(config, customerUuid)
+ChartMogul.Customer.destroy(config, customerUuid)
 ```
 
 #### [Plans](https://dev.chartmogul.com/docs/plans)
 
 ```js
-ChartMogul.Import.Plan.create(config, data)
-ChartMogul.Import.Plan.all(config, query)
+ChartMogul.Plan.create(config, data)
+ChartMogul.Plan.retrieve(config, uuid)
+ChartMogul.Plan.modify(config, uuid, {
+    name: "new name"
+})
+ChartMogul.Plan.all(config, query)
+ChartMogul.Plan.destroy(config, uuid)
 ```
 
 #### [Invoices](https://dev.chartmogul.com/docs/invoices)
