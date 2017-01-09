@@ -1,10 +1,10 @@
 'use strict';
 
-const ChartMogul = require('../../../lib/chartmogul');
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const Plan = ChartMogul.Import.Plan;
+const Plan = ChartMogul.Plan;
 
 describe('Plan', () => {
   it('should create a new plan', () => {

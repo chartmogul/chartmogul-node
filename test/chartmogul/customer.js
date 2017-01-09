@@ -1,10 +1,10 @@
 'use strict';
 
-const ChartMogul = require('../../../lib/chartmogul');
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const Customer = ChartMogul.Import.Customer;
+const Customer = ChartMogul.Customer;
 
 describe('Customer', () => {
   it('should create a new customer', () => {
@@ -20,7 +20,7 @@ describe('Customer', () => {
     };
 
     nock(config.API_BASE)
-      .post('/v1/import/customers', postBody)
+      .post('/v1/customers', postBody)
       .reply(200, {
         /* eslint-disable camelcase */
         uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
@@ -44,7 +44,7 @@ describe('Customer', () => {
 
   it('should get all customers', () => {
     nock(config.API_BASE)
-    .get('/v1/import/customers')
+    .get('/v1/customers')
     .reply(200, {
       /* eslint-disable camelcase */
       customers: [{
@@ -73,7 +73,7 @@ describe('Customer', () => {
     const uuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
 
     nock(config.API_BASE)
-    .delete('/v1/import/customers' + '/' + uuid)
+    .delete('/v1/customers' + '/' + uuid)
     .reply(204);
 
     return Customer.destroy(config, uuid);

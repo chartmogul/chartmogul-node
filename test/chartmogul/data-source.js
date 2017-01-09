@@ -1,10 +1,10 @@
 'use strict';
 
-const ChartMogul = require('../../../lib/chartmogul');
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const DataSource = ChartMogul.Import.DataSource;
+const DataSource = ChartMogul.DataSource;
 
 describe('Data Source', () => {
   it('should create a new data source', () => {
