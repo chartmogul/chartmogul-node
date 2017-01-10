@@ -141,8 +141,9 @@ ChartMogul.Import.Transaction.create(config, invoiceUuid, data)
 #### [Subscriptions](https://dev.chartmogul.com/docs/subscriptions)
 
 ```js
-ChartMogul.Import.Subscription.cancel(config, subscriptionUuid, data)
 ChartMogul.Import.Subscription.all(config, customerUuid, query)
+ChartMogul.Import.Subscription.cancel(config, subscriptionUuid, {cancelled_at: ""})
+ChartMogul.Import.Subscription.modify(config, subscriptionUuid, {cancellation_dates: []})
 ```
 
 ### Enrichment API
