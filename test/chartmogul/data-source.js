@@ -14,12 +14,12 @@ describe('Data Source', () => {
     nock(config.API_BASE)
       .post('/v1/data_sources', postBody)
       .reply(200, {
-        /* eslint-disable camelcase*/
+        /* eslint-disable camelcase */
         uuid: 'ds_36a19126-1bc6-4d9e-af36-db06c55f576c',
         name: 'In-house billing',
         created_at: '2016-07-06T08:29:26.602Z',
         status: 'never_imported'
-        /* eslint-enable camelcase*/
+        /* eslint-enable camelcase */
       });
 
     return DataSource.create(config, postBody)
@@ -32,14 +32,14 @@ describe('Data Source', () => {
     nock(config.API_BASE)
     .get('/v1/data_sources')
     .reply(200, {
-      /* eslint-disable camelcase*/
+      /* eslint-disable camelcase */
       data_sources: [{
         uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
         name: 'In-house billing',
         created_at: '2016-07-05T16:37:30.750Z',
         status: 'import_complete'
       }]
-      /* eslint-enable camelcase*/
+      /* eslint-enable camelcase */
     });
 
     return DataSource.all(config)
