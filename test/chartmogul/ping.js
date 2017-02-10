@@ -1,3 +1,5 @@
+/* global fail */
+
 'use strict';
 
 const ChartMogul = require('../../lib/chartmogul');
@@ -8,11 +10,10 @@ const Ping = ChartMogul.Ping;
 
 describe('Ping', () => {
     it('should ping successfully', (done) => {
-
         nock(config.API_BASE)
             .get('/v1/ping')
             .reply(200, {
-                "data": "pong!"
+                'data': 'pong!'
             });
 
         return Ping.ping(config)
@@ -23,10 +24,10 @@ describe('Ping', () => {
     });
     it('should fail auth ping', (done) => {
         var errorMsg = {
-            "code": 401,
-            "message": "No valid API key provided",
-            "param": null
-        }
+            'code': 401,
+            'message': 'No valid API key provided',
+            'param': null
+        };
         nock(config.API_BASE)
             .get('/v1/ping')
             .reply(401, errorMsg);
@@ -35,8 +36,8 @@ describe('Ping', () => {
             .then(res => {
                 fail("Shouldn't succeed!");
             })
-            .catch(err => {
+            .catch(() => {
                 done();
-            })
+            });
     });
 });
