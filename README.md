@@ -46,6 +46,14 @@ const config = new ChartMogul.Config(process.env.CHARTMOGUL_ACCOUNT_TOKEN, proce
 
 You need to pass this config object as the first argument to each request.
 
+
+### Test your authentication
+```js
+ChartMogul.Ping.ping(config)
+    .then(res => console.log(res))
+    .catch(err => console.error(err))
+```
+
 ## Usage
 
 The library can be used both with promise and callback patterns. Supply the callback function as the last argmunent.
