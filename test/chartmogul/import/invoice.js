@@ -6,7 +6,7 @@ const expect = require('chai').expect;
 const nock = require('nock');
 const Invoice = ChartMogul.Import.Invoice;
 
-/* eslint-disable camelcase*/
+/* eslint-disable camelcase */
 const postBody = {
   'invoices': [{
     'external_id': 'INV0001',
@@ -45,7 +45,7 @@ const postBody = {
     ]
   }]
 };
-/* eslint-enable camelcase*/
+/* eslint-enable camelcase */
 
 describe('Customer Invoice', () => {
   it('should create a customer invoice', () => {
@@ -54,7 +54,7 @@ describe('Customer Invoice', () => {
     nock(config.API_BASE)
       .post('/v1/import/customers/' + customerUUID + '/invoices')
       .reply(200, {
-        /* eslint-disable camelcase*/
+        /* eslint-disable camelcase */
         invoices: [{
           uuid: 'inv_79eaad44-3379-4239-af83-2e0047dbebe6',
           external_id: 'INV0001',
@@ -64,7 +64,7 @@ describe('Customer Invoice', () => {
           line_items: [],
           transactions: []
         }]
-        /* eslint-enable camelcase*/
+        /* eslint-enable camelcase */
       });
 
     return Invoice.create(config, customerUUID, postBody)
@@ -79,7 +79,7 @@ describe('Customer Invoice', () => {
     nock(config.API_BASE)
       .post('/v1/import/customers/' + customerUUID + '/invoices')
       .reply(200, {
-        /* eslint-disable camelcase*/
+        /* eslint-disable camelcase */
         invoices: [{
           uuid: 'inv_79eaad44-3379-4239-af83-2e0047dbebe6',
           external_id: 'INV0001',
@@ -89,7 +89,7 @@ describe('Customer Invoice', () => {
           line_items: [],
           transactions: []
         }]
-        /* eslint-enable camelcase*/
+        /* eslint-enable camelcase */
       });
 
     Invoice.create(config, customerUUID, postBody, (err, res) => {
@@ -107,12 +107,12 @@ describe('Customer Invoice', () => {
     nock(config.API_BASE)
     .get('/v1/import/customers/' + customerUUID + '/invoices')
     .reply(200, {
-      /* eslint-disable camelcase*/
+      /* eslint-disable camelcase */
       customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
       invoices: [],
       current_page: 1,
       total_pages: 1
-      /* eslint-enable camelcase*/
+      /* eslint-enable camelcase */
     });
 
     return Invoice.all(config, customerUUID)
@@ -128,12 +128,12 @@ describe('Customer Invoice', () => {
     nock(config.API_BASE)
     .get('/v1/import/customers/' + customerUUID + '/invoices')
     .reply(200, {
-      /* eslint-disable camelcase*/
+      /* eslint-disable camelcase */
       customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
       invoices: [],
       current_page: 1,
       total_pages: 1
-      /* eslint-enable camelcase*/
+      /* eslint-enable camelcase */
     });
 
     Invoice.all(config, customerUUID, (err, res) => {
