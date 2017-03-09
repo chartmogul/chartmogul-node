@@ -1,11 +1,10 @@
 'use strict';
-/** @deprecated Remove once module Enrichment is removed */
 
-const ChartMogul = require('../../../lib/chartmogul');
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const Invoice = ChartMogul.Import.Invoice;
+const Invoice = ChartMogul.Invoice;
 
 /* eslint-disable camelcase */
 const postBody = {
@@ -48,7 +47,7 @@ const postBody = {
 };
 /* eslint-enable camelcase */
 
-describe('DeprecatedCustomerInvoice', () => {
+describe('Customer Invoice', () => {
   it('should create a customer invoice', () => {
     const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 

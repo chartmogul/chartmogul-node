@@ -136,22 +136,22 @@ ChartMogul.Plan.destroy(config, uuid)
 #### [Invoices](https://dev.chartmogul.com/docs/invoices)
 
 ```js
-ChartMogul.Import.Invoice.create(config, customerUuid, data)
-ChartMogul.Import.Invoice.all(config, customerUuid, query)
+ChartMogul.Invoice.create(config, customerUuid, data)
+ChartMogul.Invoice.all(config, customerUuid, query)
 ```
 
 #### [Transactions](https://dev.chartmogul.com/docs/transactions)
 
 ```js
-ChartMogul.Import.Transaction.create(config, invoiceUuid, data)
+ChartMogul.Transaction.create(config, invoiceUuid, data)
 ```
 
 #### [Subscriptions](https://dev.chartmogul.com/docs/subscriptions)
 
 ```js
-ChartMogul.Import.Subscription.all(config, customerUuid, query)
-ChartMogul.Import.Subscription.cancel(config, subscriptionUuid, {cancelled_at: ""})
-ChartMogul.Import.Subscription.modify(config, subscriptionUuid, {cancellation_dates: []})
+ChartMogul.Subscription.all(config, customerUuid, query)
+ChartMogul.Subscription.cancel(config, subscriptionUuid, {cancelled_at: ""})
+ChartMogul.Subscription.modify(config, subscriptionUuid, {cancellation_dates: []})
 ```
 
 ### Enrichment API
@@ -162,18 +162,18 @@ Available methods in Enrichment API:
 #### [Customers](https://dev.chartmogul.com/docs/retrieve-customer)
 
 ```js
-ChartMogul.Enrichment.Customer.retrieve(config, customerUuid)
-ChartMogul.Enrichment.Customer.all(config, query)
-ChartMogul.Enrichment.Customer.search(config, {
+ChartMogul.Customer.retrieve(config, customerUuid)
+ChartMogul.Customer.all(config, query)
+ChartMogul.Customer.search(config, {
   email: 'adam@smith.com'
 })
 
-ChartMogul.Enrichment.Customer.merge(config, {
+ChartMogul.Customer.merge(config, {
   "from": {"customer_uuid": "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb"},
   "into": {"customer_uuid": "cus_2123290f-09c8-4628-a205-db5596bd58f7"}
 })
 
-ChartMogul.Enrichment.Customer.modify(config, "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb", {
+ChartMogul.Customer.modify(config, "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb", {
   "lead_created_at": "2015-01-01 00:00:00",
   "free_trial_started_at": "2015-06-13 15:45:13"
 })
@@ -182,20 +182,20 @@ ChartMogul.Enrichment.Customer.modify(config, "cus_5915ee5a-babd-406b-b8ce-d2071
 #### [Customer Attributes](https://dev.chartmogul.com/docs/customer-attributes)
 
 ```js
-ChartMogul.Enrichment.Customer.attributes(config, customerUuid)
+ChartMogul.Customer.attributes(config, customerUuid)
 ```
 
 #### [Tags](https://dev.chartmogul.com/docs/tags)
 
 ```js
-ChartMogul.Enrichment.Tag.add(config, customerUuid, {
+ChartMogul.Tag.add(config, customerUuid, {
   "tags": ["important", "Prio1"]
 });
-ChartMogul.Enrichment.Tag.add(config, {
+ChartMogul.Tag.add(config, {
   "email": 'adam@smith.com',
   "tags": ["important", "Prio1"]
 });
-ChartMogul.Enrichment.Tag.remove(config, customerUuid, {
+ChartMogul.Tag.remove(config, customerUuid, {
   "tags": ["Prio1", "discountable"]
 });
 ```
@@ -204,24 +204,24 @@ ChartMogul.Enrichment.Tag.remove(config, customerUuid, {
 #### [Custom Attributes](https://dev.chartmogul.com/docs/custom-attributes)
 
 ```js
-ChartMogul.Enrichment.CustomAttribute.add(config, customerUuid, {
+ChartMogul.CustomAttribute.add(config, customerUuid, {
   'custom': [
     {'type': 'Integer', 'key': 'age', 'value': 8}
   ]
 });
-ChartMogul.Enrichment.CustomAttribute.add(config, {
+ChartMogul.CustomAttribute.add(config, {
   'email': 'adam@smith.com',
   'custom': [
     {'type': 'Integer', 'key': 'age', 'value': 8}
   ]
 });
-ChartMogul.Enrichment.CustomAttribute.update(config, customerUuid, {
+ChartMogul.CustomAttribute.update(config, customerUuid, {
   'custom': {
     'age': 20,
     'channel': 'Twitter'
   }
 });
-ChartMogul.Enrichment.CustomAttribute.remove(config, customerUuid, {
+ChartMogul.CustomAttribute.remove(config, customerUuid, {
   'custom': ['CAC']
 });
 ```

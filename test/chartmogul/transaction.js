@@ -1,13 +1,12 @@
 'use strict';
-/** @deprecated Remove once module Enrichment is removed */
 
-const ChartMogul = require('../../../lib/chartmogul');
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const Transaction = ChartMogul.Import.Transaction;
+const Transaction = ChartMogul.Transaction;
 
-describe('DeprecatedTransaction', () => {
+describe('Transaction', () => {
   it('should create a transaction', () => {
     const invoiceUuid = 'inv_79eaad44-3379-4239-af83-2e0047dbebe6';
 
