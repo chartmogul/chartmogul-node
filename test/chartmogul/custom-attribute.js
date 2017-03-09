@@ -1,13 +1,12 @@
 'use strict';
-/** @deprecated Remove once module Enrichment is removed */
 
-const ChartMogul = require('../../../lib/chartmogul');
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const CustomAttribute = ChartMogul.Enrichment.CustomAttribute;
+const CustomAttribute = ChartMogul.CustomAttribute;
 
-describe('DeprecatedCustomAttribute', () => {
+describe('CustomAttribute', () => {
   it('should add custom attributes to a customer', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const postBody = {

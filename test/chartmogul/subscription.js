@@ -1,13 +1,12 @@
 'use strict';
-/** @deprecated Remove once module Enrichment is removed */
 
-const ChartMogul = require('../../../lib/chartmogul');
+const ChartMogul = require('../../lib/chartmogul');
 const config = new ChartMogul.Config('token', 'secret');
 const expect = require('chai').expect;
 const nock = require('nock');
-const Subscription = ChartMogul.Import.Subscription;
+const Subscription = ChartMogul.Subscription;
 
-describe('DeprecatedSubscription', () => {
+describe('Subscription', () => {
   it('should cancel a subscription', () => {
     const subscriptionUuid = 'sub_0c26db04-9b58-423f-9a3b-fec4a3a61a88';
 
