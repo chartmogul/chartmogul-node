@@ -216,4 +216,15 @@ describe('Invoices', () => {
       expect(res.invoices[0].external_id).to.equal('INV0001');
     });
   });
+
+  it('should delete an invoice', () => {
+    nock(config.API_BASE)
+    .delete('/v1/invoices/inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
+    .reply(204, {});
+
+    return Invoice.destroy(config, 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
+    .then(res => {
+      expect(res).to.be.deep.equal({});
+    });
+  });
 });
