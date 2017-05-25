@@ -138,6 +138,8 @@ ChartMogul.Plan.destroy(config, uuid)
 ```js
 ChartMogul.Invoice.create(config, customerUuid, data)
 ChartMogul.Invoice.all(config, customerUuid, query)
+ChartMogul.Invoice.all(config, query)
+ChartMogul.Invoice.retrieve(config, invoiceUuid)
 ```
 
 #### [Transactions](https://dev.chartmogul.com/docs/transactions)
