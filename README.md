@@ -290,6 +290,14 @@ To work on the library:
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/chartmogul/chartmogul-node.
 
+## Releasing
+1. You need an authorized account on npmjs.com
+2. Bump up the version in `package.json` & tag on GitHub
+3. `npm test`
+4. `npm publish`
+
+[Full Howto](https://docs.npmjs.com/getting-started/publishing-npm-packages)
+
 ## License
 
 The library is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
