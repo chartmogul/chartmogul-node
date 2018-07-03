@@ -16,7 +16,7 @@ describe('Ping', () => {
               'data': 'pong!'
             });
 
-    return Ping.ping(config)
+    Ping.ping(config)
             .then(res => {
               expect(res).to.have.property('data');
               done();
@@ -32,7 +32,7 @@ describe('Ping', () => {
             .get('/v1/ping')
             .reply(401, errorMsg);
 
-    return Ping.ping(config)
+    Ping.ping(config)
             .then(res => {
               fail("Shouldn't succeed!");
             })

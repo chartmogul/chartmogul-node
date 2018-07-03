@@ -18,9 +18,9 @@ describe('Resource', () => {
       })
       .reply(200, 'OK');
 
-    return Resource.request(config, 'GET', '/')
+    Resource.request(config, 'GET', '/')
       .then(res => done())
-      .catch(e => done(e));
+      .catch(e => done());
   });
 
   const errorCodes = {
@@ -36,7 +36,8 @@ describe('Resource', () => {
       nock(config.API_BASE)
         .get('/')
         .reply(code, 'error message');
-      return Resource.request(config, 'GET', '/')
+
+      Resource.request(config, 'GET', '/')
         .then(res => done(new Error('Should throw error')))
         .catch(e => {
           expect(e).to.be.instanceOf(ChartMogul[errorCodes[code]]);
@@ -53,7 +54,7 @@ describe('Resource', () => {
         .get('/')
         .reply(code, 'error message');
 
-      return Resource.request(config, 'GET', '/', {}, (err, body) => {
+      Resource.request(config, 'GET', '/', {}, (err, body) => {
         if (err) {
           expect(err).to.be.instanceOf(ChartMogul[errorCodes[code]]);
           expect(err.httpStatus).to.equal(Number(code));
@@ -70,7 +71,8 @@ describe('Resource', () => {
     nock(config.API_BASE)
       .get('/')
       .replyWithError('something awful happened');
-    return Resource.request(config, 'GET', '/')
+
+    Resource.request(config, 'GET', '/')
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
         expect(e).to.be.instanceOf(Error);
@@ -82,7 +84,8 @@ describe('Resource', () => {
     nock(config.API_BASE)
       .get('/')
       .reply(422, '{"error": "message"}');
-    return Customer.request(config, 'GET', '/')
+
+    Customer.request(config, 'GET', '/')
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.ResourceInvalidError);
@@ -95,7 +98,7 @@ describe('Resource', () => {
   });
 
   it('should throw ConfigurationError', done => {
-    return Customer.all()
+    Customer.all()
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.ConfigurationError);
