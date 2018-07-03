@@ -1,5 +1,5 @@
 <p align="center">
-<a href="https://chartmogul.com"><img width="200" src="https://chartmogul.com/assets/img/logo.png"></a>
+<a href="https://chartmogul.com"><img width="200" src="https://user-images.githubusercontent.com/5329361/42206299-021e4184-7ea7-11e8-8160-8ecd5d9948b8.png"></a>
 </p>
 
 <h3 align="center">Official ChartMogul API Node.js Client</h3>
