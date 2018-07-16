@@ -367,6 +367,42 @@ describe('Metrics', () => {
     });
   });
 
+  it('should list customer activites paged', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+
+    const query = {
+      'page': 1,
+      'per_page': 10
+    };
+
+    nock(config.API_BASE)
+    .get(`/v1/customers/${customerUuid}/activities`)
+    .query(query)
+    .reply(200, {
+      /* eslint-disable camelcase */
+      entries: [ { id: 495366,
+        description: 'purchased the Bronze Plan plan with $10.00 discount applied',
+        'activity-mrr-movement': 4100,
+        'activity-mrr': 4100,
+        'activity-arr': 49200,
+        date: '2015-11-01T00:00:00+00:00',
+        type: 'new_biz',
+        currency: 'USD',
+        'currency-sign': '$'
+      }],
+      has_more: false,
+      per_page: 10,
+      page: 1
+      /* eslint-enable camelcase */
+    });
+
+    return Metrics.Customer.activities(config, customerUuid, query)
+    .then(res => {
+      expect(res).to.have.property('entries');
+      expect(res.entries).to.be.instanceof(Array);
+    });
+  });
+
   it('should list customer subscriptions', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
@@ -395,6 +431,46 @@ describe('Metrics', () => {
     });
 
     return Metrics.Customer.subscriptions(config, customerUuid)
+    .then(res => {
+      expect(res).to.have.property('entries');
+      expect(res.entries).to.be.instanceof(Array);
+    });
+  });
+
+  it('should list customer subscriptions paged', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+
+    const query = {
+      'page': 1,
+      'per_page': 25
+    };
+
+    nock(config.API_BASE)
+    .get(`/v1/customers/${customerUuid}/subscriptions`)
+    .query(query)
+    .reply(200, {
+      /* eslint-disable camelcase */
+      entries: [{
+        id: 297047,
+        plan: 'Bronze Plan',
+        quantity: 0,
+        mrr: 0,
+        arr: 0,
+        status: 'inactive',
+        'billing-cycle': 'month',
+        'billing-cycle-count': 1,
+        'start-date': '2016-01-15T00:00:00+00:00',
+        'end-date': '2016-01-15T00:00:00+00:00',
+        currency: 'USD',
+        'currency-sign': '$'
+      }],
+      has_more: false,
+      per_page: 25,
+      page: 1
+      /* eslint-enable camelcase */
+    });
+
+    return Metrics.Customer.subscriptions(config, customerUuid, query)
     .then(res => {
       expect(res).to.have.property('entries');
       expect(res.entries).to.be.instanceof(Array);
