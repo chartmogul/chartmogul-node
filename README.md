@@ -274,6 +274,19 @@ The following table describes the properties of the error object.
 | `httpStatus`     | number           | When the error occurs during an HTTP request, the HTTP status code. |
 | `response` | object or string | HTTP response as JSON, or raw response if not parsable to JSON |
 
+### Rate Limits & Exponential Backoff
+
+The library will keep retrying if the request exceeds the rate limit or if there's any network related error.
+By default, the request will be retried for 20 times (approximated 15 minutes) before finally giving up.
+
+You can change the retry count using `Config` object:
+
+```js
+const ChartMogul = require('chartmogul-node');
+const config = new ChartMogul.Config(process.env.CHARTMOGUL_ACCOUNT_TOKEN, process.env.CHARTMOGUL_SECRET_KEY);
+config.retries = 15; // 0 disables retrying
+```
+
 ## Development
 
 To work on the library:

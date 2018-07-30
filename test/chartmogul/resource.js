@@ -9,7 +9,7 @@ const Customer = require('../../lib/chartmogul/customer');
 
 describe('Resource', () => {
   const config = new ChartMogul.Config('token', 'secret');
-  config.retries = 1; // retry once
+  config.retries = 0; // no retry
   it('should send basicAuth headers', done => {
     nock(config.API_BASE)
       .get('/')
@@ -32,17 +32,11 @@ describe('Resource', () => {
     422: 'ResourceInvalidError',
     500: 'ChartMogulError'
   };
-  Object.keys(errorCodes).forEach(function(code) {
+  Object.keys(errorCodes).forEach(function (code) {
     it(`should throw ${errorCodes[code]}`, done => {
       nock(config.API_BASE)
         .get('/')
         .reply(code, 'error message');
-      if (code >= 500) {
-        // retried request
-        nock(config.API_BASE)
-          .get('/')
-          .reply(code, 'error message');
-      }
 
       Resource.request(config, 'GET', '/')
         .then(res => done(new Error('Should throw error')))
@@ -55,16 +49,11 @@ describe('Resource', () => {
     });
   });
 
-  Object.keys(errorCodes).forEach(function(code) {
+  Object.keys(errorCodes).forEach(function (code) {
     it(`should throw ${errorCodes[code]} in callback`, done => {
       nock(config.API_BASE)
         .get('/')
         .reply(code, 'error message');
-      if (code >= 500) {
-        nock(config.API_BASE)
-          .get('/')
-          .reply(code, 'error message');
-      }
 
       Resource.request(config, 'GET', '/', {}, (err, body) => {
         if (err) {
@@ -163,8 +152,8 @@ describe('Resource Retry', () => {
   // mock server used to send server errors to let the client retry
   // it will send several 5xx status and finally sends a 200 status
   // so clients can retry on 5xx status codes
-  function startMockServer(cb) {
-    cb = cb || function() {};
+  function startMockServer (cb) {
+    cb = cb || function () {};
     const server = http.createServer((req, res) => {
       if (retry <= 0) {
         return res.end('ok');
