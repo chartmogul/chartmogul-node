@@ -160,6 +160,9 @@ describe('Resource Retry', () => {
     });
   });
 
+  // mock server used to send server errors to let the client retry
+  // it will send several 5xx status and finally sends a 200 status
+  // so clients can retry on 5xx status codes
   function startMockServer(cb) {
     cb = cb || function() {};
     const server = http.createServer((req, res) => {
