@@ -2,13 +2,14 @@
 
 const expect = require('chai').expect;
 const nock = require('nock');
+const http = require('http');
 const ChartMogul = require('../../lib/chartmogul');
 const Resource = require('../../lib/chartmogul/resource');
 const Customer = require('../../lib/chartmogul/customer');
 
-const config = new ChartMogul.Config('token', 'secret');
-
 describe('Resource', () => {
+  const config = new ChartMogul.Config('token', 'secret');
+  config.retries = 1; // retry once
   it('should send basicAuth headers', done => {
     nock(config.API_BASE)
       .get('/')
@@ -36,6 +37,11 @@ describe('Resource', () => {
       nock(config.API_BASE)
         .get('/')
         .reply(code, 'error message');
+      if (code >= 500) { // retried request
+        nock(config.API_BASE)
+          .get('/')
+          .reply(code, 'error message');
+      }
 
       Resource.request(config, 'GET', '/')
         .then(res => done(new Error('Should throw error')))
@@ -53,6 +59,11 @@ describe('Resource', () => {
       nock(config.API_BASE)
         .get('/')
         .reply(code, 'error message');
+      if (code >= 500) {
+        nock(config.API_BASE)
+          .get('/')
+          .reply(code, 'error message');
+      }
 
       Resource.request(config, 'GET', '/', {}, (err, body) => {
         if (err) {
@@ -106,3 +117,61 @@ describe('Resource', () => {
       });
   });
 });
+
+describe('Resource Retry', () => {
+  const port = 12345;
+  const config = new ChartMogul.Config('token', 'secret', `http://localhost:${port}`);
+  let server, status, retry;
+
+  before(done => {
+    server = startMockServer(done);
+  });
+  after(done => server.close(done));
+
+  it('should retry if status 429 is received', () => {
+    retry = 1;
+    status = 429;
+    return Customer.all(config)
+      .then(res => {
+        expect(res).to.be.eql('ok');
+        expect(retry).to.be.eql(0);
+      });
+  });
+  it('should retry if status 500 is received', () => {
+    retry = 1;
+    status = 500;
+    return Customer.all(config)
+      .then(res => {
+        expect(res).to.be.eql('ok');
+        expect(retry).to.be.eql(0);
+      });
+  });
+
+  it('should retry on ECONNRESET', () => {
+    retry = 1;
+    status = 0;
+    return Customer.all(config)
+      .then(res => {
+        expect(res).to.be.eql('ok');
+        expect(retry).to.be.eql(0);
+      });
+  });
+
+  function startMockServer (cb = () => {}) {
+    const server = http.createServer((req, res) => {
+      if (retry <= 0) {
+        return res.end('ok');
+      }
+      if (status === 0 && retry >= 0) {
+        retry--;
+        return req.socket.destroy(new Error('some error'));
+      }
+      retry--;
+      res.writeHead(status);
+      res.end(status.toString());
+    });
+    server.listen(port, cb);
+    return server;
+  }
+});
+
