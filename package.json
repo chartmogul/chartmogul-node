@@ -1,10 +1,10 @@
 {
   "name": "chartmogul-node",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Official Chartmogul API Node.js Client",
   "main": "lib/chartmogul.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha -t 10000",
     "lint": "eslint --fix .",
     "cover": "istanbul cover ./node_modules/mocha/bin/_mocha",
     "prepare": "npm run lint && npm run test"
@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "request": "^2.87.0",
+    "retry": "^0.12.0",
     "uri-templates": "^0.2.0"
   },
   "devDependencies": {
