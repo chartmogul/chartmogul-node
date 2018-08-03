@@ -1,0 +1,11 @@
+plugins: 
+  eslint:
+    enabled: true
+  nodesecurity:
+    enabled: true
+engines:
+  duplication:
+    enabled: true
+
+exclude_patterns:
+- "**/test/**"
