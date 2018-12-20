@@ -1,10 +1,11 @@
+version: "2"
 plugins: 
   eslint:
     enabled: true
   nodesecurity:
     enabled: true
-engines:
-  duplication:
+checks:
+  identical-code:
     enabled: true
 
 exclude_patterns:

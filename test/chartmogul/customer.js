@@ -227,4 +227,30 @@ describe('Enrichment#Customer', () => {
       expect(res).to.be.instanceof(Object);
     });
   });
+  it('should connect subscriptions', () => {
+    const customerUuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
+    /* eslint-disable camelcase */
+    const postBody = {
+      subscriptions: [{
+        data_source_uuid: 'ds_ade45e52-47a4-231a-1ed2-eb6b9e541213',
+        external_id: 'd1c0c885-add0-48db-8fa9-0bdf5017d6b0'
+      },
+        {
+          data_source_uuid: 'ds_ade45e52-47a4-231a-1ed2-eb6b9e541213',
+          external_id: '9db5f4a1-1695-44c0-8bd4-de7ce4d0f1d4'
+        }
+      ]
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .post(`/v1/customers/${customerUuid}/connect_subscriptions`, postBody)
+      .reply(202, {});
+
+    return Customer.connectSubscriptions(config, customerUuid, postBody)
+    .then(res => {
+      expect(202);
+      expect(res).to.be.instanceof(Object);
+    });
+  });
 });
