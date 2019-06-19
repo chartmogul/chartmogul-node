@@ -3,6 +3,7 @@ node_js:
   - "6"
   - "8"
   - "10"
+  - node
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
