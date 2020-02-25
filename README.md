@@ -140,7 +140,7 @@ ChartMogul.PlanGroup.create(config, data)
 ChartMogul.PlanGroup.retrieve(config, planGroupUuid)
 ChartMogul.PlanGroup.modify(config, planGroupUuid, data)
 ChartMogul.PlanGroup.all(config, query)
-ChartMogul.PlanGroup.all(config, planGroupUuid,{ page: 1, per_page: 20 }, query)
+ChartMogul.PlanGroup.all(config, planGroupUuid, query)
 ChartMogul.PlanGroup.destroy(config, planGroupUuid)
 ```
 
