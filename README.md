@@ -133,6 +133,17 @@ ChartMogul.Plan.all(config, query)
 ChartMogul.Plan.destroy(config, uuid)
 ```
 
+#### [Plan Groups](https://dev.chartmogul.com/docs/plan_groups)
+
+```js
+ChartMogul.PlanGroup.create(config, data)
+ChartMogul.PlanGroup.retrieve(config, planGroupUuid)
+ChartMogul.PlanGroup.modify(config, planGroupUuid, data)
+ChartMogul.PlanGroup.all(config, query)
+ChartMogul.PlanGroup.all(config, planGroupUuid, query)
+ChartMogul.PlanGroup.destroy(config, planGroupUuid)
+```
+
 #### [Invoices](https://dev.chartmogul.com/docs/invoices)
 
 ```js
