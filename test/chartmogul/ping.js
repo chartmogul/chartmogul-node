@@ -11,33 +11,33 @@ const Ping = ChartMogul.Ping;
 describe('Ping', () => {
   it('should ping successfully', (done) => {
     nock(config.API_BASE)
-            .get('/v1/ping')
-            .reply(200, {
-              'data': 'pong!'
-            });
+      .get('/v1/ping')
+      .reply(200, {
+        data: 'pong!'
+      });
 
     Ping.ping(config)
-            .then(res => {
-              expect(res).to.have.property('data');
-              done();
-            });
+      .then(res => {
+        expect(res).to.have.property('data');
+        done();
+      });
   });
   it('should fail auth ping', (done) => {
     var errorMsg = {
-      'code': 401,
-      'message': 'No valid API key provided',
-      'param': null
+      code: 401,
+      message: 'No valid API key provided',
+      param: null
     };
     nock(config.API_BASE)
-            .get('/v1/ping')
-            .reply(401, errorMsg);
+      .get('/v1/ping')
+      .reply(401, errorMsg);
 
     Ping.ping(config)
-            .then(res => {
-              fail("Shouldn't succeed!");
-            })
-            .catch(() => {
-              done();
-            });
+      .then(res => {
+        fail("Shouldn't succeed!");
+      })
+      .catch(() => {
+        done();
+      });
   });
 });

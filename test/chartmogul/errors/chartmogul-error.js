@@ -16,11 +16,9 @@ describe('Error', function () {
       var error = createError(errorClass);
       it('should be instance of Error', function () {
         assert.isTrue(error instanceof Error);
-        assert.isTrue(Error.prototype.isPrototypeOf(error));
       });
       it('should be instance of ChartMogulError', function () {
         assert.isTrue(error instanceof errors.ChartMogulError);
-        assert.isTrue(errors.ChartMogulError.prototype.isPrototypeOf(error));
       });
 
       it('should identify as an Error object - [object Error]',

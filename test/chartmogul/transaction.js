@@ -12,9 +12,9 @@ describe('Transaction', () => {
 
     /* eslint-disable camelcase */
     const postBody = {
-      'type': 'refund',
-      'date': '2015-12-25 18:10:00',
-      'result': 'successful'
+      type: 'refund',
+      date: '2015-12-25 18:10:00',
+      result: 'successful'
     };
     /* eslint-enable camelcase */
 
@@ -31,8 +31,8 @@ describe('Transaction', () => {
       });
 
     return Transaction.create(config, invoiceUuid, postBody)
-    .then(res => {
-      expect(res).to.have.property('uuid');
-    });
+      .then(res => {
+        expect(res).to.have.property('uuid');
+      });
   });
 });
