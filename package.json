@@ -4,7 +4,7 @@
   "description": "Official Chartmogul API Node.js Client",
   "main": "lib/chartmogul.js",
   "scripts": {
-    "test": "mocha -t 10000",
+    "test": "mocha",
     "lint": "eslint --fix .",
     "cover": "nyc mocha",
     "prepare": "npm run lint && npm run test"

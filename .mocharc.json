@@ -1,0 +1,6 @@
+{
+  "reporter": "dot",
+  "colors": true,
+  "timeout": 10000,
+  "recursive":  true
+}
