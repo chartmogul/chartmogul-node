@@ -43,7 +43,6 @@
     "eslint-plugin-node": "",
     "eslint-plugin-promise": "",
     "eslint-plugin-standard": "",
-    "gulp": "",
     "mocha": "",
     "nock": "",
     "pre-commit": ""
