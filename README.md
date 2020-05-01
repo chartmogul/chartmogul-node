@@ -29,7 +29,7 @@
 
 ## Installation
 
-This library requires node.js 4.x or above.
+This library requires node.js 6.x or above.
 
 ```sh
 npm install --save chartmogul-node
