@@ -1,8 +1,9 @@
 language: node_js
 node_js:
-  - "6"
   - "8"
   - "10"
+  - "12"
+  - "14"
   - node
 
 before_script:
@@ -12,7 +13,7 @@ before_script:
 
 after_script:
   - npm run cover
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter after-build -t lcov ./coverage/lcov.info --exit-code $TRAVIS_TEST_RESULT 
 
 branches:
   only:

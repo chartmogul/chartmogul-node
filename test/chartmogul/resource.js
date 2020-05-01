@@ -36,7 +36,7 @@ describe('Resource', () => {
     it(`should throw ${errorCodes[code]}`, done => {
       nock(config.API_BASE)
         .get('/')
-        .reply(code, 'error message');
+        .reply(Number(code), 'error message');
 
       Resource.request(config, 'GET', '/')
         .then(res => done(new Error('Should throw error')))
@@ -53,7 +53,7 @@ describe('Resource', () => {
     it(`should throw ${errorCodes[code]} in callback`, done => {
       nock(config.API_BASE)
         .get('/')
-        .reply(code, 'error message');
+        .reply(Number(code), 'error message');
 
       Resource.request(config, 'GET', '/', {}, (err, body) => {
         if (err) {

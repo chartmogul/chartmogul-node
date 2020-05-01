@@ -32,27 +32,27 @@ describe('Plan', () => {
       });
 
     return Plan.create(config, postBody)
-    .then(res => {
-      expect(res).to.have.property('uuid');
-    });
+      .then(res => {
+        expect(res).to.have.property('uuid');
+      });
   });
 
   it('should get all plans', () => {
     nock(config.API_BASE)
-    .get('/v1/plans')
-    .reply(200, {
+      .get('/v1/plans')
+      .reply(200, {
       /* eslint-disable camelcase */
-      plans: [],
-      current_page: 1,
-      total_pages: 0
+        plans: [],
+        current_page: 1,
+        total_pages: 0
       /* eslint-enable camelcase */
-    });
+      });
 
     return Plan.all(config)
-    .then(res => {
-      expect(res).to.have.property('plans');
-      expect(res.plans).to.be.instanceof(Array);
-    });
+      .then(res => {
+        expect(res).to.have.property('plans');
+        expect(res.plans).to.be.instanceof(Array);
+      });
   });
 
   it('should modify a plan', () => {
@@ -62,34 +62,34 @@ describe('Plan', () => {
     };
     /* eslint-enable camelcase */
     nock(config.API_BASE)
-    .patch('/v1/plans/pl_cff3a63c-3915-435e-a675-85a8a8ef4454')
-    .reply(200, {
+      .patch('/v1/plans/pl_cff3a63c-3915-435e-a675-85a8a8ef4454')
+      .reply(200, {
       /* eslint-disable camelcase */
-      uuid: 'pl_cff3a63c-3915-435e-a675-85a8a8ef4454',
-      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-      name: 'new_name',
-      interval_count: 1,
-      interval_unit: 'month',
-      external_id: 'plan_0001'
+        uuid: 'pl_cff3a63c-3915-435e-a675-85a8a8ef4454',
+        data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+        name: 'new_name',
+        interval_count: 1,
+        interval_unit: 'month',
+        external_id: 'plan_0001'
       /* eslint-enable camelcase */
-    });
+      });
 
     return Plan.modify(config, 'pl_cff3a63c-3915-435e-a675-85a8a8ef4454', postBody)
-    .then(res => {
-      expect(res).to.have.property('uuid');
-      expect(res).to.have.property('name');
-      expect(res.name).to.be.equal('new_name');
-    });
+      .then(res => {
+        expect(res).to.have.property('uuid');
+        expect(res).to.have.property('name');
+        expect(res.name).to.be.equal('new_name');
+      });
   });
 
   it('should delete a plan', () => {
     nock(config.API_BASE)
-    .delete('/v1/plans/pl_cff3a63c-3915-435e-a675-85a8a8ef4454')
-    .reply(200, {});
+      .delete('/v1/plans/pl_cff3a63c-3915-435e-a675-85a8a8ef4454')
+      .reply(200, {});
 
     return Plan.destroy(config, 'pl_cff3a63c-3915-435e-a675-85a8a8ef4454')
-    .then(res => {
-      expect(res).to.be.deep.equal({});
-    });
+      .then(res => {
+        expect(res).to.be.deep.equal({});
+      });
   });
 });

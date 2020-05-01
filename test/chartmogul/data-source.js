@@ -23,38 +23,38 @@ describe('Data Source', () => {
       });
 
     return DataSource.create(config, postBody)
-    .then(res => {
-      expect(res).to.have.property('uuid');
-    });
+      .then(res => {
+        expect(res).to.have.property('uuid');
+      });
   });
 
   it('should get all data sources', () => {
     nock(config.API_BASE)
-    .get('/v1/data_sources')
-    .reply(200, {
+      .get('/v1/data_sources')
+      .reply(200, {
       /* eslint-disable camelcase */
-      data_sources: [{
-        uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-        name: 'In-house billing',
-        created_at: '2016-07-05T16:37:30.750Z',
-        status: 'import_complete'
-      }]
+        data_sources: [{
+          uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+          name: 'In-house billing',
+          created_at: '2016-07-05T16:37:30.750Z',
+          status: 'import_complete'
+        }]
       /* eslint-enable camelcase */
-    });
+      });
 
     return DataSource.all(config)
-    .then(res => {
-      expect(res).to.have.property('data_sources');
-      expect(res.data_sources).to.be.instanceof(Array);
-    });
+      .then(res => {
+        expect(res).to.have.property('data_sources');
+        expect(res.data_sources).to.be.instanceof(Array);
+      });
   });
 
   it('should delete a data source', () => {
     const uuid = 'ds_6f8de69c-56e3-4cb3-83ad-17e6715d03fb';
 
     nock(config.API_BASE)
-    .delete('/v1/data_sources' + '/' + uuid)
-    .reply(204);
+      .delete('/v1/data_sources' + '/' + uuid)
+      .reply(204);
 
     return DataSource.destroy(config, uuid);
   });
