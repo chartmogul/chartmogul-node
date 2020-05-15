@@ -1,4 +1,8 @@
+os: linux
+dist: bionic
+
 language: node_js
+
 node_js:
   - "8"
   - "10"
@@ -13,7 +17,7 @@ before_script:
 
 after_script:
   - npm run cover
-  - ./cc-test-reporter after-build -t lcov ./coverage/lcov.info --exit-code $TRAVIS_TEST_RESULT 
+  - ./cc-test-reporter after-build -t lcov ./coverage/lcov.info --exit-code $TRAVIS_TEST_RESULT
 
 branches:
   only:
