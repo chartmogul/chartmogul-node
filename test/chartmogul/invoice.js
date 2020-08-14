@@ -228,6 +228,17 @@ describe('Invoices', () => {
       });
   });
 
+  it('should delete all invoices', () => {
+    nock(config.API_BASE)
+      .delete('/v1/data_sources/ds_cff3a63c-3915-435e-a675-85a8a8ef4454/customers/cus_9bf6482d-01e5-4944-957d-5bc730d2cda3/invoices')
+      .reply(204, {});
+
+    return Invoice.destroy_all(config, 'ds_cff3a63c-3915-435e-a675-85a8a8ef4454', 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3')
+      .then(res => {
+        expect(res).to.be.deep.equal({});
+      });
+  });
+
   it('should retrieve an invoice', () => {
     var payload = { external_id: 'some_invoice_id' };
     nock(config.API_BASE)
