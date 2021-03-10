@@ -277,6 +277,14 @@ ChartMogul.Metrics.Customer.activities(config, customerUuid, query)
 ChartMogul.Metrics.Customer.subscriptions(config, customerUuid, query)
 ```
 
+### Account
+
+Available methods:
+
+```js
+ChartMogul.Account.retrieve(config)
+```
+
 
 ### Errors
 
