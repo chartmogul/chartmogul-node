@@ -275,6 +275,7 @@ ChartMogul.Metrics.mrrChurnRate(config, query)
 ChartMogul.Metrics.ltv(config, query)
 ChartMogul.Metrics.Customer.activities(config, customerUuid, query)
 ChartMogul.Metrics.Customer.subscriptions(config, customerUuid, query)
+ChartMogul.Metrics.Activity.all(config, query)
 ```
 
 ### Account
