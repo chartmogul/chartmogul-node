@@ -83,8 +83,7 @@ const newInvoiceListResult = {
         discount_amount_in_cents: 500,
         tax_amount_in_cents: 450,
         transaction_fees_currency: 'EUR',
-        discount_description: '2 EUR',
-        event_order: 5
+        discount_description: '2 EUR'
       }
     ],
     transactions: [
