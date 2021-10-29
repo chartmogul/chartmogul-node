@@ -30,6 +30,7 @@
     "node": ">=4"
   },
   "dependencies": {
+    "dependency-lint": "^7.1.0",
     "nyc": "^15.0.1",
     "request": "^2.88.2",
     "retry": "^0.12.0",
