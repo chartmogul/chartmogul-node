@@ -23,7 +23,7 @@ describe('Ping', () => {
       });
   });
   it('should fail auth ping', (done) => {
-    const errorMsg = {
+    var errorMsg = {
       code: 401,
       message: 'No valid API key provided',
       param: null

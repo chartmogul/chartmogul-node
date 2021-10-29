@@ -13,7 +13,7 @@ function createError (key) {
 describe('Error', function () {
   Object.keys(errors).forEach(function (errorClass) {
     describe('#' + errorClass, function () {
-      const error = createError(errorClass);
+      var error = createError(errorClass);
       it('should be instance of Error', function () {
         assert.isTrue(error instanceof Error);
       });
