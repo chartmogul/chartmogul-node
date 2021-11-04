@@ -35,6 +35,8 @@ npm install --save chartmogul-node
 ```
 
 ## Configuration
+[Deprecation] - `account_token`/`secret_key` combo is deprecated. Please use API key for both fields.
+Version 2.x will introduce a breaking change in authentication configuration. For more details, please visit: https://dev.chartmogul.com/docs/authentication
 
 First create a `Config` object by passing your account token and secret key, available from the administration section of your ChartMogul account.
 
