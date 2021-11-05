@@ -2,7 +2,7 @@
 /** @deprecated Remove once module Enrichment is removed */
 
 const ChartMogul = require('../../../lib/chartmogul');
-const config = new ChartMogul.Config('token', 'secret');
+const config = new ChartMogul.Config('token');
 const expect = require('chai').expect;
 const nock = require('nock');
 const Tag = ChartMogul.Enrichment.Tag;

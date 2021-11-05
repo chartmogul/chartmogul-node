@@ -35,14 +35,11 @@ npm install --save chartmogul-node
 ```
 
 ## Configuration
-[Deprecation] - `account_token`/`secret_key` combo is deprecated. Please use API key for both fields.
-Version 2.x will introduce a breaking change in authentication configuration. For more details, please visit: https://dev.chartmogul.com/docs/authentication
-
-First create a `Config` object by passing your account token and secret key, available from the administration section of your ChartMogul account.
+First create a `Config` object by passing your api key, available from the administration section of your ChartMogul account.
 
 ```js
 const ChartMogul = require('chartmogul-node');
-const config = new ChartMogul.Config(process.env.CHARTMOGUL_ACCOUNT_TOKEN, process.env.CHARTMOGUL_SECRET_KEY);
+const config = new ChartMogul.Config(process.env.CHARTMOGUL_API_KEY);
 ```
 
 You need to pass this config object as the first argument to each request.
@@ -66,7 +63,7 @@ Here are sample examples:
 ```js
 const ChartMogul = require('chartmogul-node');
 
-const config = new ChartMogul.Config('accountToken', 'secretKey');
+const config = new ChartMogul.Config('apiKey');
 
 ChartMogul.Customer.create(config, {
   data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
@@ -88,7 +85,7 @@ ChartMogul.Customer.create(config, {
 ```js
 const ChartMogul = require('chartmogul-node');
 
-const config = new ChartMogul.Config('accountToken', 'secretKey');
+const config = new ChartMogul.Config('apiKey');
 
 ChartMogul.Customer.create(config, data, (err, res) => {
   if(err){
@@ -318,7 +315,7 @@ You can change the retry count using `Config` object:
 
 ```js
 const ChartMogul = require('chartmogul-node');
-const config = new ChartMogul.Config(process.env.CHARTMOGUL_ACCOUNT_TOKEN, process.env.CHARTMOGUL_SECRET_KEY);
+const config = new ChartMogul.Config(process.env.CHARTMOGUL_API_KEY);
 config.retries = 15; // 0 disables retrying
 ```
 

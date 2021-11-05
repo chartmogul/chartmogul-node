@@ -8,14 +8,14 @@ const Resource = require('../../lib/chartmogul/resource');
 const Customer = require('../../lib/chartmogul/customer');
 
 describe('Resource', () => {
-  const config = new ChartMogul.Config('token', 'secret');
+  const config = new ChartMogul.Config('token');
   config.retries = 0; // no retry
   it('should send basicAuth headers', done => {
     nock(config.API_BASE)
       .get('/')
       .basicAuth({
-        user: config.getAccountToken(),
-        pass: config.getSecretKey()
+        user: config.getApiKey(),
+        pass: ''
       })
       .reply(200, 'OK');
 
@@ -113,7 +113,6 @@ describe('Resource Retry', () => {
   const port = 12345;
   const config = new ChartMogul.Config(
     'token',
-    'secret',
     `http://localhost:${port}`
   );
   let server, status, retry;
