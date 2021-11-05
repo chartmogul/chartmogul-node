@@ -240,7 +240,7 @@ describe('Invoices', () => {
   });
 
   it('should retrieve an invoice', () => {
-    var payload = { external_id: 'some_invoice_id' };
+    const payload = { external_id: 'some_invoice_id' };
     nock(config.API_BASE)
       .get('/v1/invoices/inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
       .reply(200, payload);
