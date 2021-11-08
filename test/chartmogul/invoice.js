@@ -24,7 +24,10 @@ const postBody = {
         quantity: 1,
         discount_code: 'PSO86',
         discount_amount_in_cents: 1000,
-        tax_amount_in_cents: 900
+        tax_amount_in_cents: 900,
+        transaction_fees_currency: 'EUR',
+        discount_description: '5 EUR',
+        event_order: 5
       },
       {
         type: 'one_time',
@@ -33,7 +36,9 @@ const postBody = {
         quantity: 1,
         discount_code: 'PSO86',
         discount_amount_in_cents: 500,
-        tax_amount_in_cents: 450
+        tax_amount_in_cents: 450,
+        transaction_fees_currency: 'EUR',
+        discount_description: '2 EUR'
       }
     ],
     transactions: [
@@ -64,7 +69,10 @@ const newInvoiceListResult = {
         quantity: 1,
         discount_code: 'PSO86',
         discount_amount_in_cents: 1000,
-        tax_amount_in_cents: 900
+        tax_amount_in_cents: 900,
+        transaction_fees_currency: 'EUR',
+        discount_description: '5 EUR',
+        event_order: 5
       },
       {
         type: 'one_time',
@@ -73,7 +81,9 @@ const newInvoiceListResult = {
         quantity: 1,
         discount_code: 'PSO86',
         discount_amount_in_cents: 500,
-        tax_amount_in_cents: 450
+        tax_amount_in_cents: 450,
+        transaction_fees_currency: 'EUR',
+        discount_description: '2 EUR'
       }
     ],
     transactions: [
@@ -240,7 +250,7 @@ describe('Invoices', () => {
   });
 
   it('should retrieve an invoice', () => {
-    var payload = { external_id: 'some_invoice_id' };
+    const payload = { external_id: 'some_invoice_id' };
     nock(config.API_BASE)
       .get('/v1/invoices/inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
       .reply(200, payload);
