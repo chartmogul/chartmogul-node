@@ -1,6 +1,6 @@
 {
   "name": "chartmogul-node",
-  "version": "1.5.0",
+  "version": "1.9.0",
   "description": "Official Chartmogul API Node.js Client",
   "main": "lib/chartmogul.js",
   "scripts": {
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "chai": "",
-    "eslint": "",
+    "eslint": "^7",
     "eslint-config-standard": "",
     "eslint-plugin-import": "",
     "eslint-plugin-node": "",
