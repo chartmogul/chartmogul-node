@@ -3,7 +3,7 @@
 'use strict';
 
 const ChartMogul = require('../../lib/chartmogul');
-const config = new ChartMogul.Config('token', 'secret');
+const config = new ChartMogul.Config('token');
 const expect = require('chai').expect;
 const nock = require('nock');
 const Ping = ChartMogul.Ping;
