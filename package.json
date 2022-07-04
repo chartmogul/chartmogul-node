@@ -41,7 +41,7 @@
     "eslint": "^7",
     "eslint-config-standard": "",
     "eslint-plugin-import": "",
-    "eslint-plugin-node": "",
+    "eslint-plugin-n": "",
     "eslint-plugin-promise": "",
     "eslint-plugin-standard": "",
     "mocha": "",
