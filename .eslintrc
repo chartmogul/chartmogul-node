@@ -1,4 +1,5 @@
 {
+    "parserOptions": { "ecmaVersion": "latest" },
     "extends": "standard",
     "globals": {
       "describe": true,
