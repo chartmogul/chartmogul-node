@@ -165,6 +165,32 @@ ChartMogul.Subscription.cancel(config, subscriptionUuid, {cancelled_at: ""})
 ChartMogul.Subscription.modify(config, subscriptionUuid, {cancellation_dates: []})
 ```
 
+#### [Subscription events](https://dev.chartmogul.com/reference/subscription-events)
+```js
+ChartMogul.SubscriptionEvent.all(config, query)
+ChartMogul.SubscriptionEvent.create(config, {
+  subscription_event: {
+    event_type: 'subscription_cancelled',
+    event_date: '2022-06-13',
+    effective_date: '2022-06-13',
+    subscription_external_id: 'sub_ex_id_1',
+    customer_external_id: 'cus_ex_id_1',
+    data_source_uuid: '4175177b-3e4b-45b6-b6fb-426d6fd79028'
+  }
+})
+ChartMogul.SubscriptionEvent.updateWithParams(config, {
+  subscription_event: {
+    id: 1,
+    plan_external_id: 'gazillion_monthly'
+  }
+})
+ChartMogul.SubscriptionEvent.deleteWithParams(config, {
+  subscription_event: {
+    id: 1
+  }
+})
+```
+
 ### Enrichment API
 
 Available methods in Enrichment API:
