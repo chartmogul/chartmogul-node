@@ -117,6 +117,17 @@ ChartMogul.Customer.all(config, {
   per_page: 20
 })
 ChartMogul.Customer.destroy(config, customerUuid)
+
+ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'aabbcc...' })
+ChartMogul.Customer.createContact(config, customerUuid, data)
+```
+
+#### [Contacts](https://dev.chartmogul.com/docs/contacts)
+
+```js
+ChartMogul.Contact.create(config, data)
+ChartMogul.Contact.all(config, { per_page: 10, cursor: 'aabbcc...' })
+ChartMogul.Contact.destroy(config, contactUuid)
 ```
 
 #### [Plans](https://dev.chartmogul.com/docs/plans)
