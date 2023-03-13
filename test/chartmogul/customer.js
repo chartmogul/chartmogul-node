@@ -78,6 +78,84 @@ describe('Customer', () => {
 
     return Customer.destroy(config, uuid);
   });
+
+  it('creates a new contact from a customer', () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+    const postBody = {
+      /* eslint-disable camelcase */
+      data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
+      customer_external_id: 'external_001',
+      first_name: 'First name',
+      last_name: 'Last name',
+      position: 9,
+      title: 'Title',
+      email: 'test@example.com',
+      phone: '+1234567890',
+      linked_in: 'https://linkedin.com/not_found',
+      twitter: 'https://twitter.com/not_found',
+      notes: 'Heading\nBody\nFooter',
+      custom: [
+        { key: 'MyStringAttribute', value: 'Test' },
+        { key: 'MyIntegerAttribute', value: 123 }
+      ]
+      /* eslint-enable camelcase */
+    };
+
+    nock(config.API_BASE)
+      .post(`/v1/customers/${customerUuid}/contacts`, postBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: 'con_00000000-0000-0000-0000-000000000000',
+        customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
+        data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
+        customer_external_id: 'external_001',
+        first_name: 'First name',
+        last_name: 'Last name',
+        position: 9,
+        title: 'Title',
+        email: 'test@example.com',
+        phone: '+1234567890',
+        linked_in: 'https://linkedin.com/not_found',
+        twitter: 'https://twitter.com/not_found',
+        notes: 'Heading\nBody\nFooter',
+        custom: {
+          MyStringAttribute: 'Test',
+          MyIntegerAttribute: 123
+        }
+        /* eslint-enable camelcase */
+      });
+
+    Customer.createContact(config, customerUuid, postBody)
+      .then(res => {
+        expect(res).to.have.property('uuid');
+      });
+  });
+
+  it('gets all contacts from a customer', () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+
+    nock(config.API_BASE)
+      .get(`/v1/customers/${customerUuid}/contacts`)
+      .reply(200, {
+      /* eslint-disable camelcase */
+        entries: [{
+          uuid: 'con_00000000-0000-0000-0000-000000000000',
+          customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
+          data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
+          customer_external_id: 'external_001',
+          email: 'test@example.com'
+        }],
+        cursor: 'MjAyMy0wMy0xM1QxMjowMTozMi44MDYxODYwMDArMDk6MDAmY29uXzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMA==',
+        has_more: false
+      /* eslint-enable camelcase */
+      });
+
+    return Customer.contacts(config, customerUuid)
+      .then(res => {
+        expect(res).to.have.property('entries');
+        expect(res.entries).to.be.instanceof(Array);
+      });
+  });
 });
 
 /** Suite that originally belonged in the Enrichment module.
