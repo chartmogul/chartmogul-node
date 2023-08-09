@@ -378,8 +378,7 @@ describe('Metrics', () => {
           'currency-sign': '$'
         }],
         has_more: false,
-        per_page: 200,
-        page: 1
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -387,6 +386,8 @@ describe('Metrics', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 
@@ -394,7 +395,7 @@ describe('Metrics', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     const query = {
-      page: 1,
+      cursor: 'cursor==',
       per_page: 10
     };
 
@@ -415,8 +416,7 @@ describe('Metrics', () => {
           'currency-sign': '$'
         }],
         has_more: false,
-        per_page: 10,
-        page: 1
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -424,6 +424,8 @@ describe('Metrics', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 
@@ -449,8 +451,7 @@ describe('Metrics', () => {
           'currency-sign': '$'
         }],
         has_more: false,
-        per_page: 200,
-        page: 1
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -458,6 +459,8 @@ describe('Metrics', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 
@@ -465,7 +468,7 @@ describe('Metrics', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     const query = {
-      page: 1,
+      cursor: 'cursor==',
       per_page: 25
     };
 
@@ -489,8 +492,7 @@ describe('Metrics', () => {
           'currency-sign': '$'
         }],
         has_more: false,
-        per_page: 25,
-        page: 1
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -498,6 +500,8 @@ describe('Metrics', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 });

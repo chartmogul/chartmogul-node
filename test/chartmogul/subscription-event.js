@@ -34,24 +34,20 @@ describe('SubscriptionEvent', () => {
             retracted_event_id: null
           }
         ],
-        meta: {
-          next_key: 121,
-          prev_key: 123,
-          before_key: '2022-06-13T12:30:35.160Z',
-          page: 2,
-          total_pages: 121
-        }
+        has_more: false,
+        cursor: 'cursor=='
       });
 
     return SubscriptionEvent.all(config).then(res => {
       expect(res).to.have.property('subscription_events');
-      expect(res).to.have.property('meta');
       expect(res.subscription_events[0]).to.have.property('data_source_uuid');
       expect(res.subscription_events[0].data_source_uuid).to.eq('ds_e243129a-12c0-4e29-8f54-07da7905fbd1');
+      expect(res.cursor).to.eql('cursor==');
+      expect(res.has_more).to.eql(false);
     });
   });
 
-  it('should list create a subscription event', () => {
+  it('should create a subscription event', () => {
     const postBody = {
       subscription_event: {
         customer_external_id: 'c_ex_id_1',

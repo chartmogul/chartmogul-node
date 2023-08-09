@@ -61,9 +61,15 @@ describe('PlanGroup', () => {
       .get('/v1/plan_groups')
       .reply(200, {
       /* eslint-disable camelcase */
-        plan_groups: [],
-        current_page: 1,
-        total_pages: 0
+        plan_groups: [
+          {
+            name: 'All Plans',
+            uuid: 'plg_aa8c5eb3-a907-45da-bfa9-924f1a432d4a',
+            plans_count: 0
+          }
+        ],
+        cursor: 'MjAyMy0wNy0yN1Qx==',
+        has_more: true
       /* eslint-enable camelcase */
       });
 
@@ -71,6 +77,8 @@ describe('PlanGroup', () => {
       .then(res => {
         expect(res).to.have.property('plan_groups');
         expect(res.plan_groups).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('MjAyMy0wNy0yN1Qx==');
+        expect(res.has_more).to.eql(true);
       });
   });
 
@@ -98,8 +106,8 @@ describe('PlanGroup', () => {
             interval_unit: 'month',
             data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
           }],
-        current_page: 1,
-        total_pages: 0
+        cursor: 'MjAyMy0wNy0yN1Qx==',
+        has_more: false
       /* eslint-enable camelcase */
       });
 
@@ -111,6 +119,8 @@ describe('PlanGroup', () => {
       expect(res.plans).to.be.instanceof(Array);
       expect(res.plans[0].uuid).to.be.equal('pl_ab225d54-7ab4-421b-cdb2-eb6b9e553462');
       expect(res.plans[1].uuid).to.be.equal('pl_eed05d54-75b4-431b-adb2-eb6b9e543206');
+      expect(res.cursor).to.eql('MjAyMy0wNy0yN1Qx==');
+      expect(res.has_more).to.eql(false);
     });
   });
 

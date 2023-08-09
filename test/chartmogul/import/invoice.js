@@ -116,8 +116,8 @@ describe('DeprecatedCustomerInvoice', () => {
       /* eslint-disable camelcase */
         customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
         invoices: [],
-        current_page: 1,
-        total_pages: 1
+        cursor: 'cursor==',
+        has_more: false
       /* eslint-enable camelcase */
       });
 
@@ -125,6 +125,8 @@ describe('DeprecatedCustomerInvoice', () => {
       .then(res => {
         expect(res).to.have.property('invoices');
         expect(res.invoices).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 
@@ -137,8 +139,8 @@ describe('DeprecatedCustomerInvoice', () => {
       /* eslint-disable camelcase */
         customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
         invoices: [],
-        current_page: 1,
-        total_pages: 1
+        cursor: 'cursor==',
+        has_more: false
       /* eslint-enable camelcase */
       });
 
@@ -148,6 +150,8 @@ describe('DeprecatedCustomerInvoice', () => {
       }
       expect(res).to.have.property('invoices');
       expect(res.invoices).to.be.instanceof(Array);
+      expect(res.cursor).to.eql('cursor==');
+      expect(res.has_more).to.eql(false);
       done();
     });
   });

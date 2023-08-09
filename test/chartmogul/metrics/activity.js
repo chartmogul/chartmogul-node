@@ -35,12 +35,14 @@ describe('Activity', () => {
           }
         ],
         has_more: false,
-        per_page: 200
+        cursor: 'cursor=='
       });
     return Activity.all(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.has_more).to.eql(false);
+        expect(res.cursor).to.eql('cursor==');
       });
   });
 });

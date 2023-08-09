@@ -80,8 +80,8 @@ describe('DeprecatedSubscription', () => {
           plan_uuid: 'pl_cff3a63c-3915-435e-a675-85a8a8ef4454',
           data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
         }],
-        current_page: 1,
-        total_pages: 1
+        cursor: 'cursor==',
+        has_more: true
       /* eslint-enable camelcase */
       });
 
@@ -89,6 +89,8 @@ describe('DeprecatedSubscription', () => {
       .then(res => {
         expect(res).to.have.property('subscriptions');
         expect(res.subscriptions).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(true);
       });
   });
 });

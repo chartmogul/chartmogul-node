@@ -55,8 +55,7 @@ describe('DeprecatedEnrichment#Customer', () => {
       /* eslint-disable camelcase */
         entries: [],
         has_more: false,
-        per_page: 200,
-        page: 1
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -64,6 +63,8 @@ describe('DeprecatedEnrichment#Customer', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 
@@ -79,8 +80,7 @@ describe('DeprecatedEnrichment#Customer', () => {
       /* eslint-disable camelcase */
         entries: [],
         has_more: false,
-        per_page: 200,
-        page: 1
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -90,6 +90,8 @@ describe('DeprecatedEnrichment#Customer', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 

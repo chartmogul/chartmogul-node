@@ -42,9 +42,18 @@ describe('Plan', () => {
       .get('/v1/plans')
       .reply(200, {
       /* eslint-disable camelcase */
-        plans: [],
-        current_page: 1,
-        total_pages: 0
+        plans: [
+          {
+            external_id: 'price_1NYSWgIFhx3XTAwSSnub7K43',
+            name: 'Test Product',
+            interval_count: 1,
+            uuid: 'pl_93756449-aaea-4662-9e3a-004e52f14adc',
+            interval_unit: 'month',
+            data_source_uuid: 'ds_d02c7c42-2d1d-11ee-8e58-3fa5919351b4'
+          }
+        ],
+        cursor: 'MjAyMy0wNy0yOFQwODowOT==',
+        has_more: true
       /* eslint-enable camelcase */
       });
 
@@ -52,6 +61,8 @@ describe('Plan', () => {
       .then(res => {
         expect(res).to.have.property('plans');
         expect(res.plans).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('MjAyMy0wNy0yOFQwODowOT==');
+        expect(res.has_more).to.eql(true);
       });
   });
 

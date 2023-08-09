@@ -112,13 +112,10 @@ ChartMogul.DataSource.destroy(config, dataSourceUuid)
 
 ```js
 ChartMogul.Customer.create(config, data)
-ChartMogul.Customer.all(config, {
-  page: 2,
-  per_page: 20
-})
+ChartMogul.Customer.all(config, { cursor: 'cursor==', per_page: 20 })
 ChartMogul.Customer.destroy(config, customerUuid)
 
-ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'aabbcc...' })
+ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createContact(config, customerUuid, data)
 ```
 
@@ -126,7 +123,7 @@ ChartMogul.Customer.createContact(config, customerUuid, data)
 
 ```js
 ChartMogul.Contact.create(config, data)
-ChartMogul.Contact.all(config, { per_page: 10, cursor: 'aabbcc...' })
+ChartMogul.Contact.all(config, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Contact.destroy(config, contactUuid)
 ```
 
@@ -135,10 +132,8 @@ ChartMogul.Contact.destroy(config, contactUuid)
 ```js
 ChartMogul.Plan.create(config, data)
 ChartMogul.Plan.retrieve(config, uuid)
-ChartMogul.Plan.modify(config, uuid, {
-    name: "new name"
-})
-ChartMogul.Plan.all(config, query)
+ChartMogul.Plan.modify(config, uuid, { name: "new name" })
+ChartMogul.Plan.all(config, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Plan.destroy(config, uuid)
 ```
 
@@ -148,7 +143,7 @@ ChartMogul.Plan.destroy(config, uuid)
 ChartMogul.PlanGroup.create(config, data)
 ChartMogul.PlanGroup.retrieve(config, planGroupUuid)
 ChartMogul.PlanGroup.modify(config, planGroupUuid, data)
-ChartMogul.PlanGroup.all(config, query)
+ChartMogul.PlanGroup.all(config, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.PlanGroup.all(config, planGroupUuid, query)
 ChartMogul.PlanGroup.destroy(config, planGroupUuid)
 ```
@@ -158,7 +153,7 @@ ChartMogul.PlanGroup.destroy(config, planGroupUuid)
 ```js
 ChartMogul.Invoice.create(config, customerUuid, data)
 ChartMogul.Invoice.all(config, customerUuid, query)
-ChartMogul.Invoice.all(config, query)
+ChartMogul.Invoice.all(config, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Invoice.retrieve(config, invoiceUuid)
 ```
 

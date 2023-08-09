@@ -94,8 +94,8 @@ const newInvoiceListResult = {
       }
     ]
   }],
-  current_page: 1,
-  total_pages: 1
+  has_more: true,
+  cursor: 'cursor=='
 };
 /* eslint-enable camelcase */
 
@@ -162,8 +162,8 @@ describe('Customer Invoice', () => {
       /* eslint-disable camelcase */
         customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
         invoices: [],
-        current_page: 1,
-        total_pages: 1
+        has_more: false,
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -171,6 +171,8 @@ describe('Customer Invoice', () => {
       .then(res => {
         expect(res).to.have.property('invoices');
         expect(res.invoices).to.be.instanceof(Array);
+        expect(res.has_more).to.eql(false);
+        expect(res.cursor).to.eql('cursor==');
       });
   });
 
@@ -183,8 +185,8 @@ describe('Customer Invoice', () => {
       /* eslint-disable camelcase */
         customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
         invoices: [],
-        current_page: 1,
-        total_pages: 1
+        has_more: false,
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -194,6 +196,8 @@ describe('Customer Invoice', () => {
       }
       expect(res).to.have.property('invoices');
       expect(res.invoices).to.be.instanceof(Array);
+      expect(res.has_more).to.eql(false);
+      expect(res.cursor).to.eql('cursor==');
       done();
     });
   });
@@ -210,6 +214,8 @@ describe('Invoices', () => {
         expect(res).to.have.property('invoices');
         expect(res.invoices).to.be.instanceof(Array);
         expect(res.invoices[0].customer_uuid).to.equal('cus_9bf6482d-01e5-4944-957d-5bc730d2cda3');
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(true);
       });
   });
 
@@ -224,6 +230,8 @@ describe('Invoices', () => {
         expect(res).to.have.property('invoices');
         expect(res.invoices).to.be.instanceof(Array);
         expect(res.invoices[0].external_id).to.equal('INV0001');
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(true);
       });
   });
 
