@@ -10,6 +10,7 @@ const Customer = require('../../lib/chartmogul/customer');
 describe('Resource', () => {
   const config = new ChartMogul.Config('token');
   config.retries = 0; // no retry
+
   it('should send basicAuth headers', done => {
     nock(config.API_BASE)
       .get('/')
@@ -101,6 +102,19 @@ describe('Resource', () => {
 
   it('should throw ConfigurationError', done => {
     Customer.all()
+      .then(res => done(new Error('Should throw error')))
+      .catch(e => {
+        expect(e).to.be.instanceOf(ChartMogul.ConfigurationError);
+        done();
+      });
+  });
+
+  it('should throw InvalidParameterError', done => {
+    nock(config.API_BASE)
+      .get('/customers?page=1')
+      .reply(200, '{}');
+
+    Customer.all(config, { page: 1 })
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.ConfigurationError);

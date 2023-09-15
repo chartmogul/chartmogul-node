@@ -89,7 +89,7 @@ describe('Subscription', () => {
         expect(res).to.have.property('subscriptions');
         expect(res.subscriptions).to.be.instanceof(Array);
         expect(res.cursor).to.eql('cursor==');
-        expect(res.has_more).to.eql(false)
+        expect(res.has_more).to.eql(false);
       });
   });
 });
