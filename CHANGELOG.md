@@ -13,3 +13,6 @@ and this project adheres to [Semantic Versioning].
 ### Added
 - Support for cursor based pagination to `.all()` endpoints.
 - Changelog and 3.0.0 upgrade instructions.
+
+### Removed
+- Support for Node v14 because it reached EOL.
