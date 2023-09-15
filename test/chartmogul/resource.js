@@ -117,7 +117,7 @@ describe('Resource', () => {
     Customer.all(config, { page: 1 })
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
-        expect(e).to.be.instanceOf(ChartMogul.ConfigurationError);
+        expect(e).to.be.instanceOf(ChartMogul.InvalidParameterError);
         done();
       });
   });
