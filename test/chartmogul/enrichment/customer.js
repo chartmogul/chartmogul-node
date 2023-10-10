@@ -48,7 +48,7 @@ describe('DeprecatedEnrichment#Customer', () => {
       });
   });
 
-  it('should get all customers', () => {
+  it('should get all customers with old pagination', () => {
     nock(config.API_BASE)
       .get('/v1/customers')
       .reply(200, {
@@ -64,10 +64,31 @@ describe('DeprecatedEnrichment#Customer', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.page).to.eql(1);
       });
   });
 
-  it('should search for a customer', () => {
+  it('should get all customers with new pagination', () => {
+    nock(config.API_BASE)
+      .get('/v1/customers')
+      .reply(200, {
+      /* eslint-disable camelcase */
+        entries: [],
+        has_more: false,
+        cursor: 'cursor=='
+      /* eslint-enable camelcase */
+      });
+
+    return Customer.all(config)
+      .then(res => {
+        expect(res).to.have.property('entries');
+        expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
+      });
+  });
+
+  it('should search for a customer with old pagination', () => {
     const email = 'adam@smith.com';
 
     nock(config.API_BASE)
@@ -90,6 +111,34 @@ describe('DeprecatedEnrichment#Customer', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
+        expect(res.page).to.eql(1);
+      });
+  });
+
+  it('should search for a customer with new pagination', () => {
+    const email = 'adam@smith.com';
+
+    nock(config.API_BASE)
+      .get('/v1/customers/search')
+      .query({
+        email
+      })
+      .reply(200, {
+      /* eslint-disable camelcase */
+        entries: [],
+        has_more: false,
+        cursor: 'cursor=='
+      /* eslint-enable camelcase */
+      });
+
+    return Customer.search(config, {
+      email
+    })
+      .then(res => {
+        expect(res).to.have.property('entries');
+        expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 
