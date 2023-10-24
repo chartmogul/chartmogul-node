@@ -37,7 +37,7 @@ describe('Plan', () => {
       });
   });
 
-  it('should get all plans', () => {
+  it('should get all plans with old pagination', () => {
     nock(config.API_BASE)
       .get('/v1/plans')
       .reply(200, {
@@ -52,6 +52,28 @@ describe('Plan', () => {
       .then(res => {
         expect(res).to.have.property('plans');
         expect(res.plans).to.be.instanceof(Array);
+        expect(res.current_page).to.eql(1);
+        expect(res.total_pages).to.eql(0);
+      });
+  });
+
+  it('should get all plans with new pagination', () => {
+    nock(config.API_BASE)
+      .get('/v1/plans')
+      .reply(200, {
+      /* eslint-disable camelcase */
+        plans: [],
+        cursor: 'cursor==',
+        has_more: false
+      /* eslint-enable camelcase */
+      });
+
+    return Plan.all(config)
+      .then(res => {
+        expect(res).to.have.property('plans');
+        expect(res.plans).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
       });
   });
 

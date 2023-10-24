@@ -107,7 +107,7 @@ describe('DeprecatedCustomerInvoice', () => {
     });
   });
 
-  it('should get all customer invoices', () => {
+  it('should get all customer invoices with old pagination', () => {
     const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     nock(config.API_BASE)
@@ -125,10 +125,35 @@ describe('DeprecatedCustomerInvoice', () => {
       .then(res => {
         expect(res).to.have.property('invoices');
         expect(res.invoices).to.be.instanceof(Array);
+        expect(res.current_page).to.eql(1);
+        expect(res.total_pages).to.eql(1);
       });
   });
 
-  it('should get all customer invoices in a callback', done => {
+  it('should get all customer invoices with new pagination', () => {
+    const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+
+    nock(config.API_BASE)
+      .get('/v1/import/customers/' + customerUUID + '/invoices')
+      .reply(200, {
+      /* eslint-disable camelcase */
+        customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
+        invoices: [],
+        cursor: 'cursor==',
+        has_more: false
+      /* eslint-enable camelcase */
+      });
+
+    return Invoice.all(config, customerUUID)
+      .then(res => {
+        expect(res).to.have.property('invoices');
+        expect(res.invoices).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('cursor==');
+        expect(res.has_more).to.eql(false);
+      });
+  });
+
+  it('should get all customer invoices in callback (old pagination)', done => {
     const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     nock(config.API_BASE)
@@ -148,6 +173,34 @@ describe('DeprecatedCustomerInvoice', () => {
       }
       expect(res).to.have.property('invoices');
       expect(res.invoices).to.be.instanceof(Array);
+      expect(res.current_page).to.eql(1);
+      expect(res.total_pages).to.eql(1);
+      done();
+    });
+  });
+
+  it('should get all customer invoices in callback (new pagination)', done => {
+    const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+
+    nock(config.API_BASE)
+      .get('/v1/import/customers/' + customerUUID + '/invoices')
+      .reply(200, {
+      /* eslint-disable camelcase */
+        customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
+        invoices: [],
+        cursor: 'cursor==',
+        has_more: false
+      /* eslint-enable camelcase */
+      });
+
+    Invoice.all(config, customerUUID, (err, res) => {
+      if (err) {
+        return done(err);
+      }
+      expect(res).to.have.property('invoices');
+      expect(res.invoices).to.be.instanceof(Array);
+      expect(res.cursor).to.eql('cursor==');
+      expect(res.has_more).to.eql(false);
       done();
     });
   });

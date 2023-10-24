@@ -112,10 +112,7 @@ ChartMogul.DataSource.destroy(config, dataSourceUuid)
 
 ```js
 ChartMogul.Customer.create(config, data)
-ChartMogul.Customer.all(config, {
-  page: 2,
-  per_page: 20
-})
+ChartMogul.Customer.all(config, { per_page: 20 })
 ChartMogul.Customer.destroy(config, customerUuid)
 
 ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'aabbcc...' })

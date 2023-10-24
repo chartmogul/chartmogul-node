@@ -71,7 +71,7 @@ describe('Contact', () => {
           customer_external_id: 'external_001',
           email: 'test@example.com'
         }],
-        cursor: 'MjAyMy0wMy0xM1QxMjowMTozMi44MDYxODYwMDArMDk6MDAmY29uXzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMA==',
+        cursor: 'MjAyMy0wMy0xM1QxMjowMTozMi44MD==',
         has_more: false
       /* eslint-enable camelcase */
       });
@@ -80,8 +80,8 @@ describe('Contact', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
-        expect(res).to.have.property('cursor');
-        expect(res).to.have.property('has_more');
+        expect(res.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
+        expect(res.has_more).to.eql(false);
       });
   });
 

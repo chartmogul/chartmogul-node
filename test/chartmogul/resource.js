@@ -10,6 +10,7 @@ const Customer = require('../../lib/chartmogul/customer');
 describe('Resource', () => {
   const config = new ChartMogul.Config('token');
   config.retries = 0; // no retry
+
   it('should send basicAuth headers', done => {
     nock(config.API_BASE)
       .get('/')
