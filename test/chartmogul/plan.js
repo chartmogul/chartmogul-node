@@ -37,27 +37,26 @@ describe('Plan', () => {
       });
   });
 
-  it('should get all plans with old pagination', () => {
+  it('throws DeprecatedParamError if using old pagination parameter', done => {
+    const query = {
+      page: 1
+    };
+
     nock(config.API_BASE)
       .get('/v1/plans')
-      .reply(200, {
-      /* eslint-disable camelcase */
-        plans: [],
-        current_page: 1,
-        total_pages: 0
-      /* eslint-enable camelcase */
-      });
-
-    return Plan.all(config)
-      .then(res => {
-        expect(res).to.have.property('plans');
-        expect(res.plans).to.be.instanceof(Array);
-        expect(res.current_page).to.eql(1);
-        expect(res.total_pages).to.eql(0);
+      .query(query)
+      .reply(200, {});
+    Plan.all(config, query)
+      .then(res => done(new Error('Should throw error')))
+      .catch(e => {
+        expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
+        expect(e.httpStatus).to.equal(422);
+        expect(e.message).to.equal('"page" param is deprecated {}');
+        done();
       });
   });
 
-  it('should get all plans with new pagination', () => {
+  it('should get all plans with pagination', () => {
     nock(config.API_BASE)
       .get('/v1/plans')
       .reply(200, {

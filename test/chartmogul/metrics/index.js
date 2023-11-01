@@ -359,42 +359,8 @@ describe('Metrics', () => {
       });
   });
 
-  it('should list customer activites with old pagination', () => {
+  it('throws DeprecatedParamError if using old pagination parameter', done => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
-
-    nock(config.API_BASE)
-      .get(`/v1/customers/${customerUuid}/activities`)
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [{
-          id: 495366,
-          description: 'purchased the Bronze Plan plan with $10.00 discount applied',
-          'activity-mrr-movement': 4100,
-          'activity-mrr': 4100,
-          'activity-arr': 49200,
-          date: '2015-11-01T00:00:00+00:00',
-          type: 'new_biz',
-          currency: 'USD',
-          'currency-sign': '$'
-        }],
-        has_more: false,
-        per_page: 200,
-        page: 1
-      /* eslint-enable camelcase */
-      });
-
-    return Metrics.Customer.activities(config, customerUuid)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.page).to.eql(1);
-        expect(res.per_page).to.eql(200);
-      });
-  });
-
-  it('should list customer activites paged', () => {
-    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
-
     const query = {
       page: 1,
       per_page: 10
@@ -403,69 +369,19 @@ describe('Metrics', () => {
     nock(config.API_BASE)
       .get(`/v1/customers/${customerUuid}/activities`)
       .query(query)
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [{
-          id: 495366,
-          description: 'purchased the Bronze Plan plan with $10.00 discount applied',
-          'activity-mrr-movement': 4100,
-          'activity-mrr': 4100,
-          'activity-arr': 49200,
-          date: '2015-11-01T00:00:00+00:00',
-          type: 'new_biz',
-          currency: 'USD',
-          'currency-sign': '$'
-        }],
-        has_more: false,
-        per_page: 10,
-        page: 1
-      /* eslint-enable camelcase */
-      });
-
-    return Metrics.Customer.activities(config, customerUuid, query)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.page).to.eql(1);
-        expect(res.per_page).to.eql(10);
+      .reply(200, {});
+    Metrics.Customer.activities(config, customerUuid, query)
+      .then(res => done(new Error('Should throw error')))
+      .catch(e => {
+        expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
+        expect(e.httpStatus).to.equal(422);
+        expect(e.message).to.equal('"page" param is deprecated {}');
+        done();
       });
   });
 
-  it('should list customer activites with new pagination', () => {
+  it('should list customer activites with pagination', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
-
-    nock(config.API_BASE)
-      .get(`/v1/customers/${customerUuid}/activities`)
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [{
-          id: 495366,
-          description: 'purchased the Bronze Plan plan with $10.00 discount applied',
-          'activity-mrr-movement': 4100,
-          'activity-mrr': 4100,
-          'activity-arr': 49200,
-          date: '2015-11-01T00:00:00+00:00',
-          type: 'new_biz',
-          currency: 'USD',
-          'currency-sign': '$'
-        }],
-        has_more: false,
-        cursor: 'cursor=='
-      /* eslint-enable camelcase */
-      });
-
-    return Metrics.Customer.activities(config, customerUuid)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.has_more).to.eql(false);
-        expect(res.cursor).to.eql('cursor==');
-      });
-  });
-
-  it('should list customer activites cursored', () => {
-    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
-
     const query = { cursor: 'cursor==' };
 
     nock(config.API_BASE)
@@ -485,7 +401,7 @@ describe('Metrics', () => {
           'currency-sign': '$'
         }],
         has_more: false,
-        cursor: null
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
@@ -493,16 +409,18 @@ describe('Metrics', () => {
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
-        expect(res.cursor).to.eql(null);
         expect(res.has_more).to.eql(false);
+        expect(res.cursor).to.eql('cursor==');
       });
   });
 
-  it('should list customer subscriptions with old pagination', () => {
+  it('should list customer subscriptions with pagination', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    const query = { cursor: 'cursor==', per_page: 200 };
 
     nock(config.API_BASE)
       .get(`/v1/customers/${customerUuid}/subscriptions`)
+      .query(query)
       .reply(200, {
       /* eslint-disable camelcase */
         entries: [{
@@ -521,131 +439,16 @@ describe('Metrics', () => {
         }],
         has_more: false,
         per_page: 200,
-        page: 1
+        cursor: 'cursor=='
       /* eslint-enable camelcase */
       });
 
-    return Metrics.Customer.subscriptions(config, customerUuid)
+    return Metrics.Customer.subscriptions(config, customerUuid, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
-        expect(res.page).to.eql(1);
+        expect(res.cursor).to.eql('cursor==');
         expect(res.per_page).to.eql(200);
-      });
-  });
-
-  it('should list customer subscriptions paged', () => {
-    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
-
-    const query = {
-      page: 1,
-      per_page: 25
-    };
-
-    nock(config.API_BASE)
-      .get(`/v1/customers/${customerUuid}/subscriptions`)
-      .query(query)
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [{
-          id: 297047,
-          plan: 'Bronze Plan',
-          quantity: 0,
-          mrr: 0,
-          arr: 0,
-          status: 'inactive',
-          'billing-cycle': 'month',
-          'billing-cycle-count': 1,
-          'start-date': '2016-01-15T00:00:00+00:00',
-          'end-date': '2016-01-15T00:00:00+00:00',
-          currency: 'USD',
-          'currency-sign': '$'
-        }],
-        has_more: false,
-        per_page: 25,
-        page: 1
-      /* eslint-enable camelcase */
-      });
-
-    return Metrics.Customer.subscriptions(config, customerUuid, query)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.per_page).to.eql(25);
-        expect(res.page).to.eql(1);
-      });
-  });
-
-  it('should list customer subscriptions with new pagination', () => {
-    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
-
-    nock(config.API_BASE)
-      .get(`/v1/customers/${customerUuid}/subscriptions`)
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [{
-          id: 297047,
-          plan: 'Bronze Plan',
-          quantity: 0,
-          mrr: 0,
-          arr: 0,
-          status: 'inactive',
-          'billing-cycle': 'month',
-          'billing-cycle-count': 1,
-          'start-date': '2016-01-15T00:00:00+00:00',
-          'end-date': '2016-01-15T00:00:00+00:00',
-          currency: 'USD',
-          'currency-sign': '$'
-        }],
-        has_more: false,
-        cursor: 'cursor=='
-      /* eslint-enable camelcase */
-      });
-
-    return Metrics.Customer.subscriptions(config, customerUuid)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.has_more).to.eql(false);
-        expect(res.cursor).to.eql('cursor==');
-      });
-  });
-
-  it('should list customer subscriptions cursored', () => {
-    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
-
-    const query = { cursor: 'cursor==' };
-
-    nock(config.API_BASE)
-      .get(`/v1/customers/${customerUuid}/subscriptions`)
-      .query(query)
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [{
-          id: 297047,
-          plan: 'Bronze Plan',
-          quantity: 0,
-          mrr: 0,
-          arr: 0,
-          status: 'inactive',
-          'billing-cycle': 'month',
-          'billing-cycle-count': 1,
-          'start-date': '2016-01-15T00:00:00+00:00',
-          'end-date': '2016-01-15T00:00:00+00:00',
-          currency: 'USD',
-          'currency-sign': '$'
-        }],
-        has_more: false,
-        cursor: 'cursor=='
-      /* eslint-enable camelcase */
-      });
-
-    return Metrics.Customer.subscriptions(config, customerUuid, query)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.has_more).to.eql(false);
-        expect(res.cursor).to.eql('cursor==');
       });
   });
 });

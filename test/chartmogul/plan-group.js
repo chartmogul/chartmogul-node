@@ -56,27 +56,26 @@ describe('PlanGroup', () => {
     });
   });
 
-  it('should get all plan groups with old pagination', () => {
+  it('throws DeprecatedParamError if using old pagination parameter', done => {
+    const query = {
+      page: 1
+    };
+
     nock(config.API_BASE)
       .get('/v1/plan_groups')
-      .reply(200, {
-      /* eslint-disable camelcase */
-        plan_groups: [],
-        current_page: 1,
-        total_pages: 0
-      /* eslint-enable camelcase */
-      });
-
-    return PlanGroup.all(config)
-      .then(res => {
-        expect(res).to.have.property('plan_groups');
-        expect(res.plan_groups).to.be.instanceof(Array);
-        expect(res.current_page).to.eql(1);
-        expect(res.total_pages).to.eql(0);
+      .query(query)
+      .reply(200, {});
+    PlanGroup.all(config, query)
+      .then(res => done(new Error('Should throw error')))
+      .catch(e => {
+        expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
+        expect(e.httpStatus).to.equal(422);
+        expect(e.message).to.equal('"page" param is deprecated {}');
+        done();
       });
   });
 
-  it('should get all plan groups with new pagination', () => {
+  it('should get all plan groups with pagination', () => {
     nock(config.API_BASE)
       .get('/v1/plan_groups')
       .reply(200, {
@@ -96,49 +95,7 @@ describe('PlanGroup', () => {
       });
   });
 
-  it('should get all plans for a plan group with old pagination', () => {
-    const planGroupUUID = 'plg_eed05d54-75b4-431b-adb2-eb6b9e543206';
-
-    nock(config.API_BASE)
-      .get('/v1/plan_groups/' + planGroupUUID + '/plans')
-      .reply(200, {
-      /* eslint-disable camelcase */
-        plans: [
-          {
-            uuid: 'pl_ab225d54-7ab4-421b-cdb2-eb6b9e553462',
-            external_id: 'plan_0001',
-            name: 'Bronze Plan',
-            interval_count: 1,
-            interval_unit: 'month',
-            data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
-          },
-          {
-            uuid: 'pl_eed05d54-75b4-431b-adb2-eb6b9e543206',
-            external_id: 'plan_0001',
-            name: 'Bronze Plan',
-            interval_count: 1,
-            interval_unit: 'month',
-            data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
-          }],
-        current_page: 1,
-        total_pages: 0
-      /* eslint-enable camelcase */
-      });
-
-    return PlanGroup.all(config, planGroupUUID, (err, res) => {
-      if (err) {
-        return err;
-      }
-      expect(res).to.have.property('plans');
-      expect(res.plans).to.be.instanceof(Array);
-      expect(res.plans[0].uuid).to.be.equal('pl_ab225d54-7ab4-421b-cdb2-eb6b9e553462');
-      expect(res.plans[1].uuid).to.be.equal('pl_eed05d54-75b4-431b-adb2-eb6b9e543206');
-      expect(res.current_page).to.eql(1);
-      expect(res.total_pages).to.eql(0);
-    });
-  });
-
-  it('should get all plans for a plan group with new pagination', () => {
+  it('should get all plans for a plan group with pagination', () => {
     const planGroupUUID = 'plg_eed05d54-75b4-431b-adb2-eb6b9e543206';
 
     nock(config.API_BASE)

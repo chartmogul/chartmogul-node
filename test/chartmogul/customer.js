@@ -42,41 +42,34 @@ describe('Customer', () => {
       });
   });
 
-  it('should get all customers with old pagination', () => {
+  it('throws DeprecatedParamError if using old pagination parameter', done => {
+    const query = {
+      page: 1
+    };
+
     nock(config.API_BASE)
       .get('/v1/customers')
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [{
-          uuid: 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc',
-          external_id: 'cus_0001',
-          name: 'Adam Smith',
-          company: '',
-          email: 'adam@smith.com',
-          city: 'New York',
-          state: '',
-          country: 'US',
-          zip: '',
-          data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
-        }],
-        current_page: 1,
-        total_pages: 1,
-        page: 1
-      /* eslint-enable camelcase */
-      });
-
-    return Customer.all(config)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.page).to.eql(1);
-        expect(res.total_pages).to.eql(1);
+      .query(query)
+      .reply(200, {});
+    Customer.all(config, query)
+      .then(res => done(new Error('Should throw error')))
+      .catch(e => {
+        expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
+        expect(e.httpStatus).to.equal(422);
+        expect(e.message).to.equal('"page" param is deprecated {}');
+        done();
       });
   });
 
-  it('should get all customers with new pagination', () => {
+  it('should list all customers with pagination', () => {
+    const query = {
+      per_page: 1,
+      cursor: 'cursor=='
+    };
+
     nock(config.API_BASE)
       .get('/v1/customers')
+      .query(query)
       .reply(200, {
       /* eslint-disable camelcase */
         entries: [{
@@ -96,7 +89,7 @@ describe('Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    return Customer.all(config)
+    return Customer.all(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
@@ -239,27 +232,7 @@ describe('Enrichment#Customer', () => {
       });
   });
 
-  it('should get all customers with old pagination', () => {
-    nock(config.API_BASE)
-      .get('/v1/customers')
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [],
-        has_more: false,
-        per_page: 200,
-        page: 1
-      /* eslint-enable camelcase */
-      });
-
-    return Customer.all(config)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.page).to.eql(1);
-      });
-  });
-
-  it('should get all customers with new pagination', () => {
+  it('should list all customers with pagination', () => {
     nock(config.API_BASE)
       .get('/v1/customers')
       .reply(200, {
@@ -279,41 +252,15 @@ describe('Enrichment#Customer', () => {
       });
   });
 
-  it('should search for a customer with old pagination', () => {
-    const email = 'adam@smith.com';
+  it('should search for a customer with pagination', () => {
+    const query = {
+      email: 'adam@smith.com',
+      per_page: 1
+    };
 
     nock(config.API_BASE)
       .get('/v1/customers/search')
-      .query({
-        email
-      })
-      .reply(200, {
-      /* eslint-disable camelcase */
-        entries: [],
-        has_more: false,
-        per_page: 200,
-        page: 1
-      /* eslint-enable camelcase */
-      });
-
-    return Customer.search(config, {
-      email
-    })
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.page).to.eql(1);
-      });
-  });
-
-  it('should search for a customer with new pagination', () => {
-    const email = 'adam@smith.com';
-
-    nock(config.API_BASE)
-      .get('/v1/customers/search')
-      .query({
-        email
-      })
+      .query(query)
       .reply(200, {
       /* eslint-disable camelcase */
         entries: [],
@@ -322,9 +269,7 @@ describe('Enrichment#Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    return Customer.search(config, {
-      email
-    })
+    return Customer.search(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
