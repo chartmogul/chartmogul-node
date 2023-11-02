@@ -8,52 +8,26 @@ const SubscriptionEvent = ChartMogul.SubscriptionEvent;
 const path = '/v1/subscription_events';
 
 describe('SubscriptionEvent', () => {
-  it('should list all subscription events with old pagination', () => {
+  it('throws DeprecatedParamError if using old pagination parameter', done => {
+    const query = {
+      page: 1
+    };
+
     nock(config.API_BASE)
       .get(path)
-      .reply(200, {
-        subscription_events: [
-          {
-            id: 101,
-            data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-            customer_external_id: '39530',
-            subscription_set_external_id: null,
-            subscription_external_id: 'subscription_39530',
-            plan_external_id: 'gazillion_monthly',
-            event_date: '2022-06-01T00:00:00Z',
-            effective_date: '2022-06-02T00:00:00Z',
-            event_type: 'subscription_cancelled',
-            external_id: 'ex_id_1',
-            errors: {},
-            created_at: '2022-06-13T11:06:56Z',
-            updated_at: '2022-06-13T12:19:40Z',
-            quantity: null,
-            currency: null,
-            amount_in_cents: null,
-            tax_amount_in_cents: null,
-            retracted_event_id: null
-          }
-        ],
-        meta: {
-          next_key: 121,
-          prev_key: 123,
-          before_key: '2022-06-13T12:30:35.160Z',
-          page: 2,
-          total_pages: 121
-        }
+      .query(query)
+      .reply(200, {});
+    SubscriptionEvent.all(config, query)
+      .then(res => done(new Error('Should throw error')))
+      .catch(e => {
+        expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
+        expect(e.httpStatus).to.equal(422);
+        expect(e.message).to.equal('"page" param is deprecated {}');
+        done();
       });
-
-    return SubscriptionEvent.all(config).then(res => {
-      expect(res).to.have.property('subscription_events');
-      expect(res).to.have.property('meta');
-      expect(res.subscription_events[0]).to.have.property('data_source_uuid');
-      expect(res.subscription_events[0].data_source_uuid).to.eq('ds_e243129a-12c0-4e29-8f54-07da7905fbd1');
-      expect(res.meta.total_pages).to.eql(121);
-      expect(res.meta.before_key).to.eql('2022-06-13T12:30:35.160Z');
-    });
   });
 
-  it('should list all subscription events with new pagination', () => {
+  it('should list all subscription events with pagination', () => {
     nock(config.API_BASE)
       .get(path)
       .reply(200, {

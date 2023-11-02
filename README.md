@@ -28,7 +28,7 @@
 
 ## Installation
 
-This library requires node.js 14.x or above.
+This library requires node.js 16.x or above.
 
 ```sh
 npm install --save chartmogul-node
@@ -331,6 +331,7 @@ The library throws following error objects.
 - `ChartMogul.NotFoundError`
 - `ChartMogul.ResourceInvalidError`
 - `ChartMogul.SchemaInvalidError`
+- `ChartMogul.DeprecatedParamError`
 
 The following table describes the properties of the error object.
 
