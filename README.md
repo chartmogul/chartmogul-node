@@ -46,10 +46,11 @@ You need to pass this config object as the first argument to each request.
 
 
 ### Test your authentication
+
 ```js
 ChartMogul.Ping.ping(config)
-    .then(res => console.log(res))
-    .catch(err => console.error(err))
+  .then(res => console.log(res))
+  .catch(err => console.error(err))
 ```
 
 ## Usage
@@ -77,7 +78,6 @@ ChartMogul.Customer.create(config, {
   console.log(res);
 })
 .catch(e => console.error(e.message, e.httpStatus, e.response));
-
 ```
 
 **Using with a callback**
@@ -88,7 +88,7 @@ const ChartMogul = require('chartmogul-node');
 const config = new ChartMogul.Config('apiKey');
 
 ChartMogul.Customer.create(config, data, (err, res) => {
-  if(err){
+  if(err) {
     console.error(err.message, err.httpStatus, err.response)
   }
   console.log(res);
@@ -103,7 +103,7 @@ Available methods in Import API:
 
 ```js
 ChartMogul.DataSource.create(config, data)
-ChartMogul.DataSource.retrieve(config, uuid)
+ChartMogul.DataSource.retrieve(config, dataSourceUuid)
 ChartMogul.DataSource.all(config, query)
 ChartMogul.DataSource.destroy(config, dataSourceUuid)
 ```
@@ -112,10 +112,16 @@ ChartMogul.DataSource.destroy(config, dataSourceUuid)
 
 ```js
 ChartMogul.Customer.create(config, data)
+ChartMogul.Customer.retrieve(config, customerUuid)
 ChartMogul.Customer.all(config, { per_page: 20 })
+ChartMogul.Customer.modify(config, customerUuid, data)
 ChartMogul.Customer.destroy(config, customerUuid)
+ChartMogul.Customer.merge(config, {
+  'from': {'customer_uuid': 'cus_5915ee5a-babd-406b-b8ce-d207133fb4cb'},
+  'into': {'customer_uuid': 'cus_2123290f-09c8-4628-a205-db5596bd58f7'}
+})
 
-ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'aabbcc...' })
+ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createContact(config, customerUuid, data)
 ```
 
@@ -123,8 +129,12 @@ ChartMogul.Customer.createContact(config, customerUuid, data)
 
 ```js
 ChartMogul.Contact.create(config, data)
-ChartMogul.Contact.all(config, { per_page: 10, cursor: 'aabbcc...' })
+ChartMogul.Contact.retrieve(config, contactUuid)
+ChartMogul.Contact.modify(config, contactUuid)
 ChartMogul.Contact.destroy(config, contactUuid)
+ChartMogul.Contact.merge(config, intoUuid, fromUuid);
+ChartMogul.Contact.all(config, { per_page: 10, cursor: 'cursor==' })
+
 ```
 
 #### [Plans](https://dev.chartmogul.com/docs/plans)
@@ -132,11 +142,9 @@ ChartMogul.Contact.destroy(config, contactUuid)
 ```js
 ChartMogul.Plan.create(config, data)
 ChartMogul.Plan.retrieve(config, uuid)
-ChartMogul.Plan.modify(config, uuid, {
-    name: "new name"
-})
-ChartMogul.Plan.all(config, query)
+ChartMogul.Plan.modify(config, uuid, { name: 'new name' })
 ChartMogul.Plan.destroy(config, uuid)
+ChartMogul.Plan.all(config, query)
 ```
 
 #### [Plan Groups](https://dev.chartmogul.com/docs/plan_groups)
@@ -145,18 +153,28 @@ ChartMogul.Plan.destroy(config, uuid)
 ChartMogul.PlanGroup.create(config, data)
 ChartMogul.PlanGroup.retrieve(config, planGroupUuid)
 ChartMogul.PlanGroup.modify(config, planGroupUuid, data)
+ChartMogul.PlanGroup.destroy(config, planGroupUuid)
 ChartMogul.PlanGroup.all(config, query)
 ChartMogul.PlanGroup.all(config, planGroupUuid, query)
-ChartMogul.PlanGroup.destroy(config, planGroupUuid)
+```
+
+#### [Subscriptions](https://dev.chartmogul.com/docs/subscriptions)
+
+```js
+ChartMogul.Subscription.all(config, customerUuid, query)
+ChartMogul.Subscription.cancel(config, subscriptionUuid, { cancelled_at: '' })
+ChartMogul.Subscription.modify(config, subscriptionUuid, { cancellation_dates: [] })
 ```
 
 #### [Invoices](https://dev.chartmogul.com/docs/invoices)
 
 ```js
 ChartMogul.Invoice.create(config, customerUuid, data)
+ChartMogul.Invoice.retrieve(config, invoiceUuid)
+ChartMogul.Invoice.destroy(config, invoiceUuid)
 ChartMogul.Invoice.all(config, customerUuid, query)
 ChartMogul.Invoice.all(config, query)
-ChartMogul.Invoice.retrieve(config, invoiceUuid)
+ChartMogul.Invoice.destroy_all(config, dataSourceUuid, customerUuid)
 ```
 
 #### [Transactions](https://dev.chartmogul.com/docs/transactions)
@@ -165,17 +183,9 @@ ChartMogul.Invoice.retrieve(config, invoiceUuid)
 ChartMogul.Transaction.create(config, invoiceUuid, data)
 ```
 
-#### [Subscriptions](https://dev.chartmogul.com/docs/subscriptions)
-
-```js
-ChartMogul.Subscription.all(config, customerUuid, query)
-ChartMogul.Subscription.cancel(config, subscriptionUuid, {cancelled_at: ""})
-ChartMogul.Subscription.modify(config, subscriptionUuid, {cancellation_dates: []})
-```
-
 #### [Subscription events](https://dev.chartmogul.com/reference/subscription-events)
+
 ```js
-ChartMogul.SubscriptionEvent.all(config, query)
 ChartMogul.SubscriptionEvent.create(config, {
   subscription_event: {
     event_type: 'subscription_cancelled',
@@ -197,43 +207,17 @@ ChartMogul.SubscriptionEvent.deleteWithParams(config, {
     id: 1
   }
 })
+ChartMogul.SubscriptionEvent.all(config, query)
 ```
 
 ### Enrichment API
 
 Available methods in Enrichment API:
 
-
-#### [Customers](https://dev.chartmogul.com/docs/retrieve-customer)
+#### [Customers](https://dev.chartmogul.com/reference/customers-1)
 
 ```js
-ChartMogul.Customer.retrieve(config, customerUuid)
-ChartMogul.Customer.all(config, query)
-ChartMogul.Customer.search(config, {
-  email: 'adam@smith.com'
-})
-
-ChartMogul.Customer.merge(config, {
-  "from": {"customer_uuid": "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb"},
-  "into": {"customer_uuid": "cus_2123290f-09c8-4628-a205-db5596bd58f7"}
-})
-
-ChartMogul.Customer.modify(config, "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb", {
-  "lead_created_at": "2015-01-01 00:00:00",
-  "free_trial_started_at": "2015-06-13 15:45:13"
-})
-
-ChartMogul.Customer.connectSubscriptions(config, "cus_5915ee5a-babd-406b-b8ce-d207133fb4cb", {
-    "subscriptions": [{
-            "data_source_uuid": "ds_ade45e52-47a4-231a-1ed2-eb6b9e541213",
-            "external_id": "d1c0c885-add0-48db-8fa9-0bdf5017d6b0"
-        },
-        {
-            "data_source_uuid": "ds_ade45e52-47a4-231a-1ed2-eb6b9e541213",
-            "external_id": "9db5f4a1-1695-44c0-8bd4-de7ce4d0f1d4"
-        }
-    ]
-})
+ChartMogul.Customer.search(config, { email: 'bob@example.com' })
 ```
 
 #### [Customer Attributes](https://dev.chartmogul.com/docs/customer-attributes)
@@ -246,30 +230,29 @@ ChartMogul.Customer.attributes(config, customerUuid)
 
 ```js
 ChartMogul.Tag.add(config, customerUuid, {
-  "tags": ["important", "Prio1"]
+  'tags': ['important', 'Prio1']
 });
 ChartMogul.Tag.add(config, {
-  "email": 'adam@smith.com',
-  "tags": ["important", "Prio1"]
-});
+  'email': 'adam@smith.com',
+  'tags': ['important', 'Prio1']
+})'
 ChartMogul.Tag.remove(config, customerUuid, {
-  "tags": ["Prio1", "discountable"]
+  'tags': ['Prio1', 'discountable']
 });
 ```
-
 
 #### [Custom Attributes](https://dev.chartmogul.com/docs/custom-attributes)
 
 ```js
 ChartMogul.CustomAttribute.add(config, customerUuid, {
   'custom': [
-    {'type': 'Integer', 'key': 'age', 'value': 8}
+    { 'type': 'Integer', 'key': 'age', 'value': 8 }
   ]
 });
 ChartMogul.CustomAttribute.add(config, {
-  'email': 'adam@smith.com',
+  'email': 'adam@example.com',
   'custom': [
-    {'type': 'Integer', 'key': 'age', 'value': 8}
+    { 'type': 'Integer', 'key': 'age', 'value': 8 }
   ]
 });
 ChartMogul.CustomAttribute.update(config, customerUuid, {
@@ -283,11 +266,9 @@ ChartMogul.CustomAttribute.remove(config, customerUuid, {
 });
 ```
 
-
 ### [Metrics API](https://dev.chartmogul.com/docs/introduction-metrics-api)
 
 Available methods in Metrics API:
-
 
 ```js
 ChartMogul.Metrics.all(config, {
@@ -319,7 +300,6 @@ Available methods:
 ```js
 ChartMogul.Account.retrieve(config)
 ```
-
 
 ### Errors
 
@@ -371,6 +351,7 @@ To work on the library:
 Bug reports and pull requests are welcome on GitHub at https://github.com/chartmogul/chartmogul-node.
 
 ## Releasing
+
 1. You need an authorized account on npmjs.com
 2. Bump up the version in `package.json` & tag on GitHub
 3. `npm test`
