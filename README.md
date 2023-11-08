@@ -214,7 +214,7 @@ ChartMogul.SubscriptionEvent.all(config, query)
 
 Available methods in Enrichment API:
 
-#### [Customers](https://dev.chartmogul.com/docs/retrieve-customer)
+#### [Customers](https://dev.chartmogul.com/reference/customers-1)
 
 ```js
 ChartMogul.Customer.search(config, { email: 'bob@example.com' })
