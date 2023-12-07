@@ -187,6 +187,62 @@ describe('Customer', () => {
         expect(res.has_more).to.eql(false);
       });
   });
+
+  it('creates a new note from a customer', () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+    const postBody = {
+      type: 'note',
+      author_email: 'john@example.com',
+      note: 'This is a note'
+    };
+
+    nock(config.API_BASE)
+      .post(`/v1/customers/${customerUuid}/notes`, postBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: 'note_00000000-0000-0000-0000-000000000000',
+        customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
+        author: 'John Doe (john@example.com)',
+        text: 'This is a note',
+        created_at: '2015-01-01T12:00:00-05:00',
+        updated_at: '2015-01-01T12:00:00-05:00',
+        type: 'note'
+        /* eslint-enable camelcase */
+      });
+
+    Customer.createrNote(config, customerUuid, postBody)
+      .then(res => {
+        expect(res).to.have.property('uuid');
+      });
+  });
+
+  it('gets all notes from a customer', () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+
+    nock(config.API_BASE)
+      .get(`/v1/customers/${customerUuid}/notes`)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        entries: [{
+          uuid: 'note_00000000-0000-0000-0000-000000000000',
+          customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
+          author: 'John Doe (john@example.com)',
+          text: 'This is a note',
+          created_at: '2015-01-01T12:00:00-05:00',
+          updated_at: '2015-01-01T12:00:00-05:00',
+          type: 'note'
+        }]
+        /* eslint-enable camelcase */
+    });
+
+    Customer.notes(config, customerUuid)
+      .then(res => {
+        expect(res).to.have.property('entries');
+        expect(res.entries).to.be.instanceof(Array);
+        expect(res.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
+        expect(res.has_more).to.eql(false);
+      });
+  });
 });
 
 /** Suite that originally belonged in the Enrichment module.
