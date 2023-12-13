@@ -191,15 +191,15 @@ describe('Customer', () => {
   it('creates a new note from a customer', () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {
+      customer_uuid: customerUuid,
       type: 'note',
       author_email: 'john@example.com',
       note: 'This is a note'
     };
 
     nock(config.API_BASE)
-      .post(`/v1/customers/${customerUuid}/notes`, postBody)
+      .post('/v1/customer_notes', postBody)
       .reply(200, {
-        /* eslint-disable camelcase */
         uuid: 'note_00000000-0000-0000-0000-000000000000',
         customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
         author: 'John Doe (john@example.com)',
@@ -207,7 +207,6 @@ describe('Customer', () => {
         created_at: '2015-01-01T12:00:00-05:00',
         updated_at: '2015-01-01T12:00:00-05:00',
         type: 'note'
-        /* eslint-enable camelcase */
       });
 
     Customer.createrNote(config, customerUuid, postBody)
@@ -220,9 +219,8 @@ describe('Customer', () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
 
     nock(config.API_BASE)
-      .get(`/v1/customers/${customerUuid}/notes`)
+      .get(`/v1/customer_notes?customer_uuid=${customerUuid}`)
       .reply(200, {
-        /* eslint-disable camelcase */
         entries: [{
           uuid: 'note_00000000-0000-0000-0000-000000000000',
           customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
@@ -232,8 +230,7 @@ describe('Customer', () => {
           updated_at: '2015-01-01T12:00:00-05:00',
           type: 'note'
         }]
-        /* eslint-enable camelcase */
-    });
+      });
 
     Customer.notes(config, customerUuid)
       .then(res => {

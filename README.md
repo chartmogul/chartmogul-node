@@ -123,6 +123,9 @@ ChartMogul.Customer.merge(config, {
 
 ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createContact(config, customerUuid, data)
+
+ChartMogul.Customer.notes(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
+ChartMogul.Customer.createNote(config, customerUuid, data)
 ```
 
 #### [Contacts](https://dev.chartmogul.com/docs/contacts)
@@ -136,6 +139,18 @@ ChartMogul.Contact.merge(config, intoUuid, fromUuid);
 ChartMogul.Contact.all(config, { per_page: 10, cursor: 'cursor==' })
 
 ```
+
+#### [Customer Notes](https://dev.chartmogul.com/docs/customer_notes)
+
+```js
+ChartMogul.CustomerNote.create(config, data)
+ChartMogul.CustomerNote.retrieve(config)
+ChartMogul.CustomerNote.patch(config)
+ChartMogul.CustomerNote.destroy(config)
+ChartMogul.CustomerNote.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
+
+```
+
 
 #### [Plans](https://dev.chartmogul.com/docs/plans)
 
