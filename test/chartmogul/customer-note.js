@@ -7,7 +7,7 @@ const nock = require('nock');
 const CustomerNote = ChartMogul.CustomerNote;
 
 describe('CustomerNote', () => {
-  it('create a customer note', () => {
+  it('creates a note from a customer', () => {
     const uuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {
       customer_uuid: uuid,
@@ -34,7 +34,7 @@ describe('CustomerNote', () => {
       });
   });
 
-  it('lists all customer notes', () => {
+  it('lists all notes from a customer', () => {
     const uuid = 'cus_00000000-0000-0000-0000-000000000000';
 
     nock(config.API_BASE)
@@ -61,7 +61,7 @@ describe('CustomerNote', () => {
     const uuid = 'note_00000000-0000-0000-0000-000000000000';
 
     nock(config.API_BASE)
-      .get('/v1/customer_notes' + '/' + uuid)
+      .get(`/v1/customer_notes/${uuid}`)
       .reply(200, {
         uuid,
         customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
@@ -84,7 +84,7 @@ describe('CustomerNote', () => {
     };
 
     nock(config.API_BASE)
-      .patch('/v1/customer_notes' + '/' + uuid, postBody)
+      .patch(`/v1/customer_notes/${uuid}`, postBody)
       .reply(200, {
         /* eslint-disable camelcase */
         uuid,
@@ -107,7 +107,7 @@ describe('CustomerNote', () => {
     const uuid = 'con_00000000-0000-0000-0000-000000000000';
 
     nock(config.API_BASE)
-      .delete('/v1/customer_notes' + '/' + uuid)
+      .delete(`/v1/customer_notes/${uuid}`)
       .reply(204);
 
     CustomerNote.destroy(config, uuid)
