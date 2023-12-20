@@ -191,7 +191,6 @@ describe('Customer', () => {
   it('creates a new note from a customer', () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {
-      customer_uuid: customerUuid,
       type: 'note',
       author_email: 'john@example.com',
       note: 'This is a note'
@@ -209,7 +208,7 @@ describe('Customer', () => {
         type: 'note'
       });
 
-    Customer.createrNote(config, customerUuid, postBody)
+    Customer.createNote(config, customerUuid, postBody)
       .then(res => {
         expect(res).to.have.property('uuid');
       });
