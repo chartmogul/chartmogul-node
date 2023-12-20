@@ -1,6 +1,6 @@
 {
   "name": "chartmogul-node",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Official Chartmogul API Node.js Client",
   "main": "lib/chartmogul.js",
   "scripts": {
