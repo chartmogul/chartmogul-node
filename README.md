@@ -145,7 +145,7 @@ ChartMogul.Contact.all(config, { per_page: 10, cursor: 'cursor==' })
 ```js
 ChartMogul.CustomerNote.create(config, data)
 ChartMogul.CustomerNote.retrieve(config, noteUuid)
-ChartMogul.CustomerNote.patch(config, noteUuid)
+ChartMogul.CustomerNote.patch(config, noteUuid, data)
 ChartMogul.CustomerNote.destroy(config, noteUuid)
 ChartMogul.CustomerNote.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
 
