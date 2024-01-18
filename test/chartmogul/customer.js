@@ -57,11 +57,11 @@ describe('Customer', () => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
+    done();
   });
 
-  it('should list all customers with pagination', () => {
+  it('should list all customers with pagination', done => {
     const query = {
       per_page: 1,
       cursor: 'cursor=='
@@ -89,13 +89,14 @@ describe('Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    return Customer.all(config, query)
+    Customer.all(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
         expect(res.has_more).to.eql(false);
       });
+    done();
   });
 
   it('should delete a customer', () => {
@@ -304,7 +305,7 @@ describe('Enrichment#Customer', () => {
       });
   });
 
-  it('should search for a customer with pagination', () => {
+  it('should search for a customer with pagination', done => {
     const query = {
       email: 'adam@smith.com',
       per_page: 1
@@ -321,13 +322,14 @@ describe('Enrichment#Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    return Customer.search(config, query)
+    Customer.search(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.cursor).to.eql('JjI3MjI4NTM==');
         expect(res.has_more).to.eql(false);
       });
+    done();
   });
 
   it('should retrieve customer attributes', () => {
@@ -391,6 +393,7 @@ describe('Enrichment#Customer', () => {
         expect(res).to.be.instanceof(Object);
       });
   });
+
   it('should connect subscriptions', () => {
     const customerUuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
     /* eslint-disable camelcase */

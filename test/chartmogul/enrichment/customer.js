@@ -63,8 +63,8 @@ describe('DeprecatedEnrichment#Customer', () => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
+    done();
   });
 
   it('should get all customers with pagination', () => {
@@ -87,7 +87,7 @@ describe('DeprecatedEnrichment#Customer', () => {
       });
   });
 
-  it('should search for a customer with pagination', () => {
+  it('should search for a customer with pagination', done => {
     const email = 'adam@smith.com';
     const query = {
       email,
@@ -105,13 +105,14 @@ describe('DeprecatedEnrichment#Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    return Customer.search(config, query)
+    Customer.search(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.cursor).to.eql('cursor==');
         expect(res.has_more).to.eql(false);
       });
+    done();
   });
 
   it('should retrieve customer attributes', () => {

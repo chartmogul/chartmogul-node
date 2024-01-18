@@ -23,11 +23,11 @@ describe('Activity', () => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
+    done();
   });
 
-  it('should retrieve all activities with pagination', () => {
+  it('should retrieve all activities with pagination', done => {
     const query = {
       'start-date': '2020-01-01',
       per_page: 1,
@@ -59,12 +59,13 @@ describe('Activity', () => {
         has_more: false,
         cursor: 'cursor=='
       });
-    return Activity.all(config, query)
+    Activity.all(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.has_more).to.eql(false);
         expect(res.cursor).to.eql('cursor==');
       });
+    done();
   });
 });
