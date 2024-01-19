@@ -1,6 +1,6 @@
 {
   "name": "chartmogul-node",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Official Chartmogul API Node.js Client",
   "main": "lib/chartmogul.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "nyc": "^15.1.0",
     "request": "^2.88.2",
     "retry": "^0.13.1",
+    "superagent": "^8.1.2",
     "uri-templates": "^0.2.0"
   },
   "devDependencies": {

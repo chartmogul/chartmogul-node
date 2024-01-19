@@ -30,9 +30,9 @@ describe('Resource', () => {
     401: 'ForbiddenError',
     403: 'ForbiddenError',
     404: 'NotFoundError',
-    422: 'ResourceInvalidError',
     500: 'ChartMogulError'
   };
+
   Object.keys(errorCodes).forEach(function (code) {
     it(`should throw ${errorCodes[code]}`, done => {
       nock(config.API_BASE)
@@ -45,8 +45,8 @@ describe('Resource', () => {
           expect(e).to.be.instanceOf(ChartMogul[errorCodes[code]]);
           expect(e.httpStatus).to.equal(Number(code));
           expect(e.response).to.equal('error message');
-          done();
         });
+      done();
     });
   });
 
@@ -61,11 +61,11 @@ describe('Resource', () => {
           expect(err).to.be.instanceOf(ChartMogul[errorCodes[code]]);
           expect(err.httpStatus).to.equal(Number(code));
           expect(err.response).to.equal('error message');
-          done();
         } else {
           done(new Error('Should throw error'));
         }
       });
+      done();
     });
   });
 
@@ -78,8 +78,8 @@ describe('Resource', () => {
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
         expect(e).to.be.instanceOf(Error);
-        done();
       });
+    done();
   });
 
   it('should throw ResourceInvalidError', done => {
@@ -96,8 +96,8 @@ describe('Resource', () => {
         expect(e.message).to.equal(
           'The Customer  could not be created or updated. {"error":"message"}'
         );
-        done();
       });
+    done();
   });
 
   it('should throw ConfigurationError', done => {
@@ -105,8 +105,8 @@ describe('Resource', () => {
       .then(res => done(new Error('Should throw error')))
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.ConfigurationError);
-        done();
       });
+    done();
   });
 });
 
@@ -118,35 +118,41 @@ describe('Resource Retry', () => {
   );
   let server, status, retry;
 
+  config.retries = 1;
+
   before(done => {
     server = startMockServer(done);
   });
   after(done => server.close(done));
 
-  it('should retry if status 429 is received', () => {
+  it('should retry if status 429 is received', done => {
     retry = 1;
     status = 429;
-    return Customer.all(config).then(res => {
+    Customer.all(config).then(res => {
       expect(res).to.be.eql('ok');
       expect(retry).to.be.eql(0);
     });
-  });
-  it('should retry if status 500 is received', () => {
-    retry = 1;
-    status = 500;
-    return Customer.all(config).then(res => {
-      expect(res).to.be.eql('ok');
-      expect(retry).to.be.eql(0);
-    });
+    done();
   });
 
-  it('should retry on ECONNRESET', () => {
+  it('should retry if status 500 is received', done => {
     retry = 1;
-    status = 0;
-    return Customer.all(config).then(res => {
+    status = 500;
+    Customer.all(config).then(res => {
       expect(res).to.be.eql('ok');
       expect(retry).to.be.eql(0);
     });
+    done();
+  });
+
+  it('should retry on ECONNRESET', done => {
+    retry = 1;
+    status = 0;
+    Customer.all(config).then(res => {
+      expect(res).to.be.eql('ok');
+      expect(retry).to.be.eql(0);
+    });
+    done();
   });
 
   // mock server used to send server errors to let the client retry

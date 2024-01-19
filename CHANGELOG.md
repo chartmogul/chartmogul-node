@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning].
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [3.2.2] - 2023-01-28
+- Remove the `requests` library and use `superagent` instead
+
 ## [3.2.1] - 2023-12-20
 - Fix missing `customer_uuid` when creating a note or retrieving all notes from a customer
 

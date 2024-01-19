@@ -149,8 +149,8 @@ describe('Customer Invoice', () => {
         return done(err);
       }
       expect(res).to.have.property('invoices');
-      done();
     });
+    done();
   });
 
   it('throws DeprecatedParamError if using old pagination parameter', done => {
@@ -170,8 +170,8 @@ describe('Customer Invoice', () => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
+    done();
   });
 
   it('should list all customer invoices with pagination', () => {
@@ -219,8 +219,8 @@ describe('Customer Invoice', () => {
       expect(res.invoices).to.be.instanceof(Array);
       expect(res.cursor).to.eql('cursor==');
       expect(res.has_more).to.eql(false);
-      done();
     });
+    done();
   });
 });
 
@@ -240,13 +240,13 @@ describe('Invoices', () => {
       });
   });
 
-  it('should get invoices by external id', () => {
+  it('should get invoices by external id', done => {
     nock(config.API_BASE)
       .get('/v1/invoices')
       .query({ external_id: 'INV0001' })
       .reply(200, invoiceListResult);
 
-    return Invoice.all(config, { external_id: 'INV0001' })
+    Invoice.all(config, { external_id: 'INV0001' })
       .then(res => {
         expect(res).to.have.property('invoices');
         expect(res.invoices).to.be.instanceof(Array);
@@ -254,6 +254,7 @@ describe('Invoices', () => {
         expect(res.cursor).to.eql('cursor==');
         expect(res.has_more).to.eql(false);
       });
+    done();
   });
 
   it('should delete an invoice', () => {

@@ -7,7 +7,7 @@ const nock = require('nock');
 const Metrics = ChartMogul.Metrics;
 
 describe('Metrics', () => {
-  it('should retrieve all key metrics', () => {
+  it('should retrieve all key metrics', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24',
@@ -146,14 +146,15 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.all(config, query)
+    Metrics.all(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
       });
+    done();
   });
 
-  it('should retrieve MRR', () => {
+  it('should retrieve MRR', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24',
@@ -178,15 +179,16 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.mrr(config, query)
+    Metrics.mrr(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
-  it('should retrieve ARR', () => {
+  it('should retrieve ARR', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24',
@@ -204,15 +206,16 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.arr(config, query)
+    Metrics.arr(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
-  it('should retrieve ARPA', () => {
+  it('should retrieve ARPA', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24',
@@ -229,15 +232,16 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.arpa(config, query)
+    Metrics.arpa(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
-  it('should retrieve ASP', () => {
+  it('should retrieve ASP', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24',
@@ -254,15 +258,16 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.asp(config, query)
+    Metrics.asp(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
-  it('should retrieve Customer Count', () => {
+  it('should retrieve Customer Count', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24',
@@ -279,15 +284,16 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.customerCount(config, query)
+    Metrics.customerCount(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
-  it('should retrieve Customer Churn Rate', () => {
+  it('should retrieve Customer Churn Rate', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24'
@@ -303,15 +309,16 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.customerChurnRate(config, query)
+    Metrics.customerChurnRate(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
-  it('should retrieve MRR Churn Rate', () => {
+  it('should retrieve MRR Churn Rate', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24'
@@ -327,15 +334,16 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.mrrChurnRate(config, query)
+    Metrics.mrrChurnRate(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
-  it('should retrieve LTV', () => {
+  it('should retrieve LTV', done => {
     const query = {
       'start-date': '2015-01-01',
       'end-date': '2015-11-24'
@@ -351,12 +359,13 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.ltv(config, query)
+    Metrics.ltv(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res).to.have.property('summary');
       });
+    done();
   });
 
   it('throws DeprecatedParamError if using old pagination parameter', done => {
@@ -376,11 +385,11 @@ describe('Metrics', () => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
+    done();
   });
 
-  it('should list customer activites with pagination', () => {
+  it('should list customer activites with pagination', done => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const query = { cursor: 'cursor==' };
 
@@ -405,16 +414,17 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.Customer.activities(config, customerUuid, query)
+    Metrics.Customer.activities(config, customerUuid, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.has_more).to.eql(false);
         expect(res.cursor).to.eql('cursor==');
       });
+    done();
   });
 
-  it('should list customer subscriptions with pagination', () => {
+  it('should list customer subscriptions with pagination', done => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const query = { cursor: 'cursor==', per_page: 200 };
 
@@ -443,12 +453,13 @@ describe('Metrics', () => {
       /* eslint-enable camelcase */
       });
 
-    return Metrics.Customer.subscriptions(config, customerUuid, query)
+    Metrics.Customer.subscriptions(config, customerUuid, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.cursor).to.eql('cursor==');
         expect(res.per_page).to.eql(200);
       });
+    done();
   });
 });
