@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning].
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
-## [3.2.2] - 2023-01-28
+## [3.2.3] - 2023-01-19
+- Actually remove the `requests` library from `package.json`
+
+## [3.2.2] - 2023-01-18
 - Remove the `requests` library and use `superagent` instead
 
 ## [3.2.1] - 2023-12-20
