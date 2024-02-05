@@ -15,7 +15,8 @@ describe('Customer', () => {
       name: 'Adam Smith',
       email: 'adam@smith.com',
       country: 'US',
-      city: 'New York'
+      city: 'New York',
+      website_url: 'https://chartmogul.com'
       /* eslint-enable camelcase */
     };
 
@@ -32,7 +33,8 @@ describe('Customer', () => {
         state: '',
         country: 'US',
         zip: '',
-        data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
+        data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+        website_url: 'https://chartmogul.com'
         /* eslint-enable camelcase */
       });
 
@@ -275,7 +277,8 @@ describe('Enrichment#Customer', () => {
         'chartmogul-url': 'https://app.chartmogul.com/#customers/244461-Adam_Smith',
         'billing-system-type': 'ImportApi',
         currency: 'USD',
-        'currency-sign': '$'
+        'currency-sign': '$',
+        website_url: 'https://chartmogul.com'
         /* eslint-enable camelcase */
       });
 
