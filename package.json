@@ -30,7 +30,6 @@
     "node": ">=16"
   },
   "dependencies": {
-    "nyc": "^15.1.0",
     "retry": "^0.13.1",
     "superagent": "^8.1.2",
     "uri-templates": "^0.2.0"
@@ -47,6 +46,7 @@
     "eslint-plugin-standard": "",
     "mocha": "",
     "nock": "",
+    "nyc": "^15.1.0",
     "pre-commit": ""
   },
   "pre-commit": "prepare"
