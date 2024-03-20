@@ -242,6 +242,89 @@ describe('Customer', () => {
         expect(res.has_more).to.eql(false);
       });
   });
+
+  it('creates a new opportunity from a customer', async () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+    const postBody = {
+      customer_uuid: customerUuid,
+      owner: 'test1@example.org',
+      pipeline: 'New business 1',
+      pipeline_stage: 'Discovery',
+      estimated_close_date: '2023-12-22',
+      currency: 'USD',
+      amount_in_cents: 100,
+      type: 'recurring',
+      forecast_category: 'pipeline',
+      win_likelihood: 3,
+      custom: [{ key: 'from_campain', value: 'true' }]
+    };
+
+    nock(config.API_BASE)
+      .post('/v1/opportunities', postBody)
+      .reply(200, {
+        uuid: '00000000-0000-0000-0000-000000000000',
+        customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
+        owner: 'test1@example.org',
+        pipeline: 'New business 1',
+        pipeline_stage: 'Discovery',
+        estimated_close_date: '2023-12-22',
+        currency: 'USD',
+        amount_in_cents: 100,
+        type: 'recurring',
+        forecast_category: 'pipeline',
+        win_likelihood: 3,
+        custom: { from_campain: 'true' },
+        created_at: '2024-03-13T07:33:28.356Z',
+        updated_at: '2024-03-13T07:33:28.356Z'
+      });
+
+    const opportunity = await Customer.createOpportunity(config, customerUuid, postBody);
+    expect(opportunity.uuid).to.be.equal('00000000-0000-0000-0000-000000000000');
+    expect(opportunity.customer_uuid).to.be.equal(customerUuid);
+    expect(opportunity.owner).to.be.equal('test1@example.org');
+    expect(opportunity.pipeline).to.be.equal('New business 1');
+    expect(opportunity.pipeline_stage).to.be.equal('Discovery');
+    expect(opportunity.estimated_close_date).to.be.equal('2023-12-22');
+    expect(opportunity.currency).to.be.equal('USD');
+    expect(opportunity.amount_in_cents).to.be.equal(100);
+    expect(opportunity.type).to.be.equal('recurring');
+    expect(opportunity.forecast_category).to.be.equal('pipeline');
+    expect(opportunity.win_likelihood).to.be.equal(3);
+    expect(opportunity.custom).to.deep.equal({ from_campain: 'true' });
+  });
+
+  it('gets all opportunities from a customer', async () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+
+    nock(config.API_BASE)
+      .get(`/v1/opportunities?customer_uuid=${customerUuid}`)
+      .reply(200, {
+        entries: [{
+          uuid: '00000000-0000-0000-0000-000000000000',
+          customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
+          owner: 'test1@example.org',
+          pipeline: 'New business 1',
+          pipeline_stage: 'Discovery',
+          estimated_close_date: '2023-12-22',
+          currency: 'USD',
+          amount_in_cents: 100,
+          type: 'recurring',
+          forecast_category: 'pipeline',
+          win_likelihood: 3,
+          custom: { from_campain: 'true' },
+          created_at: '2024-03-13T07:33:28.356Z',
+          updated_at: '2024-03-13T07:33:28.356Z'
+        }],
+        cursor: 'MjAyMy0wMy0xM1QxMjowMTozMi44MD==',
+        has_more: false
+      });
+
+    const opportunities = await Customer.opportunities(config, customerUuid);
+    expect(opportunities).to.have.property('entries');
+    expect(opportunities.entries).to.be.instanceof(Array);
+    expect(opportunities.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
+    expect(opportunities.has_more).to.eql(false);
+  });
 });
 
 /** Suite that originally belonged in the Enrichment module.
