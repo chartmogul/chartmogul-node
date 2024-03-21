@@ -256,7 +256,7 @@ describe('Customer', () => {
       type: 'recurring',
       forecast_category: 'pipeline',
       win_likelihood: 3,
-      custom: [{ key: 'from_campain', value: 'true' }]
+      custom: [{ key: 'from_campaign', value: 'true' }]
     };
 
     nock(config.API_BASE)
@@ -273,7 +273,7 @@ describe('Customer', () => {
         type: 'recurring',
         forecast_category: 'pipeline',
         win_likelihood: 3,
-        custom: { from_campain: 'true' },
+        custom: { from_campaign: 'true' },
         created_at: '2024-03-13T07:33:28.356Z',
         updated_at: '2024-03-13T07:33:28.356Z'
       });
@@ -290,7 +290,7 @@ describe('Customer', () => {
     expect(opportunity.type).to.be.equal('recurring');
     expect(opportunity.forecast_category).to.be.equal('pipeline');
     expect(opportunity.win_likelihood).to.be.equal(3);
-    expect(opportunity.custom).to.deep.equal({ from_campain: 'true' });
+    expect(opportunity.custom).to.deep.equal({ from_campaign: 'true' });
   });
 
   it('gets all opportunities from a customer', async () => {
@@ -311,7 +311,7 @@ describe('Customer', () => {
           type: 'recurring',
           forecast_category: 'pipeline',
           win_likelihood: 3,
-          custom: { from_campain: 'true' },
+          custom: { from_campaign: 'true' },
           created_at: '2024-03-13T07:33:28.356Z',
           updated_at: '2024-03-13T07:33:28.356Z'
         }],

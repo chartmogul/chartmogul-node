@@ -20,7 +20,7 @@ describe('Opportunity', () => {
       type: 'recurring',
       forecast_category: 'pipeline',
       win_likelihood: 3,
-      custom: [{ key: 'from_campain', value: 'true' }]
+      custom: [{ key: 'from_campaign', value: 'true' }]
     };
 
     nock(config.API_BASE)
@@ -37,7 +37,7 @@ describe('Opportunity', () => {
         type: 'recurring',
         forecast_category: 'pipeline',
         win_likelihood: 3,
-        custom: { from_campain: 'true' },
+        custom: { from_campaign: 'true' },
         created_at: '2024-03-13T07:33:28.356Z',
         updated_at: '2024-03-13T07:33:28.356Z'
       });
@@ -53,7 +53,7 @@ describe('Opportunity', () => {
     expect(opportunity.type).to.be.equal('recurring');
     expect(opportunity.forecast_category).to.be.equal('pipeline');
     expect(opportunity.win_likelihood).to.be.equal(3);
-    expect(opportunity.custom).to.deep.equal({ from_campain: 'true' });
+    expect(opportunity.custom).to.deep.equal({ from_campaign: 'true' });
   });
 
   it('lists all opportunities from a customer', async () => {
@@ -75,7 +75,7 @@ describe('Opportunity', () => {
             type: 'recurring',
             forecast_category: 'pipeline',
             win_likelihood: 3,
-            custom: { from_campain: 'true' },
+            custom: { from_campaign: 'true' },
             created_at: '2024-03-13T07:33:28.356Z',
             updated_at: '2024-03-13T07:33:28.356Z'
           }
@@ -103,14 +103,16 @@ describe('Opportunity', () => {
         type: 'recurring',
         forecast_category: 'pipeline',
         win_likelihood: 3,
-        custom: { from_campain: 'true' },
+        custom: { from_campaign: 'true' },
         created_at: '2024-03-13T07:33:28.356Z',
         updated_at: '2024-03-13T07:33:28.356Z'
       });
 
     const opportunity = await Opportunity.retrieve(config, uuid);
     expect(opportunity.uuid).to.be.equal(uuid);
-    expect(opportunity.customer_uuid).to.be.equal('cus_00000000-0000-0000-0000-000000000000');
+    expect(opportunity.customer_uuid).to.be.equal(
+      'cus_00000000-0000-0000-0000-000000000000'
+    );
     expect(opportunity.owner).to.be.equal('test1@example.org');
     expect(opportunity.pipeline).to.be.equal('New business 1');
     expect(opportunity.pipeline_stage).to.be.equal('Discovery');
@@ -120,7 +122,7 @@ describe('Opportunity', () => {
     expect(opportunity.type).to.be.equal('recurring');
     expect(opportunity.forecast_category).to.be.equal('pipeline');
     expect(opportunity.win_likelihood).to.be.equal(3);
-    expect(opportunity.custom).to.deep.equal({ from_campain: 'true' });
+    expect(opportunity.custom).to.deep.equal({ from_campaign: 'true' });
   });
 
   it('updates an opportunity', async () => {
@@ -143,14 +145,16 @@ describe('Opportunity', () => {
         type: 'recurring',
         forecast_category: 'pipeline',
         win_likelihood: 3,
-        custom: { from_campain: 'true' },
+        custom: { from_campaign: 'true' },
         created_at: '2024-03-13T07:33:28.356Z',
         updated_at: '2024-03-13T07:33:28.356Z'
       });
 
     const opportunity = await Opportunity.patch(config, uuid, postBody);
     expect(opportunity.uuid).to.be.equal(uuid);
-    expect(opportunity.customer_uuid).to.be.equal('cus_00000000-0000-0000-0000-000000000000');
+    expect(opportunity.customer_uuid).to.be.equal(
+      'cus_00000000-0000-0000-0000-000000000000'
+    );
     expect(opportunity.owner).to.be.equal('test1@example.org');
     expect(opportunity.pipeline).to.be.equal('New business 1');
     expect(opportunity.pipeline_stage).to.be.equal('Discovery');
@@ -160,7 +164,7 @@ describe('Opportunity', () => {
     expect(opportunity.type).to.be.equal('recurring');
     expect(opportunity.forecast_category).to.be.equal('pipeline');
     expect(opportunity.win_likelihood).to.be.equal(3);
-    expect(opportunity.custom).to.deep.equal({ from_campain: 'true' });
+    expect(opportunity.custom).to.deep.equal({ from_campaign: 'true' });
   });
 
   it('deletes an opportunity', async () => {
