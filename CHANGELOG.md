@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning].
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [3.4.0] - 2024-03-25
+- Adds support for Opportunities (https://dev.chartmogul.com/reference/opportunities)
+
 ## [3.3.2] - 2024-02-28
 - Fix query string not passed after replacing `request` library with `superagent`
 
