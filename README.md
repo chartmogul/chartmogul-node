@@ -126,6 +126,9 @@ ChartMogul.Customer.createContact(config, customerUuid, data)
 
 ChartMogul.Customer.notes(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createNote(config, customerUuid, data)
+
+ChartMogul.Customer.opportunities(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
+ChartMogul.Customer.createOpportunity(config, customerUuid, data)
 ```
 
 #### [Contacts](https://dev.chartmogul.com/docs/contacts)
@@ -149,6 +152,16 @@ ChartMogul.CustomerNote.patch(config, noteUuid, data)
 ChartMogul.CustomerNote.destroy(config, noteUuid)
 ChartMogul.CustomerNote.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
 
+```
+
+#### [Opportunities](https://dev.chartmogul.com/docs/opportunities)
+
+```js
+ChartMogul.Opportunity.create(config, data)
+ChartMogul.Opportunity.retrieve(config, opportunityUuid)
+ChartMogul.Opportunity.patch(config, opportunityUuid, data)
+ChartMogul.Opportunity.destroy(config, opportunityUuid)
+ChartMogul.Opportunity.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
 ```
 
 
