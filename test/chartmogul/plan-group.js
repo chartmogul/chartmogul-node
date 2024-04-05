@@ -33,7 +33,7 @@ describe('PlanGroup', () => {
       });
   });
 
-  it('should retrieve a single plan group', () => {
+  it('should retrieve a single plan group', async () => {
     const planGroupUUID = 'plg_eed05d54-75b4-431b-adb2-eb6b9e543206';
 
     nock(config.API_BASE)
@@ -46,17 +46,13 @@ describe('PlanGroup', () => {
       /* eslint-enable camelcase */
       });
 
-    return PlanGroup.retrieve(config, planGroupUUID, (err, res) => {
-      if (err) {
-        return err;
-      }
-      expect(res).to.have.property('uuid');
-      expect(res).to.have.property('name');
-      expect(res).to.have.property('plans_count');
-    });
+    const planGroup = await PlanGroup.retrieve(config, planGroupUUID);
+    expect(planGroup).to.have.property('uuid');
+    expect(planGroup).to.have.property('name');
+    expect(planGroup).to.have.property('plans_count');
   });
 
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const query = {
       page: 1
     };
@@ -65,17 +61,15 @@ describe('PlanGroup', () => {
       .get('/v1/plan_groups')
       .query(query)
       .reply(200, {});
-    PlanGroup.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+    return PlanGroup.all(config, query)
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
   });
 
-  it('should get all plan groups with pagination', () => {
+  it('should get all plan groups with pagination', async () => {
     nock(config.API_BASE)
       .get('/v1/plan_groups')
       .reply(200, {
@@ -86,16 +80,14 @@ describe('PlanGroup', () => {
       /* eslint-enable camelcase */
       });
 
-    return PlanGroup.all(config)
-      .then(res => {
-        expect(res).to.have.property('plan_groups');
-        expect(res.plan_groups).to.be.instanceof(Array);
-        expect(res.cursor).to.eql('cursor==');
-        expect(res.has_more).to.eql(false);
-      });
+    const planGroup = await PlanGroup.all(config);
+    expect(planGroup).to.have.property('plan_groups');
+    expect(planGroup.plan_groups).to.be.instanceof(Array);
+    expect(planGroup.cursor).to.eql('cursor==');
+    expect(planGroup.has_more).to.eql(false);
   });
 
-  it('should get all plans for a plan group with pagination', () => {
+  it('should get all plans for a plan group with pagination', async () => {
     const planGroupUUID = 'plg_eed05d54-75b4-431b-adb2-eb6b9e543206';
 
     nock(config.API_BASE)
@@ -124,17 +116,13 @@ describe('PlanGroup', () => {
       /* eslint-enable camelcase */
       });
 
-    return PlanGroup.all(config, planGroupUUID, (err, res) => {
-      if (err) {
-        return err;
-      }
-      expect(res).to.have.property('plans');
-      expect(res.plans).to.be.instanceof(Array);
-      expect(res.plans[0].uuid).to.be.equal('pl_ab225d54-7ab4-421b-cdb2-eb6b9e553462');
-      expect(res.plans[1].uuid).to.be.equal('pl_eed05d54-75b4-431b-adb2-eb6b9e543206');
-      expect(res.cursor).to.eql('cursor==');
-      expect(res.has_more).to.eql(false);
-    });
+    const planGroup = await PlanGroup.all(config, planGroupUUID);
+    expect(planGroup).to.have.property('plans');
+    expect(planGroup.plans).to.be.instanceof(Array);
+    expect(planGroup.plans[0].uuid).to.be.equal('pl_ab225d54-7ab4-421b-cdb2-eb6b9e553462');
+    expect(planGroup.plans[1].uuid).to.be.equal('pl_eed05d54-75b4-431b-adb2-eb6b9e543206');
+    expect(planGroup.cursor).to.eql('cursor==');
+    expect(planGroup.has_more).to.eql(false);
   });
 
   it('should modify name of a plan group', () => {
