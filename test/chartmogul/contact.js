@@ -7,7 +7,7 @@ const nock = require('nock');
 const Contact = ChartMogul.Contact;
 
 describe('Contact', () => {
-  it('creates a new contact', () => {
+  it('creates a new contact', async () => {
     const postBody = {
       /* eslint-disable camelcase */
       customer_uuid: 'cus_919d5d7c-9e23-11ed-a936-97fbf69ba02b',
@@ -53,13 +53,11 @@ describe('Contact', () => {
         /* eslint-enable camelcase */
       });
 
-    Contact.create(config, postBody)
-      .then(res => {
-        expect(res).to.have.property('uuid');
-      });
+    const contact = await Contact.create(config, postBody);
+    expect(contact).to.have.property('uuid');
   });
 
-  it('should list all contacts with pagination', done => {
+  it('should list all contacts with pagination', async () => {
     const query = {
       per_page: 1,
       cursor: 'cursor=='
@@ -82,36 +80,34 @@ describe('Contact', () => {
       /* eslint-enable camelcase */
       });
 
-    Contact.all(config, query)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
-        expect(res.has_more).to.eql(false);
-      });
-    done();
+    const contact = await Contact.all(config, query);
+    expect(contact).to.have.property('entries');
+    expect(contact).to.have.property('cursor');
+    expect(contact).to.have.property('has_more');
+    expect(contact.entries).to.be.instanceof(Array);
+    expect(contact.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
+    expect(contact.has_more).to.eql(false);
   });
 
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
-    const query = {
-      page: 1
-    };
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
+    const query = { page: 1 };
 
     nock(config.API_BASE)
       .get('/v1/contacts')
       .query(query)
       .reply(200, {});
-    Contact.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+
+    await Contact.all(config, query)
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
-        expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
+        expect(e.httpStatus).to.equal(422);
+        // eslint-disable-next-line no-unused-expressions
+        expect(e.response).to.empty;
       });
-    done();
   });
 
-  it('retrieves a contact', () => {
+  it('retrieves a contact', async () => {
     const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
 
     nock(config.API_BASE)
@@ -138,13 +134,11 @@ describe('Contact', () => {
         /* eslint-enable camelcase */
       });
 
-    return Contact.retrieve(config, contactUuid)
-      .then(res => {
-        expect(res).to.have.property('uuid');
-      });
+    const contact = await Contact.retrieve(config, contactUuid);
+    expect(contact).to.have.property('uuid');
   });
 
-  it('updates a contact', () => {
+  it('updates a contact', async () => {
     const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
 
     /* eslint-disable camelcase */
@@ -163,23 +157,23 @@ describe('Contact', () => {
         /* eslint-enable camelcase */
       });
 
-    return Contact.modify(config, contactUuid, postBody)
-      .then(res => {
-        expect(res.email).to.be.equal('test2@example.com');
-      });
+    const contact = await Contact.modify(config, contactUuid, postBody);
+    expect(contact.email).to.be.equal('test2@example.com');
   });
 
-  it('deletes a contact', () => {
+  it('deletes a contact', async () => {
     const uuid = 'con_00000000-0000-0000-0000-000000000000';
 
     nock(config.API_BASE)
       .delete('/v1/contacts' + '/' + uuid)
       .reply(204);
 
-    return Contact.destroy(config, uuid);
+    const contact = await Contact.destroy(config, uuid);
+    // eslint-disable-next-line no-unused-expressions
+    expect(contact).to.be.empty;
   });
 
-  it('merges contacts', () => {
+  it('merges contacts', async () => {
     const intoUuid = 'con_00000000-0000-0000-0000-000000000000';
     const fromUuid = 'con_00000000-0000-0000-0000-000000000001';
 
@@ -187,10 +181,9 @@ describe('Contact', () => {
       .post(`/v1/contacts/${intoUuid}/merge/${fromUuid}`)
       .reply(200, {});
 
-    return Contact.merge(config, intoUuid, fromUuid)
-      .then(res => {
-        expect(200);
-        expect(res).to.be.instanceof(Object);
-      });
+    const result = await Contact.merge(config, intoUuid, fromUuid);
+    // eslint-disable-next-line no-unused-expressions
+    expect(result).to.empty;
+    expect(result).to.be.instanceof(Object);
   });
 });
