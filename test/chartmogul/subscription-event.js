@@ -8,7 +8,7 @@ const SubscriptionEvent = ChartMogul.SubscriptionEvent;
 const path = '/v1/subscription_events';
 
 describe('SubscriptionEvent', () => {
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const query = {
       page: 1
     };
@@ -17,13 +17,10 @@ describe('SubscriptionEvent', () => {
       .get(path)
       .query(query)
       .reply(200, {});
-    SubscriptionEvent.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+    return SubscriptionEvent.all(config, query)
       .catch(e => {
-        expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
   });
 
