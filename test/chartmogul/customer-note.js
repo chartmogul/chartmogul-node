@@ -27,18 +27,19 @@ describe('CustomerNote', () => {
         author: 'John Doe (john@example.com)'
       });
 
-    CustomerNote.create(config, postBody)
+    return CustomerNote.create(config, postBody)
       .then(res => {
         expect(res.customer_uuid).to.be.equal(uuid);
         expect(res.text).to.be.equal('This is a note');
       });
   });
 
-  it('lists all notes from a customer', () => {
+  it('lists all notes from a customer', async () => {
     const uuid = 'cus_00000000-0000-0000-0000-000000000000';
+    const body = { customer_uuid: uuid, per_page: 10, cursor: 'cursor==' };
 
     nock(config.API_BASE)
-      .get('/v1/customer_notes')
+      .get(`/v1/customer_notes?customer_uuid=${uuid}&per_page=10&cursor=cursor==`)
       .reply(200, {
         entries: [{
           uuid: 'note_00000000-0000-0000-0000-000000000000',
@@ -51,10 +52,9 @@ describe('CustomerNote', () => {
         }]
       });
 
-    CustomerNote.all(config, uuid)
-      .then(res => {
-        expect(res.entries).to.haveLength(1);
-      });
+    const customerNote = await CustomerNote.all(config, body);
+    expect(customerNote.entries).to.have.lengthOf(1);
+    expect(customerNote.entries[0].customer_uuid).to.equal(uuid);
   });
 
   it('retrieves a customer note', () => {
@@ -72,8 +72,9 @@ describe('CustomerNote', () => {
         author: 'John Doe (john@example.com)'
       });
 
-    CustomerNote.retrieve(config, uuid).then(res => {
+    return CustomerNote.retrieve(config, uuid).then(res => {
       expect(res).to.have.property('uuid');
+      expect(res.uuid).to.equal(uuid);
     });
   });
 
@@ -97,7 +98,7 @@ describe('CustomerNote', () => {
         /* eslint-enable camelcase */
       });
 
-    CustomerNote.patch(config, uuid, postBody)
+    return CustomerNote.patch(config, uuid, postBody)
       .then(res => {
         expect(res.text).to.be.equal('This is a note');
       });
@@ -110,9 +111,10 @@ describe('CustomerNote', () => {
       .delete(`/v1/customer_notes/${uuid}`)
       .reply(204);
 
-    CustomerNote.destroy(config, uuid)
+    return CustomerNote.destroy(config, uuid)
       .then(res => {
-        expect(res).to.be.equal({});
+        // eslint-disable-next-line no-unused-expressions
+        expect(res).to.be.empty;
       });
   });
 });
