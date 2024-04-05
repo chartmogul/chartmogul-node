@@ -38,13 +38,13 @@ describe('Customer', () => {
         /* eslint-enable camelcase */
       });
 
-    Customer.create(config, postBody)
+    return Customer.create(config, postBody)
       .then(res => {
         expect(res).to.have.property('uuid');
       });
   });
 
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const query = {
       page: 1
     };
@@ -53,17 +53,15 @@ describe('Customer', () => {
       .get('/v1/customers')
       .query(query)
       .reply(200, {});
-    Customer.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+    await Customer.all(config, query)
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
       });
-    done();
   });
 
-  it('should list all customers with pagination', done => {
+  it('should list all customers with pagination', async () => {
     const query = {
       per_page: 1,
       cursor: 'cursor=='
@@ -91,14 +89,11 @@ describe('Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    Customer.all(config, query)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
-        expect(res.has_more).to.eql(false);
-      });
-    done();
+    const customer = await Customer.all(config, query);
+    expect(customer).to.have.property('entries');
+    expect(customer.entries).to.be.instanceof(Array);
+    expect(customer.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
+    expect(customer.has_more).to.eql(false);
   });
 
   it('should delete a customer', () => {
@@ -111,7 +106,7 @@ describe('Customer', () => {
     return Customer.destroy(config, uuid);
   });
 
-  it('creates a new contact from a customer', () => {
+  it('creates a new contact from a customer', async () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {
       /* eslint-disable camelcase */
@@ -157,10 +152,8 @@ describe('Customer', () => {
         /* eslint-enable camelcase */
       });
 
-    Customer.createContact(config, customerUuid, postBody)
-      .then(res => {
-        expect(res).to.have.property('uuid');
-      });
+    const customer = await Customer.createContact(config, customerUuid, postBody);
+    expect(customer).to.have.property('uuid');
   });
 
   it('gets all contacts from a customer', () => {
@@ -191,9 +184,10 @@ describe('Customer', () => {
       });
   });
 
-  it('creates a new note from a customer', () => {
+  it('creates a new note from a customer', async () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {
+      customer_uuid: customerUuid,
       type: 'note',
       author_email: 'john@example.com',
       note: 'This is a note'
@@ -211,13 +205,11 @@ describe('Customer', () => {
         type: 'note'
       });
 
-    Customer.createNote(config, customerUuid, postBody)
-      .then(res => {
-        expect(res).to.have.property('uuid');
-      });
+    const customer = await Customer.createNote(config, customerUuid, postBody);
+    expect(customer).to.have.property('uuid');
   });
 
-  it('gets all notes from a customer', () => {
+  it('gets all notes from a customer', async () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
 
     nock(config.API_BASE)
@@ -234,13 +226,9 @@ describe('Customer', () => {
         }]
       });
 
-    Customer.notes(config, customerUuid)
-      .then(res => {
-        expect(res).to.have.property('entries');
-        expect(res.entries).to.be.instanceof(Array);
-        expect(res.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
-        expect(res.has_more).to.eql(false);
-      });
+    const customer = await Customer.notes(config, customerUuid);
+    expect(customer).to.have.property('entries');
+    expect(customer.entries).to.be.instanceof(Array);
   });
 
   it('creates a new opportunity from a customer', async () => {
@@ -391,7 +379,7 @@ describe('Enrichment#Customer', () => {
       });
   });
 
-  it('should search for a customer with pagination', done => {
+  it('should search for a customer with pagination', async () => {
     const query = {
       email: 'adam@smith.com',
       per_page: 1
@@ -408,14 +396,13 @@ describe('Enrichment#Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    Customer.search(config, query)
+    return await Customer.search(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.cursor).to.eql('JjI3MjI4NTM==');
         expect(res.has_more).to.eql(false);
       });
-    done();
   });
 
   it('should retrieve customer attributes', () => {
