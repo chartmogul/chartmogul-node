@@ -37,7 +37,7 @@ describe('Plan', () => {
       });
   });
 
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const query = {
       page: 1
     };
@@ -46,13 +46,11 @@ describe('Plan', () => {
       .get('/v1/plans')
       .query(query)
       .reply(200, {});
-    Plan.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+    return Plan.all(config, query)
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
   });
 
