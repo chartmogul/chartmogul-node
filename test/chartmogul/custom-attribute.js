@@ -27,6 +27,8 @@ describe('CustomAttribute', () => {
     return CustomAttribute.add(config, customerUuid, postBody)
       .then(res => {
         expect(res).to.have.property('custom');
+        expect(res.custom.channel).to.be.equal('Facebook');
+        expect(res.custom.age).to.be.equal(8);
       });
   });
 
