@@ -1,0 +1,53 @@
+{
+	"name": "chartmogul-node",
+	"version": "3.4.0",
+	"description": "Official Chartmogul API Node.js Client",
+	"main": "lib/chartmogul.js",
+	"scripts": {
+		"test": "mocha",
+		"lint": "eslint --fix .",
+		"cover": "nyc mocha",
+		"prepare": "npm run lint && npm run test"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/chartmogul/chartmogul-node.git"
+	},
+	"keywords": [
+		"chartmogul",
+		"api"
+	],
+	"author": "ChartMogul Ltd. <support@chartmogul.com>",
+	"contributors": [
+		"Mahmudul Hassan <hassan@chartmogul.com>"
+	],
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/chartmogul/chartmogul-node/issues"
+	},
+	"homepage": "https://github.com/chartmogul/chartmogul-node",
+	"engines": {
+		"node": ">=16"
+	},
+	"dependencies": {
+		"retry": "^0.13.1",
+		"superagent": "^8.1.2",
+		"uri-templates": "^0.2.0"
+	},
+	"devDependencies": {
+		"@babel/traverse": ">=7.23.2",
+		"chai": "",
+		"dependency-lint": "^7.1.0",
+		"eslint": "^8.54.0",
+		"eslint-config-standard": "",
+		"eslint-plugin-import": "",
+		"eslint-plugin-n": "",
+		"eslint-plugin-promise": "",
+		"eslint-plugin-standard": "",
+		"mocha": "",
+		"nock": "",
+		"nyc": "^15.1.0",
+		"pre-commit": ""
+	},
+	"pre-commit": "prepare"
+}
