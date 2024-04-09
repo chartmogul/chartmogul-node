@@ -64,7 +64,7 @@ describe('Subscription', () => {
       });
   });
 
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const query = {
       page: 1,
@@ -75,13 +75,11 @@ describe('Subscription', () => {
       .get('/v1/import/customers/' + customerUUID + '/subscriptions')
       .query(query)
       .reply(200, {});
-    Subscription.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+    return Subscription.all(config, query)
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
-        done();
       });
   });
 

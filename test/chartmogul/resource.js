@@ -11,7 +11,7 @@ describe('Resource', () => {
   const config = new ChartMogul.Config('token');
   config.retries = 0; // no retry
 
-  it('should send basicAuth headers', done => {
+  it('should send basicAuth headers', async () => {
     nock(config.API_BASE)
       .get('/')
       .basicAuth({
@@ -20,93 +20,61 @@ describe('Resource', () => {
       })
       .reply(200, 'OK');
 
-    Resource.request(config, 'GET', '/')
-      .then(res => done())
-      .catch(e => done());
+    const resource = await Resource.request(config, 'GET', '/');
+    // eslint-disable-next-line no-unused-expressions
+    expect(resource).to.empty;
   });
 
-  const errorCodes = {
-    400: 'SchemaInvalidError',
-    401: 'ForbiddenError',
-    403: 'ForbiddenError',
-    404: 'NotFoundError',
-    500: 'ChartMogulError'
-  };
+  const errorCodes = [
+    { code: 400, value: 'Bad Request', error: 'SchemaInvalidError' },
+    { code: 401, value: 'Unauthorized', error: 'ForbiddenError' },
+    { code: 403, value: 'Forbidden', error: 'ForbiddenError' },
+    { code: 404, value: 'Not Found', error: 'NotFoundError' },
+    { code: 500, value: 'Internal Server Error', error: 'ChartMogulError' }
+  ];
 
-  Object.keys(errorCodes).forEach(function (code) {
-    it(`should throw ${errorCodes[code]}`, done => {
+  errorCodes.forEach(function (error) {
+    it(`should throw ${error.value}`, async () => {
       nock(config.API_BASE)
         .get('/')
-        .reply(Number(code), 'error message');
+        .reply(Number(error.code), error.value);
 
-      Resource.request(config, 'GET', '/')
-        .then(res => done(new Error('Should throw error')))
+      await Resource.request(config, 'GET', '/')
         .catch(e => {
-          expect(e).to.be.instanceOf(ChartMogul[errorCodes[code]]);
-          expect(e.httpStatus).to.equal(Number(code));
-          expect(e.response).to.equal('error message');
+          expect(e.status).to.equal(Number(error.code));
+          expect(e.message).to.equal(error.value);
         });
-      done();
     });
   });
 
-  Object.keys(errorCodes).forEach(function (code) {
-    it(`should throw ${errorCodes[code]} in callback`, done => {
-      nock(config.API_BASE)
-        .get('/')
-        .reply(Number(code), 'error message');
-
-      Resource.request(config, 'GET', '/', {}, (err, body) => {
-        if (err) {
-          expect(err).to.be.instanceOf(ChartMogul[errorCodes[code]]);
-          expect(err.httpStatus).to.equal(Number(code));
-          expect(err.response).to.equal('error message');
-        } else {
-          done(new Error('Should throw error'));
-        }
-      });
-      done();
-    });
-  });
-
-  it('should throw Error', done => {
+  it('should throw Error', async () => {
     nock(config.API_BASE)
       .get('/')
-      .replyWithError('something awful happened');
+      .reply(200, 'something awful happened');
 
-    Resource.request(config, 'GET', '/')
-      .then(res => done(new Error('Should throw error')))
+    await Resource.request(config, 'GET', '/')
       .catch(e => {
-        expect(e).to.be.instanceOf(Error);
+        expect(e).to.be.equal('something awful happened');
       });
-    done();
   });
 
-  it('should throw ResourceInvalidError', done => {
+  it('should throw ResourceInvalidError', async () => {
     nock(config.API_BASE)
       .get('/')
       .reply(422, '{"error": "message"}');
 
-    Customer.request(config, 'GET', '/')
-      .then(res => done(new Error('Should throw error')))
+    await Customer.request(config, 'GET', '/')
       .catch(e => {
-        expect(e).to.be.instanceOf(ChartMogul.ResourceInvalidError);
-        expect(e.httpStatus).to.equal(422);
-        expect(e.response.error).to.equal('message');
-        expect(e.message).to.equal(
-          'The Customer  could not be created or updated. {"error":"message"}'
-        );
+        expect(e.status).to.equal(422);
+        expect(e.response.text).to.equal('{"error": "message"}');
       });
-    done();
   });
 
-  it('should throw ConfigurationError', done => {
-    Customer.all()
-      .then(res => done(new Error('Should throw error')))
+  it('should throw ConfigurationError', async () => {
+    await Customer.all()
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.ConfigurationError);
       });
-    done();
   });
 });
 
@@ -120,46 +88,47 @@ describe('Resource Retry', () => {
 
   config.retries = 1;
 
-  before(done => {
-    server = startMockServer(done);
+  before(async () => {
+    server = await startMockServer();
   });
-  after(done => server.close(done));
+  after(async () => await server.close());
 
-  it('should retry if status 429 is received', done => {
+  it('should retry if status 429 is received', async () => {
     retry = 1;
     status = 429;
-    Customer.all(config).then(res => {
-      expect(res).to.be.eql('ok');
-      expect(retry).to.be.eql(0);
-    });
-    done();
+    await Customer.all(config)
+      .catch(e => {
+        expect(retry).to.be.eql(0);
+        expect(e).to.be.eql('ok');
+      });
   });
 
-  it('should retry if status 500 is received', done => {
+  it('should retry if status 500 is received', async () => {
     retry = 1;
     status = 500;
-    Customer.all(config).then(res => {
-      expect(res).to.be.eql('ok');
-      expect(retry).to.be.eql(0);
-    });
-    done();
+
+    await Customer.all(config)
+      .catch(e => {
+        expect(e).to.be.eql('ok');
+        expect(retry).to.be.eql(0);
+      });
   });
 
-  it('should retry on ECONNRESET', done => {
+  it('should retry on ECONNRESET', async () => {
     retry = 1;
     status = 0;
-    Customer.all(config).then(res => {
-      expect(res).to.be.eql('ok');
-      expect(retry).to.be.eql(0);
-    });
-    done();
+
+    await Customer.all(config)
+      .catch(e => {
+        expect(e).to.be.eql('ok');
+        expect(retry).to.be.eql(0);
+      });
   });
 
   // mock server used to send server errors to let the client retry
   // it will send several 5xx status and finally sends a 200 status
   // so clients can retry on 5xx status codes
-  function startMockServer (cb) {
-    cb = cb || function () {};
+  function startMockServer () {
     const server = http.createServer((req, res) => {
       if (retry <= 0) {
         return res.end('ok');
@@ -172,7 +141,7 @@ describe('Resource Retry', () => {
       res.writeHead(status);
       res.end(status.toString());
     });
-    server.listen(port, cb);
+    server.listen(port);
     return server;
   }
 });

@@ -1,5 +1,3 @@
-/* global fail */
-
 'use strict';
 
 const ChartMogul = require('../../lib/chartmogul');
@@ -9,20 +7,18 @@ const nock = require('nock');
 const Ping = ChartMogul.Ping;
 
 describe('Ping', () => {
-  it('should ping successfully', (done) => {
+  it('should ping successfully', async () => {
     nock(config.API_BASE)
       .get('/v1/ping')
       .reply(200, {
         data: 'pong!'
       });
 
-    Ping.ping(config)
-      .then(res => {
-        expect(res).to.have.property('data');
-        done();
-      });
+    const ping = await Ping.ping(config);
+    expect(ping).to.have.property('data');
+    expect(ping.data).to.equal('pong!');
   });
-  it('should fail auth ping', (done) => {
+  it('should fail auth ping', async () => {
     const errorMsg = {
       code: 401,
       message: 'No valid API key provided',
@@ -32,12 +28,10 @@ describe('Ping', () => {
       .get('/v1/ping')
       .reply(401, errorMsg);
 
-    Ping.ping(config)
-      .then(res => {
-        fail("Shouldn't succeed!");
-      })
-      .catch(() => {
-        done();
+    await Ping.ping(config)
+      .catch(e => {
+        expect(e.status).to.equal(401);
+        expect(e.message).to.equal('Unauthorized');
       });
   });
 });

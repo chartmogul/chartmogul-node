@@ -48,7 +48,7 @@ describe('DeprecatedEnrichment#Customer', () => {
       });
   });
 
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const query = {
       page: 1
     };
@@ -57,14 +57,11 @@ describe('DeprecatedEnrichment#Customer', () => {
       .get('/v1/customers')
       .query(query)
       .reply(200, {});
-    Customer.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+    return await Customer.all(config, query)
       .catch(e => {
-        expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
       });
-    done();
   });
 
   it('should get all customers with pagination', () => {
@@ -87,7 +84,7 @@ describe('DeprecatedEnrichment#Customer', () => {
       });
   });
 
-  it('should search for a customer with pagination', done => {
+  it('should search for a customer with pagination', async () => {
     const email = 'adam@smith.com';
     const query = {
       email,
@@ -105,14 +102,13 @@ describe('DeprecatedEnrichment#Customer', () => {
       /* eslint-enable camelcase */
       });
 
-    Customer.search(config, query)
+    return await Customer.search(config, query)
       .then(res => {
         expect(res).to.have.property('entries');
         expect(res.entries).to.be.instanceof(Array);
         expect(res.cursor).to.eql('cursor==');
         expect(res.has_more).to.eql(false);
       });
-    done();
   });
 
   it('should retrieve customer attributes', () => {

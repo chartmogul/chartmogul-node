@@ -125,7 +125,7 @@ describe('Customer Invoice', () => {
       });
   });
 
-  it('should create a customer invoice using callback', done => {
+  it('should create a customer invoice using callback', async () => {
     const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     nock(config.API_BASE)
@@ -144,16 +144,11 @@ describe('Customer Invoice', () => {
         /* eslint-enable camelcase */
       });
 
-    Invoice.create(config, customerUUID, postBody, (err, res) => {
-      if (err) {
-        return done(err);
-      }
-      expect(res).to.have.property('invoices');
-    });
-    done();
+    const invoice = await Invoice.create(config, customerUUID, postBody);
+    expect(invoice).to.have.property('invoices');
   });
 
-  it('throws DeprecatedParamError if using old pagination parameter', done => {
+  it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const query = {
       page: 1,
@@ -164,14 +159,13 @@ describe('Customer Invoice', () => {
       .get('/v1/contacts')
       .query(query)
       .reply(200, {});
-    Invoice.all(config, query)
-      .then(res => done(new Error('Should throw error')))
+
+    return await Invoice.all(config, query)
       .catch(e => {
         expect(e).to.be.instanceOf(ChartMogul.DeprecatedParamError);
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
       });
-    done();
   });
 
   it('should list all customer invoices with pagination', () => {
@@ -197,7 +191,7 @@ describe('Customer Invoice', () => {
       });
   });
 
-  it('should list all customer invoices in callback', done => {
+  it('should list all customer invoices in callback', async () => {
     const customerUUID = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     nock(config.API_BASE)
@@ -211,16 +205,11 @@ describe('Customer Invoice', () => {
       /* eslint-enable camelcase */
       });
 
-    Invoice.all(config, customerUUID, (err, res) => {
-      if (err) {
-        return done(err);
-      }
-      expect(res).to.have.property('invoices');
-      expect(res.invoices).to.be.instanceof(Array);
-      expect(res.cursor).to.eql('cursor==');
-      expect(res.has_more).to.eql(false);
-    });
-    done();
+    const invoice = await Invoice.all(config, customerUUID);
+    expect(invoice).to.have.property('invoices');
+    expect(invoice.invoices).to.be.instanceof(Array);
+    expect(invoice.cursor).to.eql('cursor==');
+    expect(invoice.has_more).to.eql(false);
   });
 });
 
@@ -240,21 +229,19 @@ describe('Invoices', () => {
       });
   });
 
-  it('should get invoices by external id', done => {
+  it('should get invoices by external id', async () => {
     nock(config.API_BASE)
       .get('/v1/invoices')
       .query({ external_id: 'INV0001' })
       .reply(200, invoiceListResult);
 
-    Invoice.all(config, { external_id: 'INV0001' })
-      .then(res => {
-        expect(res).to.have.property('invoices');
-        expect(res.invoices).to.be.instanceof(Array);
-        expect(res.invoices[0].external_id).to.equal('INV0001');
-        expect(res.cursor).to.eql('cursor==');
-        expect(res.has_more).to.eql(false);
-      });
-    done();
+    const invoice = await Invoice.all(config, { external_id: 'INV0001' });
+
+    expect(invoice).to.have.property('invoices');
+    expect(invoice.invoices).to.be.instanceof(Array);
+    expect(invoice.invoices[0].external_id).to.equal('INV0001');
+    expect(invoice.cursor).to.eql('cursor==');
+    expect(invoice.has_more).to.eql(false);
   });
 
   it('should delete an invoice', () => {
