@@ -467,6 +467,27 @@ describe('Enrichment#Customer', () => {
       });
   });
 
+  it('should unmerge customers', () => {
+    /* eslint-disable camelcase */
+    const postBody = {
+      customer_uuid: 'cus_cd9e5f29-6299-40e5-b343-0bd1ed228b4f',
+      data_source_uuid: 'ds_788ec6ae-dd51-11ee-bd46-a3ec952dc041',
+      external_id: 'cus_O075O8NH0LrtG8',
+      move_to_new_customer: []
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .post('/v1/customers/unmerges', postBody)
+      .reply(202, {});
+
+    return Customer.unmerge(config, postBody)
+      .then(res => {
+        expect(202);
+        expect(res).to.be.instanceof(Object);
+      });
+  });
+
   it('should connect subscriptions', () => {
     const customerUuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
     /* eslint-disable camelcase */
