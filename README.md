@@ -120,6 +120,12 @@ ChartMogul.Customer.merge(config, {
   'from': {'customer_uuid': 'cus_5915ee5a-babd-406b-b8ce-d207133fb4cb'},
   'into': {'customer_uuid': 'cus_2123290f-09c8-4628-a205-db5596bd58f7'}
 })
+ChartMogul.Customer.unmerge(config, {
+  'customer_uuid': 'cus_cd9e5f29-6299-40e5-b343-0bd1ed228b4f',
+  'data_source_uuid': 'ds_788ec6ae-dd51-11ee-bd46-a3ec952dc041',
+  'external_id': 'cus_O075O8NH0LrtG8',
+  'move_to_new_customer': []
+})
 
 ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createContact(config, customerUuid, data)
