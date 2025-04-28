@@ -99,7 +99,7 @@ ChartMogul.Customer.create(config, data, (err, res) => {
 
 Available methods in Import API:
 
-#### [Data Sources](https://dev.chartmogul.com/docs/data-sources)
+#### [Data Sources](https://dev.chartmogul.com/reference/sources/)
 
 ```js
 ChartMogul.DataSource.create(config, data)
@@ -108,7 +108,7 @@ ChartMogul.DataSource.all(config, query)
 ChartMogul.DataSource.destroy(config, dataSourceUuid)
 ```
 
-#### [Customers](https://dev.chartmogul.com/docs/customers)
+#### [Customers](https://dev.chartmogul.com/reference/customers/)
 
 ```js
 ChartMogul.Customer.create(config, data)
@@ -135,9 +135,12 @@ ChartMogul.Customer.createNote(config, customerUuid, data)
 
 ChartMogul.Customer.opportunities(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createOpportunity(config, customerUuid, data)
+
+ChartMogul.Customer.tasks(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
+ChartMogul.Customer.createTask(config, customerUuid, data)
 ```
 
-#### [Contacts](https://dev.chartmogul.com/docs/contacts)
+#### [Contacts](https://dev.chartmogul.com/reference/contacts/)
 
 ```js
 ChartMogul.Contact.create(config, data)
@@ -149,7 +152,7 @@ ChartMogul.Contact.all(config, { per_page: 10, cursor: 'cursor==' })
 
 ```
 
-#### [Customer Notes](https://dev.chartmogul.com/docs/customer_notes)
+#### [Customer Notes](https://dev.chartmogul.com/reference/notes-and-call-logs/)
 
 ```js
 ChartMogul.CustomerNote.create(config, data)
@@ -160,7 +163,7 @@ ChartMogul.CustomerNote.all(config, { per_page: 10, cursor: 'cursor==', customer
 
 ```
 
-#### [Opportunities](https://dev.chartmogul.com/docs/opportunities)
+#### [Opportunities](https://dev.chartmogul.com/reference/opportunities/)
 
 ```js
 ChartMogul.Opportunity.create(config, data)
@@ -170,8 +173,18 @@ ChartMogul.Opportunity.destroy(config, opportunityUuid)
 ChartMogul.Opportunity.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
 ```
 
+#### [Tasks](https://dev.chartmogul.com/reference/tasks/)
 
-#### [Plans](https://dev.chartmogul.com/docs/plans)
+```js
+ChartMogul.Task.create(config, data)
+ChartMogul.Task.retrieve(config, taskUuid)
+ChartMogul.Task.patch(config, taskUuid, data)
+ChartMogul.Task.destroy(config, taskUuid)
+ChartMogul.Task.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
+```
+
+
+#### [Plans](https://dev.chartmogul.com/reference/plans/)
 
 ```js
 ChartMogul.Plan.create(config, data)
@@ -181,7 +194,7 @@ ChartMogul.Plan.destroy(config, uuid)
 ChartMogul.Plan.all(config, query)
 ```
 
-#### [Plan Groups](https://dev.chartmogul.com/docs/plan_groups)
+#### [Plan Groups](https://dev.chartmogul.com/reference/plan-groups/)
 
 ```js
 ChartMogul.PlanGroup.create(config, data)
@@ -192,7 +205,7 @@ ChartMogul.PlanGroup.all(config, query)
 ChartMogul.PlanGroup.all(config, planGroupUuid, query)
 ```
 
-#### [Subscriptions](https://dev.chartmogul.com/docs/subscriptions)
+#### [Subscriptions](https://dev.chartmogul.com/reference/subscriptions/)
 
 ```js
 ChartMogul.Subscription.all(config, customerUuid, query)
@@ -200,7 +213,7 @@ ChartMogul.Subscription.cancel(config, subscriptionUuid, { cancelled_at: '' })
 ChartMogul.Subscription.modify(config, subscriptionUuid, { cancellation_dates: [] })
 ```
 
-#### [Invoices](https://dev.chartmogul.com/docs/invoices)
+#### [Invoices](https://dev.chartmogul.com/reference/invoices/)
 
 ```js
 ChartMogul.Invoice.create(config, customerUuid, data)
@@ -211,13 +224,13 @@ ChartMogul.Invoice.all(config, query)
 ChartMogul.Invoice.destroy_all(config, dataSourceUuid, customerUuid)
 ```
 
-#### [Transactions](https://dev.chartmogul.com/docs/transactions)
+#### [Transactions](https://dev.chartmogul.com/reference/transactions/)
 
 ```js
 ChartMogul.Transaction.create(config, invoiceUuid, data)
 ```
 
-#### [Subscription events](https://dev.chartmogul.com/reference/subscription-events)
+#### [Subscription events](https://dev.chartmogul.com/reference/subscription-events/)
 
 ```js
 ChartMogul.SubscriptionEvent.create(config, {
@@ -248,19 +261,19 @@ ChartMogul.SubscriptionEvent.all(config, query)
 
 Available methods in Enrichment API:
 
-#### [Customers](https://dev.chartmogul.com/reference/customers-1)
+#### [Customers](https://dev.chartmogul.com/reference/customers/)
 
 ```js
 ChartMogul.Customer.search(config, { email: 'bob@example.com' })
 ```
 
-#### [Customer Attributes](https://dev.chartmogul.com/docs/customer-attributes)
+#### [Customer Attributes](https://dev.chartmogul.com/reference/customers/attributes/)
 
 ```js
 ChartMogul.Customer.attributes(config, customerUuid)
 ```
 
-#### [Tags](https://dev.chartmogul.com/docs/tags)
+#### [Tags](https://dev.chartmogul.com/reference/customers/tags/)
 
 ```js
 ChartMogul.Tag.add(config, customerUuid, {
@@ -275,7 +288,7 @@ ChartMogul.Tag.remove(config, customerUuid, {
 });
 ```
 
-#### [Custom Attributes](https://dev.chartmogul.com/docs/custom-attributes)
+#### [Custom Attributes](https://dev.chartmogul.com/reference/customers/attributes/)
 
 ```js
 ChartMogul.CustomAttribute.add(config, customerUuid, {
@@ -300,7 +313,7 @@ ChartMogul.CustomAttribute.remove(config, customerUuid, {
 });
 ```
 
-### [Metrics API](https://dev.chartmogul.com/docs/introduction-metrics-api)
+### [Metrics API](https://dev.chartmogul.com/reference/metrics/)
 
 Available methods in Metrics API:
 

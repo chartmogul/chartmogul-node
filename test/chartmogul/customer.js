@@ -313,6 +313,66 @@ describe('Customer', () => {
     expect(opportunities.cursor).to.eql('MjAyMy0wMy0xM1QxMjowMTozMi44MD==');
     expect(opportunities.has_more).to.eql(false);
   });
+
+  it('creates a new task for a customer', async () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+    const postBody = {
+      customer_uuid: customerUuid,
+      assignee: 'customer@example.com',
+      task_details: 'This is some task details text.',
+      due_date: '2025-04-30T00:00:00Z',
+      completed_at: '2025-04-20T00:00:00Z'
+    };
+
+    nock(config.API_BASE)
+      .post('/v1/tasks', postBody)
+      .reply(200, {
+        uuid: '00000000-0000-0000-0000-000000000000',
+        customer_uuid: customerUuid,
+        assignee: 'customer@example.com',
+        task_details: 'This is some task details text.',
+        due_date: '2025-04-30T00:00:00Z',
+        completed_at: '2025-04-20T00:00:00Z',
+        created_at: '2025-04-01T12:00:00.000Z',
+        updated_at: '2025-04-01T12:00:00.000Z'
+      });
+
+    const task = await Customer.createTask(config, customerUuid, postBody);
+    expect(task.uuid).to.equal('00000000-0000-0000-0000-000000000000');
+    expect(task.customer_uuid).to.equal(customerUuid);
+    expect(task.assignee).to.equal('customer@example.com');
+    expect(task.task_details).to.equal('This is some task details text.');
+    expect(task.due_date).to.equal('2025-04-30T00:00:00Z');
+    expect(task.completed_at).to.equal('2025-04-20T00:00:00Z');
+  });
+
+  it('gets all tasks for a customer', async () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+
+    nock(config.API_BASE)
+      .get(`/v1/tasks?customer_uuid=${customerUuid}`)
+      .reply(200, {
+        entries: [{
+          uuid: '00000000-0000-0000-0000-000000000000',
+          customer_uuid: customerUuid,
+          assignee: 'customer@example.com',
+          task_details: 'This is some task details text.',
+          due_date: '2025-04-30T00:00:00Z',
+          completed_at: '2025-04-20T00:00:00Z',
+          created_at: '2025-04-01T12:00:00.000Z',
+          updated_at: '2025-04-01T12:00:00.000Z'
+        }],
+        cursor: 'OjAyMy0wOy0xM1QxMkowMTozMi64NF==',
+        has_more: false
+      });
+
+    const tasks = await Customer.tasks(config, customerUuid);
+    expect(tasks).to.have.property('entries');
+    expect(tasks.entries).to.be.instanceof(Array);
+    expect(tasks.entries).to.have.lengthOf(1);
+    expect(tasks.cursor).to.equal('OjAyMy0wOy0xM1QxMkowMTozMi64NF==');
+    expect(tasks.has_more).to.equal(false);
+  });
 });
 
 /** Suite that originally belonged in the Enrichment module.
