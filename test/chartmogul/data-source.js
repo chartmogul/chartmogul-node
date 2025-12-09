@@ -184,7 +184,10 @@ describe('Data Source', () => {
             pending: 7,
             failed: 12
           },
-          auto_churn_subscription_setting: false,
+          auto_churn_subscription_setting: {
+            enabled: true,
+            interval: 14
+          },
           invoice_handling_setting: {
             manual: {
               create_subscription_when_invoice_is: 'open',
@@ -295,7 +298,10 @@ describe('Data Source', () => {
             pending: 7,
             failed: 12
           },
-          auto_churn_subscription_setting: false,
+          auto_churn_subscription_setting: {
+            enabled: true,
+            interval: 14
+          },
           invoice_handling_setting: {
             manual: {
               create_subscription_when_invoice_is: 'open',
@@ -447,7 +453,10 @@ describe('Data Source', () => {
           pending: 7,
           failed: 12
         },
-        auto_churn_subscription_setting: false,
+        auto_churn_subscription_setting: {
+          enabled: true,
+          interval: 14
+        },
         invoice_handling_setting: {
           manual: {
             create_subscription_when_invoice_is: 'open',
