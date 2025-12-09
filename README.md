@@ -103,7 +103,7 @@ Available methods in Import API:
 
 ```js
 ChartMogul.DataSource.create(config, data)
-ChartMogul.DataSource.retrieve(config, dataSourceUuid)
+ChartMogul.DataSource.retrieve(config, dataSourceUuid, query)
 ChartMogul.DataSource.all(config, query)
 ChartMogul.DataSource.destroy(config, dataSourceUuid)
 ```
