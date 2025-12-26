@@ -463,7 +463,7 @@ describe('Metrics', () => {
     done();
   });
 
-  it('should connect customer subscriptions', done => {
+  it('should connect customer subscriptions', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const dataSourceUuid = 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1';
     const postBody = {
@@ -477,14 +477,13 @@ describe('Metrics', () => {
       .post(`/v1/data_sources/${dataSourceUuid}/customers/${customerUuid}/connect_subscriptions`, postBody)
       .reply(200, {});
 
-    Metrics.Customer.connectSubscriptions(config, dataSourceUuid, customerUuid, postBody)
+    return Metrics.Customer.connectSubscriptions(config, dataSourceUuid, customerUuid, postBody)
       .then(res => {
         expect(res).to.eql({});
       });
-    done();
   });
 
-  it('should disconnect customer subscriptions', done => {
+  it('should disconnect customer subscriptions', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const dataSourceUuid = 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1';
     const postBody = {
@@ -497,10 +496,9 @@ describe('Metrics', () => {
       .post(`/v1/data_sources/${dataSourceUuid}/customers/${customerUuid}/disconnect_subscriptions`, postBody)
       .reply(200, {});
 
-    Metrics.Customer.disconnectSubscriptions(config, dataSourceUuid, customerUuid, postBody)
+    return Metrics.Customer.disconnectSubscriptions(config, dataSourceUuid, customerUuid, postBody)
       .then(res => {
         expect(res).to.eql({});
       });
-    done();
   });
 });
