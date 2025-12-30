@@ -277,4 +277,74 @@ describe('Invoices', () => {
         expect(res).to.be.deep.equal(payload);
       });
   });
+
+  it('should retrieve an invoice with validation_type', () => {
+    const payload = { external_id: 'some_invoice_id' };
+    nock(config.API_BASE)
+      .get('/v1/invoices/inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
+      .query({ validation_type: 'all' })
+      .reply(200, payload);
+
+    return Invoice.retrieve(config, 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454', { validation_type: 'all' })
+      .then(res => {
+        expect(res).to.be.deep.equal(payload);
+      });
+  });
+
+  it('should retrieve an invoice with all params', () => {
+    const payload = { external_id: 'some_invoice_id' };
+    nock(config.API_BASE)
+      .get('/v1/invoices/inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
+      .query({
+        validation_type: 'invalid',
+        include_edit_histories: true,
+        with_disabled: false
+      })
+      .reply(200, payload);
+
+    return Invoice.retrieve(config, 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454', {
+      validation_type: 'invalid',
+      include_edit_histories: true,
+      with_disabled: false
+    })
+      .then(res => {
+        expect(res).to.be.deep.equal(payload);
+      });
+  });
+
+  it('should get invoices with validation_type', async () => {
+    nock(config.API_BASE)
+      .get('/v1/invoices')
+      .query({ validation_type: 'all' })
+      .reply(200, invoiceListResult);
+
+    const invoice = await Invoice.all(config, { validation_type: 'all' });
+
+    expect(invoice).to.have.property('invoices');
+    expect(invoice.invoices).to.be.instanceof(Array);
+    expect(invoice.cursor).to.eql('cursor==');
+    expect(invoice.has_more).to.eql(false);
+  });
+
+  it('should get invoices with all params', async () => {
+    nock(config.API_BASE)
+      .get('/v1/invoices')
+      .query({
+        validation_type: 'valid',
+        include_edit_histories: true,
+        with_disabled: true
+      })
+      .reply(200, invoiceListResult);
+
+    const invoice = await Invoice.all(config, {
+      validation_type: 'valid',
+      include_edit_histories: true,
+      with_disabled: true
+    });
+
+    expect(invoice).to.have.property('invoices');
+    expect(invoice.invoices).to.be.instanceof(Array);
+    expect(invoice.cursor).to.eql('cursor==');
+    expect(invoice.has_more).to.eql(false);
+  });
 });
