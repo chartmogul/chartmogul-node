@@ -58,6 +58,20 @@ const invoiceListResult = {
     currency: 'USD',
     customer_uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
     due_date: '2015-11-15 00:00:00',
+    disabled: false,
+    disabled_at: null,
+    disabled_by: null,
+    edit_history_summary: {
+      values_changed: {
+        amount_in_cents: {
+          original_value: 4500,
+          edited_value: 5000
+        }
+      },
+      latest_edit_author: 'admin@example.com',
+      latest_edit_performed_at: '2024-01-10T12:00:00.000Z'
+    },
+    errors: null,
     line_items: [
       {
         type: 'subscription',
@@ -276,5 +290,123 @@ describe('Invoices', () => {
       .then(res => {
         expect(res).to.be.deep.equal(payload);
       });
+  });
+
+  it('should retrieve an invoice with validation_type', () => {
+    const payload = { external_id: 'some_invoice_id' };
+    nock(config.API_BASE)
+      .get('/v1/invoices/inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
+      .query({ validation_type: 'all' })
+      .reply(200, payload);
+
+    return Invoice.retrieve(config, 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454', { validation_type: 'all' })
+      .then(res => {
+        expect(res).to.be.deep.equal(payload);
+      });
+  });
+
+  it('should retrieve an invoice with all params', () => {
+    /* eslint-disable camelcase */
+    const payload = {
+      external_id: 'some_invoice_id',
+      disabled: true,
+      disabled_at: '2024-01-15T10:30:00.000Z',
+      disabled_by: 'user@example.com',
+      edit_history_summary: {
+        values_changed: {
+          currency: {
+            original_value: 'EUR',
+            edited_value: 'USD'
+          },
+          date: {
+            original_value: '2024-01-01T00:00:00.000Z',
+            edited_value: '2024-01-02T00:00:00.000Z'
+          }
+        },
+        latest_edit_author: 'editor@example.com',
+        latest_edit_performed_at: '2024-01-20T15:45:00.000Z'
+      },
+      errors: {
+        currency: ['Currency is invalid', 'Currency must be supported'],
+        date: ['Date is in the future']
+      }
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .get('/v1/invoices/inv_cff3a63c-3915-435e-a675-85a8a8ef4454')
+      .query({
+        validation_type: 'invalid',
+        include_edit_histories: true,
+        with_disabled: false
+      })
+      .reply(200, payload);
+
+    return Invoice.retrieve(config, 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454', {
+      validation_type: 'invalid',
+      include_edit_histories: true,
+      with_disabled: false
+    })
+      .then(res => {
+        expect(res.disabled).to.equal(true);
+        expect(res.disabled_at).to.equal('2024-01-15T10:30:00.000Z');
+        expect(res.disabled_by).to.equal('user@example.com');
+        expect(res.edit_history_summary).to.be.an('object');
+        expect(res.edit_history_summary.values_changed).to.be.an('object');
+        expect(res.edit_history_summary.values_changed.currency).to.deep.equal({
+          original_value: 'EUR',
+          edited_value: 'USD'
+        });
+        expect(res.edit_history_summary.values_changed.date).to.deep.equal({
+          original_value: '2024-01-01T00:00:00.000Z',
+          edited_value: '2024-01-02T00:00:00.000Z'
+        });
+        expect(res.edit_history_summary.latest_edit_author).to.equal('editor@example.com');
+        expect(res.edit_history_summary.latest_edit_performed_at).to.equal('2024-01-20T15:45:00.000Z');
+        expect(res.errors).to.be.an('object');
+        expect(res.errors.currency).to.be.an('array');
+        expect(res.errors.currency).to.have.lengthOf(2);
+        expect(res.errors.currency[0]).to.equal('Currency is invalid');
+        expect(res.errors.currency[1]).to.equal('Currency must be supported');
+        expect(res.errors.date).to.be.an('array');
+        expect(res.errors.date).to.have.lengthOf(1);
+        expect(res.errors.date[0]).to.equal('Date is in the future');
+      });
+  });
+
+  it('should get invoices with validation_type', async () => {
+    nock(config.API_BASE)
+      .get('/v1/invoices')
+      .query({ validation_type: 'all' })
+      .reply(200, invoiceListResult);
+
+    const invoice = await Invoice.all(config, { validation_type: 'all' });
+
+    expect(invoice).to.have.property('invoices');
+    expect(invoice.invoices).to.be.instanceof(Array);
+    expect(invoice.cursor).to.eql('cursor==');
+    expect(invoice.has_more).to.eql(false);
+  });
+
+  it('should get invoices with all params', async () => {
+    nock(config.API_BASE)
+      .get('/v1/invoices')
+      .query({
+        validation_type: 'valid',
+        include_edit_histories: true,
+        with_disabled: true
+      })
+      .reply(200, invoiceListResult);
+
+    const invoice = await Invoice.all(config, {
+      validation_type: 'valid',
+      include_edit_histories: true,
+      with_disabled: true
+    });
+
+    expect(invoice).to.have.property('invoices');
+    expect(invoice.invoices).to.be.instanceof(Array);
+    expect(invoice.cursor).to.eql('cursor==');
+    expect(invoice.has_more).to.eql(false);
   });
 });
