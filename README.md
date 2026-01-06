@@ -126,6 +126,14 @@ ChartMogul.Customer.unmerge(config, {
   'external_id': 'cus_O075O8NH0LrtG8',
   'move_to_new_customer': []
 })
+// DEPRECATED: Use ChartMogul.Metrics.Customer.connectSubscriptions instead
+ChartMogul.Customer.connectSubscriptions(config, customerUuid, {
+  subscriptions: [{ uuid: 'sub_uuid' }]
+})
+// DEPRECATED: Use ChartMogul.Metrics.Customer.disconnectSubscriptions instead
+ChartMogul.Customer.disconnectSubscriptions(config, customerUuid, {
+  subscriptions: [{ uuid: 'sub_uuid' }]
+})
 
 ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createContact(config, customerUuid, data)
@@ -208,9 +216,19 @@ ChartMogul.PlanGroup.all(config, planGroupUuid, query)
 #### [Subscriptions](https://dev.chartmogul.com/reference/subscriptions/)
 
 ```js
+// DEPRECATED: Use ChartMogul.Metrics.Customer.subscriptions instead
 ChartMogul.Subscription.all(config, customerUuid, query)
 ChartMogul.Subscription.cancel(config, subscriptionUuid, { cancelled_at: '' })
 ChartMogul.Subscription.modify(config, subscriptionUuid, { cancellation_dates: [] })
+
+// Recommended: Use Metrics API for subscriptions
+ChartMogul.Metrics.Customer.subscriptions(config, customerUuid, query)
+ChartMogul.Metrics.Customer.connectSubscriptions(config, dataSourceUuid, customerUuid, {
+  subscriptions: [{ uuid: 'sub_uuid', data_source_uuid: 'ds_uuid' }]
+})
+ChartMogul.Metrics.Customer.disconnectSubscriptions(config, dataSourceUuid, customerUuid, {
+  subscriptions: [{ uuid: 'sub_uuid', data_source_uuid: 'ds_uuid' }]
+})
 ```
 
 #### [Invoices](https://dev.chartmogul.com/reference/invoices/)
@@ -335,6 +353,8 @@ ChartMogul.Metrics.mrrChurnRate(config, query)
 ChartMogul.Metrics.ltv(config, query)
 ChartMogul.Metrics.Customer.activities(config, customerUuid, query)
 ChartMogul.Metrics.Customer.subscriptions(config, customerUuid, query)
+ChartMogul.Metrics.Customer.connectSubscriptions(config, dataSourceUuid, customerUuid, data)
+ChartMogul.Metrics.Customer.disconnectSubscriptions(config, dataSourceUuid, customerUuid, data)
 ChartMogul.Metrics.Activity.all(config, query)
 ChartMogul.Metrics.ActivitiesExport.create(config, query)
 ChartMogul.Metrics.ActivitiesExport.retrieve(config, id)

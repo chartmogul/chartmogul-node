@@ -462,4 +462,43 @@ describe('Metrics', () => {
       });
     done();
   });
+
+  it('should connect customer subscriptions', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    const dataSourceUuid = 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1';
+    const postBody = {
+      subscriptions: [
+        { uuid: 'sub_1', data_source_uuid: dataSourceUuid },
+        { uuid: 'sub_2', data_source_uuid: dataSourceUuid }
+      ]
+    };
+
+    nock(config.API_BASE)
+      .post(`/v1/customers/${customerUuid}/connect_subscriptions`, postBody)
+      .reply(200, {});
+
+    return Metrics.Customer.connectSubscriptions(config, dataSourceUuid, customerUuid, postBody.subscriptions)
+      .then(res => {
+        expect(res).to.eql({});
+      });
+  });
+
+  it('should disconnect customer subscriptions', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    const dataSourceUuid = 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1';
+    const postBody = {
+      subscriptions: [
+        { uuid: 'sub_1', data_source_uuid: dataSourceUuid }
+      ]
+    };
+
+    nock(config.API_BASE)
+      .post(`/v1/customers/${customerUuid}/disconnect_subscriptions`, postBody)
+      .reply(200, {});
+
+    return Metrics.Customer.disconnectSubscriptions(config, dataSourceUuid, customerUuid, postBody.subscriptions)
+      .then(res => {
+        expect(res).to.eql({});
+      });
+  });
 });
