@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning].
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [3.9.0] - 2026-01-06
+- Add new subscriptions list, connect and disconnect
+- Add tests confirming that retrieve accepts query params
+
 ## [3.8.0] - 2025-12-17
 - Update tests to confirm fetching additional DataSource fields works
 
