@@ -341,7 +341,8 @@ ChartMogul.Metrics.all(config, {
   'end-date': '2015-11-24',
   'interval': 'month',
   'geo': 'GB',
-  'plans': 'Bronze Plan'
+  'plans': 'Bronze Plan',
+  'filters': "currency~ANY~'USD'"
 })
 ChartMogul.Metrics.mrr(config, query)
 ChartMogul.Metrics.arr(config, query)
