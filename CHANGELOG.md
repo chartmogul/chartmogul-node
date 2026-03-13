@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning].
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [3.11.0] - 2026-03-16
+- Add `external_id` key to Contact model
+
 ## [3.10.0] - 2026-01-29
 - Add HTTP requests 30 seconds timeout, 120 seconds deadline and retry on timeout
 
