@@ -76,6 +76,16 @@ describe('Resource', () => {
         expect(e).to.be.instanceOf(ChartMogul.ConfigurationError);
       });
   });
+
+  it('should strip undefined values from POST request body', async () => {
+    let requestBody;
+    nock(config.API_BASE)
+      .post('/', body => { requestBody = body; return true; })
+      .reply(200, {});
+
+    await Resource.request(config, 'POST', '/', { email: 'x', external_id: undefined });
+    expect(requestBody).to.not.have.property('external_id');
+  });
 });
 
 describe('Resource Retry', () => {

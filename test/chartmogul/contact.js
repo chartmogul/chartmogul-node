@@ -13,6 +13,7 @@ describe('Contact', () => {
       customer_uuid: 'cus_919d5d7c-9e23-11ed-a936-97fbf69ba02b',
       data_source_uuid: 'ds_87832fac-ab61-11ec-a8d8-6fb18044a151',
       data_source_customer_external_id: 'scus_606e14228cff7d9db01be55f4e32e5e4',
+      external_id: 'contact_external_id_001',
       first_name: 'First name',
       last_name: 'Last name',
       position: 9,
@@ -37,6 +38,7 @@ describe('Contact', () => {
         customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
         data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
         data_source_customer_external_id: 'external_001',
+        external_id: 'contact_external_id_001',
         first_name: 'First name',
         last_name: 'Last name',
         position: 9,
@@ -55,6 +57,70 @@ describe('Contact', () => {
 
     const contact = await Contact.create(config, postBody);
     expect(contact).to.have.property('uuid');
+  });
+
+  it('creates a new contact with external_id as null', async () => {
+    const postBody = {
+      /* eslint-disable camelcase */
+      customer_uuid: 'cus_919d5d7c-9e23-11ed-a936-97fbf69ba02b',
+      data_source_uuid: 'ds_87832fac-ab61-11ec-a8d8-6fb18044a151',
+      data_source_customer_external_id: 'scus_606e14228cff7d9db01be55f4e32e5e4',
+      external_id: null,
+      first_name: 'First name',
+      last_name: 'Last name',
+      position: 9,
+      title: 'Title',
+      email: 'test@example.com',
+      phone: '+1234567890',
+      linked_in: 'https://linkedin.com/not_found',
+      twitter: 'https://twitter.com/not_found',
+      notes: 'Heading\nBody\nFooter',
+      custom: [
+        { key: 'Booleanz', value: false },
+        { key: 'MyIntegerAttribute', value: 123 }
+      ]
+      /* eslint-enable camelcase */
+    };
+
+    let requestBody;
+    nock(config.API_BASE)
+      .post('/v1/contacts', body => { requestBody = body; return true; })
+      .reply(200, { uuid: 'con_00000000-0000-0000-0000-000000000000' });
+
+    await Contact.create(config, postBody);
+    // eslint-disable-next-line no-unused-expressions
+    expect(requestBody).to.have.property('external_id').that.is.null;
+  });
+
+  it('creates a new contact without external_id', async () => {
+    const postBody = {
+      /* eslint-disable camelcase */
+      customer_uuid: 'cus_919d5d7c-9e23-11ed-a936-97fbf69ba02b',
+      data_source_uuid: 'ds_87832fac-ab61-11ec-a8d8-6fb18044a151',
+      data_source_customer_external_id: 'scus_606e14228cff7d9db01be55f4e32e5e4',
+      first_name: 'First name',
+      last_name: 'Last name',
+      position: 9,
+      title: 'Title',
+      email: 'test@example.com',
+      phone: '+1234567890',
+      linked_in: 'https://linkedin.com/not_found',
+      twitter: 'https://twitter.com/not_found',
+      notes: 'Heading\nBody\nFooter',
+      custom: [
+        { key: 'Booleanz', value: false },
+        { key: 'MyIntegerAttribute', value: 123 }
+      ]
+      /* eslint-enable camelcase */
+    };
+
+    let requestBody;
+    nock(config.API_BASE)
+      .post('/v1/contacts', body => { requestBody = body; return true; })
+      .reply(200, { uuid: 'con_00000000-0000-0000-0000-000000000000' });
+
+    await Contact.create(config, postBody);
+    expect(requestBody).to.not.have.property('external_id');
   });
 
   it('should list all contacts with pagination', async () => {
@@ -118,6 +184,7 @@ describe('Contact', () => {
         customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
         data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
         customer_external_id: 'external_001',
+        external_id: 'contact_external_id_001',
         first_name: 'First name',
         last_name: 'Last name',
         position: 9,
@@ -142,23 +209,42 @@ describe('Contact', () => {
     const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
 
     /* eslint-disable camelcase */
-    const postBody = { email: 'test2@example.com' };
+    const patchBody = { email: 'test2@example.com', external_id: 'contact_external_id_002' };
     /* eslint-enable camelcase */
 
     nock(config.API_BASE)
-      .patch(`/v1/contacts/${contactUuid}`, postBody)
+      .patch(`/v1/contacts/${contactUuid}`, patchBody)
       .reply(200, {
         /* eslint-disable camelcase */
         uuid: contactUuid,
         customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
         data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
         customer_external_id: 'external_001',
-        email: 'test2@example.com'
+        email: 'test2@example.com',
+        external_id: 'contact_external_id_002'
         /* eslint-enable camelcase */
       });
 
-    const contact = await Contact.modify(config, contactUuid, postBody);
+    const contact = await Contact.modify(config, contactUuid, patchBody);
     expect(contact.email).to.be.equal('test2@example.com');
+    expect(contact.external_id).to.be.equal('contact_external_id_002');
+  });
+
+  it('updates a contact with external_id as null', async () => {
+    const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
+
+    /* eslint-disable camelcase */
+    const patchBody = { external_id: null };
+    /* eslint-enable camelcase */
+
+    let requestBody;
+    nock(config.API_BASE)
+      .patch(`/v1/contacts/${contactUuid}`, body => { requestBody = body; return true; })
+      .reply(200, { uuid: contactUuid });
+
+    await Contact.modify(config, contactUuid, patchBody);
+    // eslint-disable-next-line no-unused-expressions
+    expect(requestBody).to.have.property('external_id').that.is.null;
   });
 
   it('deletes a contact', async () => {
