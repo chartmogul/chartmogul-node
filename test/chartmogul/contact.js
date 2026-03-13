@@ -82,33 +82,14 @@ describe('Contact', () => {
       /* eslint-enable camelcase */
     };
 
+    let requestBody;
     nock(config.API_BASE)
-      .post('/v1/contacts', postBody)
-      .reply(200, {
-        /* eslint-disable camelcase */
-        uuid: 'con_00000000-0000-0000-0000-000000000000',
-        customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
-        data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
-        data_source_customer_external_id: 'external_001',
-        external_id: null,
-        first_name: 'First name',
-        last_name: 'Last name',
-        position: 9,
-        title: 'Title',
-        email: 'test@example.com',
-        phone: '+1234567890',
-        linked_in: 'https://linkedin.com/not_found',
-        twitter: 'https://twitter.com/not_found',
-        notes: 'Heading\nBody\nFooter',
-        custom: {
-          MyStringAttribute: 'Test',
-          MyIntegerAttribute: 123
-        }
-        /* eslint-enable camelcase */
-      });
+      .post('/v1/contacts', body => { requestBody = body; return true; })
+      .reply(200, { uuid: 'con_00000000-0000-0000-0000-000000000000' });
 
-    const contact = await Contact.create(config, postBody);
-    expect(contact.external_id).to.equal(null);
+    await Contact.create(config, postBody);
+    // eslint-disable-next-line no-unused-expressions
+    expect(requestBody).to.have.property('external_id').that.is.null;
   });
 
   it('creates a new contact without external_id', async () => {
@@ -133,33 +114,13 @@ describe('Contact', () => {
       /* eslint-enable camelcase */
     };
 
+    let requestBody;
     nock(config.API_BASE)
-      .post('/v1/contacts', postBody)
-      .reply(200, {
-        /* eslint-disable camelcase */
-        uuid: 'con_00000000-0000-0000-0000-000000000000',
-        customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
-        data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
-        data_source_customer_external_id: 'external_001',
-        external_id: null,
-        first_name: 'First name',
-        last_name: 'Last name',
-        position: 9,
-        title: 'Title',
-        email: 'test@example.com',
-        phone: '+1234567890',
-        linked_in: 'https://linkedin.com/not_found',
-        twitter: 'https://twitter.com/not_found',
-        notes: 'Heading\nBody\nFooter',
-        custom: {
-          MyStringAttribute: 'Test',
-          MyIntegerAttribute: 123
-        }
-        /* eslint-enable camelcase */
-      });
+      .post('/v1/contacts', body => { requestBody = body; return true; })
+      .reply(200, { uuid: 'con_00000000-0000-0000-0000-000000000000' });
 
-    const contact = await Contact.create(config, postBody);
-    expect(contact.external_id).to.equal(null);
+    await Contact.create(config, postBody);
+    expect(requestBody).to.not.have.property('external_id');
   });
 
   it('should list all contacts with pagination', async () => {
@@ -276,19 +237,14 @@ describe('Contact', () => {
     const patchBody = { external_id: null };
     /* eslint-enable camelcase */
 
+    let requestBody;
     nock(config.API_BASE)
-      .patch(`/v1/contacts/${contactUuid}`, patchBody)
-      .reply(200, {
-        /* eslint-disable camelcase */
-        uuid: contactUuid,
-        customer_uuid: 'cus_00000000-0000-0000-0000-000000000000',
-        data_source_uuid: 'ds_00000000-0000-0000-0000-000000000000',
-        external_id: null
-        /* eslint-enable camelcase */
-      });
+      .patch(`/v1/contacts/${contactUuid}`, body => { requestBody = body; return true; })
+      .reply(200, { uuid: contactUuid });
 
-    const contact = await Contact.modify(config, contactUuid, patchBody);
-    expect(contact.external_id).to.equal(null);
+    await Contact.modify(config, contactUuid, patchBody);
+    // eslint-disable-next-line no-unused-expressions
+    expect(requestBody).to.have.property('external_id').that.is.null;
   });
 
   it('deletes a contact', async () => {
