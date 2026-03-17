@@ -64,163 +64,193 @@ describe('SubscriptionEvent', () => {
     });
   });
 
-  it('should create a subscription event', () => {
-    const postBody = {
+  it('should create a subscription event with flat params and wrap in envelope', async () => {
+    const flatParams = {
+      customer_external_id: 'c_ex_id_1',
+      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+      effective_date: '2022-06-13T12:30:35.160Z',
+      event_date: '2022-06-12T10:30:35.160Z',
+      event_type: 'subscription_cancelled',
+      external_id: 'ex_id_1',
+      subscription_external_id: 'sub_ex_id_1'
+    };
+
+    let requestBody;
+    nock(config.API_BASE)
+      .post(path, body => { requestBody = body; return true; })
+      .reply(201, {
+        subscription_event: {
+          id: 101,
+          external_id: 'ex_id_1'
+        }
+      });
+
+    const res = await SubscriptionEvent.create(config, flatParams);
+    expect(res).to.have.property('subscription_event');
+    expect(requestBody).to.have.property('subscription_event');
+    expect(requestBody.subscription_event.customer_external_id).to.eq('c_ex_id_1');
+  });
+
+  it('should create a subscription event with envelope params (backward compat)', async () => {
+    const envelopeParams = {
       subscription_event: {
         customer_external_id: 'c_ex_id_1',
         data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-        effective_date: '2022-06-13T12:30:35.160Z',
-        event_date: '2022-06-12T10:30:35.160Z',
         event_type: 'subscription_cancelled',
         external_id: 'ex_id_1',
         subscription_external_id: 'sub_ex_id_1'
       }
     };
 
+    let requestBody;
     nock(config.API_BASE)
-      .post(path)
+      .post(path, body => { requestBody = body; return true; })
       .reply(201, {
         subscription_event: {
           id: 101,
-          data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-          customer_external_id: 'c_ex_id_1',
-          subscription_set_external_id: null,
-          subscription_external_id: 'sub_ex_id_1',
-          plan_external_id: null,
-          event_date: '2022-06-12T10:30:35.160Z',
-          effective_date: '2022-06-13T12:30:35.160Z',
-          event_type: 'subscription_cancelled',
-          external_id: 'ex_id_1',
-          errors: {},
-          created_at: '2022-06-13T11:06:56Z',
-          updated_at: '2022-06-13T12:19:40Z',
-          quantity: null,
-          currency: null,
-          amount_in_cents: null,
-          tax_amount_in_cents: null,
-          retracted_event_id: null
+          external_id: 'ex_id_1'
         }
       });
 
-    return SubscriptionEvent.create(config, postBody)
-      .then(res => {
-        expect(res).to.have.property('subscription_event');
-      });
+    const res = await SubscriptionEvent.create(config, envelopeParams);
+    expect(res).to.have.property('subscription_event');
+    expect(requestBody).to.have.property('subscription_event');
+    expect(requestBody.subscription_event.customer_external_id).to.eq('c_ex_id_1');
+    // Should NOT double-wrap
+    expect(requestBody.subscription_event).to.not.have.property('subscription_event');
   });
 
-  it('should update a subscription event using id', () => {
-    const updateBody = {
-      subscription_event: {
-        id: 101,
-        plan_external_id: 'gazillion_monthly_gold'
-      }
+  it('should update a subscription event wrapping flat params with id', async () => {
+    const flatParams = {
+      id: 101,
+      plan_external_id: 'gazillion_monthly_gold'
     };
 
+    let requestBody;
     nock(config.API_BASE)
-      .patch(path)
+      .patch(path, body => { requestBody = body; return true; })
       .reply(200, {
         subscription_event: {
           id: 101,
-          data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-          customer_external_id: 'c_ex_id_1',
-          subscription_set_external_id: null,
-          subscription_external_id: 'sub_ex_id_1',
-          plan_external_id: 'gazillion_monthly_gold',
-          event_date: '2022-06-12T10:30:35.160Z',
-          effective_date: '2022-06-13T12:30:35.160Z',
-          event_type: 'subscription_cancelled',
-          external_id: 'ex_id_1',
-          errors: {},
-          created_at: '2022-06-13T11:06:56Z',
-          updated_at: '2022-06-13T12:19:40Z',
-          quantity: null,
-          currency: null,
-          amount_in_cents: null,
-          tax_amount_in_cents: null,
-          retracted_event_id: null
+          plan_external_id: 'gazillion_monthly_gold'
         }
       });
 
-    return SubscriptionEvent.updateWithParams(config, updateBody).then(res => {
-      expect(res).to.have.property('subscription_event');
-      expect(res.subscription_event.plan_external_id).to.eq('gazillion_monthly_gold');
-    });
+    const res = await SubscriptionEvent.updateWithParams(config, flatParams);
+    expect(res.subscription_event.plan_external_id).to.eq('gazillion_monthly_gold');
+    expect(requestBody).to.have.property('subscription_event');
+    expect(requestBody.subscription_event.id).to.eq(101);
   });
 
-  it('should update a subscription event using external_id and data_source_uuid', () => {
-    const updateBody = {
-      subscription_event: {
-        external_id: 'ex_id_1',
-        data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-        plan_external_id: 'gazillion_monthly_gold'
-      }
+  it('should update a subscription event wrapping flat params with external_id', async () => {
+    const flatParams = {
+      external_id: 'ex_id_1',
+      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+      plan_external_id: 'gazillion_monthly_gold'
     };
 
+    let requestBody;
     nock(config.API_BASE)
-      .patch(path)
+      .patch(path, body => { requestBody = body; return true; })
       .reply(200, {
         subscription_event: {
           id: 101,
-          data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
-          customer_external_id: 'c_ex_id_1',
-          subscription_set_external_id: null,
-          subscription_external_id: 'sub_ex_id_1',
-          plan_external_id: 'gazillion_monthly_gold',
-          event_date: '2022-06-12T10:30:35.160Z',
-          effective_date: '2022-06-13T12:30:35.160Z',
-          event_type: 'subscription_cancelled',
-          external_id: 'ex_id_1',
-          errors: {},
-          created_at: '2022-06-13T11:06:56Z',
-          updated_at: '2022-06-13T12:19:40Z',
-          quantity: null,
-          currency: null,
-          amount_in_cents: null,
-          tax_amount_in_cents: null,
-          retracted_event_id: null
+          plan_external_id: 'gazillion_monthly_gold'
         }
       });
 
-    return SubscriptionEvent.updateWithParams(config, updateBody).then(res => {
-      expect(res).to.have.property('subscription_event');
-      expect(res.subscription_event.plan_external_id).to.eq('gazillion_monthly_gold');
+    const res = await SubscriptionEvent.updateWithParams(config, flatParams);
+    expect(res.subscription_event.plan_external_id).to.eq('gazillion_monthly_gold');
+    expect(requestBody).to.have.property('subscription_event');
+    expect(requestBody.subscription_event.external_id).to.eq('ex_id_1');
+  });
+
+  it('should delete a subscription event wrapping flat params with id', async () => {
+    const flatParams = {
+      id: 101
+    };
+
+    let requestBody;
+    nock(config.API_BASE)
+      .delete(path, body => { requestBody = body; return true; })
+      .reply(204, {});
+
+    const res = await SubscriptionEvent.deleteWithParams(config, flatParams);
+    /* eslint-disable no-unused-expressions */
+    expect(res).to.be.an('object').that.is.empty;
+    /* eslint-enable no-unused-expressions */
+    expect(requestBody).to.have.property('subscription_event');
+    expect(requestBody.subscription_event.id).to.eq(101);
+  });
+
+  it('should delete a subscription event wrapping flat params with external_id', async () => {
+    const flatParams = {
+      external_id: 'ex_id_1',
+      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
+    };
+
+    let requestBody;
+    nock(config.API_BASE)
+      .delete(path, body => { requestBody = body; return true; })
+      .reply(204, {});
+
+    const res = await SubscriptionEvent.deleteWithParams(config, flatParams);
+    /* eslint-disable no-unused-expressions */
+    expect(res).to.be.an('object').that.is.empty;
+    /* eslint-enable no-unused-expressions */
+    expect(requestBody).to.have.property('subscription_event');
+    expect(requestBody.subscription_event.external_id).to.eq('ex_id_1');
+  });
+
+  it('should disable a subscription event', () => {
+    nock(config.API_BASE)
+      .patch('/v1/subscription_events/101/disable')
+      .reply(200, {
+        subscription_event: {
+          id: 101,
+          disabled: true
+        }
+      });
+
+    return SubscriptionEvent.disable(config, 101).then(res => {
+      expect(res.subscription_event.disabled).to.eq(true);
     });
   });
 
-  it('should delete a subscription event using id', () => {
-    const deleteBody = {
-      subscription_event: {
-        id: 101
-      }
-    };
-
+  it('should enable a subscription event', () => {
     nock(config.API_BASE)
-      .delete(path)
-      .reply(204, {});
+      .patch('/v1/subscription_events/101/enable')
+      .reply(200, {
+        subscription_event: {
+          id: 101,
+          disabled: false
+        }
+      });
 
-    return SubscriptionEvent.deleteWithParams(config, deleteBody).then(res => {
-      /* eslint-disable no-unused-expressions */
-      expect(res).to.be.an('object').that.is.empty;
-      /* eslint-enable no-unused-expressions */
+    return SubscriptionEvent.enable(config, 101).then(res => {
+      expect(res.subscription_event.disabled).to.eq(false);
     });
   });
 
-  it('should delete a subscription event using external_id and data_source_uuid', () => {
-    const deleteBody = {
-      subscription_event: {
-        external_id: 'ex_id_1',
-        data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1'
-      }
-    };
-
+  it('should reject when disabling nonexistent event', () => {
     nock(config.API_BASE)
-      .delete(path)
-      .reply(204, {});
+      .patch('/v1/subscription_events/999/disable')
+      .reply(404, { message: 'Subscription event not found' });
 
-    return SubscriptionEvent.deleteWithParams(config, deleteBody).then(res => {
-      /* eslint-disable no-unused-expressions */
-      expect(res).to.be.an('object').that.is.empty;
-      /* eslint-enable no-unused-expressions */
-    });
+    return SubscriptionEvent.disable(config, 999)
+      .catch(e => {
+        expect(e.status).to.equal(404);
+      });
+  });
+
+  it('should reject when enabling nonexistent event', () => {
+    nock(config.API_BASE)
+      .patch('/v1/subscription_events/999/enable')
+      .reply(404, { message: 'Subscription event not found' });
+
+    return SubscriptionEvent.enable(config, 999)
+      .catch(e => {
+        expect(e.status).to.equal(404);
+      });
   });
 });
