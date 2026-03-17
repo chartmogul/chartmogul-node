@@ -86,7 +86,8 @@ const invoiceListResult = {
         tax_amount_in_cents: 900,
         transaction_fees_currency: 'EUR',
         discount_description: '5 EUR',
-        event_order: 5
+        event_order: 5,
+        error: null
       },
       {
         type: 'one_time',
@@ -97,14 +98,16 @@ const invoiceListResult = {
         discount_amount_in_cents: 500,
         tax_amount_in_cents: 450,
         transaction_fees_currency: 'EUR',
-        discount_description: '2 EUR'
+        discount_description: '2 EUR',
+        error: null
       }
     ],
     transactions: [
       {
         date: '2015-11-05 00:14:23',
         type: 'payment',
-        result: 'successful'
+        result: 'successful',
+        error: null
       }
     ]
   }],
@@ -280,6 +283,132 @@ describe('Invoices', () => {
       });
   });
 
+  it('should update invoice status', () => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+    /* eslint-disable camelcase */
+    const body = { status: 'void' };
+    const responsePayload = {
+      uuid: invoiceUuid,
+      external_id: 'INV0001',
+      status: 'void'
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid)
+      .reply(200, responsePayload);
+
+    return Invoice.updateStatus(config, invoiceUuid, body)
+      .then(res => {
+        expect(res.uuid).to.equal(invoiceUuid);
+        expect(res.status).to.equal('void');
+      });
+  });
+
+  it('should disable an invoice', () => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+    /* eslint-disable camelcase */
+    const responsePayload = {
+      uuid: invoiceUuid,
+      external_id: 'INV0001',
+      disabled: true,
+      disabled_at: '2024-01-15T10:30:00.000Z',
+      disabled_by: 'user@example.com'
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid + '/disable')
+      .reply(200, responsePayload);
+
+    return Invoice.disable(config, invoiceUuid)
+      .then(res => {
+        expect(res.uuid).to.equal(invoiceUuid);
+        expect(res.disabled).to.equal(true);
+        expect(res.disabled_at).to.equal('2024-01-15T10:30:00.000Z');
+        expect(res.disabled_by).to.equal('user@example.com');
+      });
+  });
+
+  it('should update invoice status with callback', (done) => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid)
+      .reply(200, { uuid: invoiceUuid, status: 'void' });
+
+    Invoice.updateStatus(config, invoiceUuid, { status: 'void' }, (err, res) => {
+      if (err) return done(err);
+      expect(res.status).to.equal('void');
+      done();
+    });
+  });
+
+  it('should reject when updating invoice with invalid status', () => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid)
+      .reply(422, { message: 'Status transition is not allowed' });
+
+    return Invoice.updateStatus(config, invoiceUuid, { status: 'invalid' })
+      .catch(e => {
+        expect(e.status).to.equal(422);
+      });
+  });
+
+  it('should disable an invoice with callback', (done) => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid + '/disable')
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: invoiceUuid,
+        disabled: true,
+        disabled_at: '2024-01-15T10:30:00.000Z',
+        disabled_by: 'user@example.com'
+        /* eslint-enable camelcase */
+      });
+
+    Invoice.disable(config, invoiceUuid, (err, res) => {
+      if (err) return done(err);
+      expect(res.disabled).to.equal(true);
+      done();
+    });
+  });
+
+  it('should disable an invoice with body params', () => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid + '/disable')
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: invoiceUuid,
+        disabled: true,
+        disabled_at: '2024-01-15T10:30:00.000Z',
+        disabled_by: 'user@example.com'
+        /* eslint-enable camelcase */
+      });
+
+    return Invoice.disable(config, invoiceUuid, { reason: 'duplicate' })
+      .then(res => {
+        expect(res.disabled).to.equal(true);
+      });
+  });
+
+  it('should reject when disabling nonexistent invoice', () => {
+    nock(config.API_BASE)
+      .patch('/v1/invoices/inv_nonexistent/disable')
+      .reply(404, { message: 'Invoice not found' });
+
+    return Invoice.disable(config, 'inv_nonexistent')
+      .catch(e => {
+        expect(e.status).to.equal(404);
+      });
+  });
+
   it('should retrieve an invoice', () => {
     const payload = { external_id: 'some_invoice_id' };
     nock(config.API_BASE)
@@ -371,6 +500,41 @@ describe('Invoices', () => {
         expect(res.errors.date).to.be.an('array');
         expect(res.errors.date).to.have.lengthOf(1);
         expect(res.errors.date[0]).to.equal('Date is in the future');
+      });
+  });
+
+  it('should expose error field on line items and transactions', () => {
+    const invoiceWithErrors = {
+      /* eslint-disable camelcase */
+      external_id: 'INV_ERR',
+      errors: { date: ['Date is invalid'] },
+      line_items: [
+        {
+          type: 'subscription',
+          amount_in_cents: 5000,
+          error: 'Plan not found'
+        }
+      ],
+      transactions: [
+        {
+          date: '2015-11-05 00:14:23',
+          type: 'payment',
+          result: 'failed',
+          error: 'Payment gateway timeout'
+        }
+      ]
+      /* eslint-enable camelcase */
+    };
+
+    nock(config.API_BASE)
+      .get('/v1/invoices/inv_err_001')
+      .reply(200, invoiceWithErrors);
+
+    return Invoice.retrieve(config, 'inv_err_001')
+      .then(res => {
+        expect(res.errors).to.be.an('object');
+        expect(res.line_items[0].error).to.equal('Plan not found');
+        expect(res.transactions[0].error).to.equal('Payment gateway timeout');
       });
   });
 
