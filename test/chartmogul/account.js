@@ -63,7 +63,9 @@ describe('Account', () => {
       .reply(400, { message: 'Invalid include parameter: invalid_field' });
 
     return Account.retrieve(config, { include: 'invalid_field' })
+      .then(() => { throw new Error('Expected rejection'); })
       .catch(e => {
+        if (e.message === 'Expected rejection') throw e;
         expect(e.status).to.equal(400);
       });
   });

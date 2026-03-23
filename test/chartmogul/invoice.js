@@ -352,7 +352,9 @@ describe('Invoices', () => {
       .reply(422, { message: 'Status transition is not allowed' });
 
     return Invoice.updateStatus(config, invoiceUuid, { status: 'invalid' })
+      .then(() => { throw new Error('Expected rejection'); })
       .catch(e => {
+        if (e.message === 'Expected rejection') throw e;
         expect(e.status).to.equal(422);
       });
   });
@@ -381,8 +383,9 @@ describe('Invoices', () => {
   it('should disable an invoice with body params', () => {
     const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
 
+    let requestBody;
     nock(config.API_BASE)
-      .patch('/v1/invoices/' + invoiceUuid + '/disable')
+      .patch('/v1/invoices/' + invoiceUuid + '/disable', body => { requestBody = body; return true; })
       .reply(200, {
         /* eslint-disable camelcase */
         uuid: invoiceUuid,
@@ -395,6 +398,7 @@ describe('Invoices', () => {
     return Invoice.disable(config, invoiceUuid, { reason: 'duplicate' })
       .then(res => {
         expect(res.disabled).to.equal(true);
+        expect(requestBody).to.have.property('reason', 'duplicate');
       });
   });
 
@@ -404,7 +408,9 @@ describe('Invoices', () => {
       .reply(404, { message: 'Invoice not found' });
 
     return Invoice.disable(config, 'inv_nonexistent')
+      .then(() => { throw new Error('Expected rejection'); })
       .catch(e => {
+        if (e.message === 'Expected rejection') throw e;
         expect(e.status).to.equal(404);
       });
   });

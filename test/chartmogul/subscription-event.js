@@ -18,7 +18,9 @@ describe('SubscriptionEvent', () => {
       .query(query)
       .reply(200, {});
     return SubscriptionEvent.all(config, query)
+      .then(() => { throw new Error('Expected rejection'); })
       .catch(e => {
+        if (e.message === 'Expected rejection') throw e;
         expect(e.httpStatus).to.equal(422);
         expect(e.message).to.equal('"page" param is deprecated {}');
       });
@@ -202,6 +204,27 @@ describe('SubscriptionEvent', () => {
     expect(requestBody.subscription_event.external_id).to.eq('ex_id_1');
   });
 
+  it('should create a subscription event with callback', (done) => {
+    nock(config.API_BASE)
+      .post(path, body => body.subscription_event)
+      .reply(201, {
+        subscription_event: { id: 102, external_id: 'ex_cb_1' }
+      });
+
+    SubscriptionEvent.create(config, {
+      customer_external_id: 'c_ex_id_1',
+      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+      event_type: 'subscription_cancelled',
+      external_id: 'ex_cb_1',
+      subscription_external_id: 'sub_ex_id_1'
+    }, (err, res) => {
+      if (err) return done(err);
+      expect(res).to.have.property('subscription_event');
+      expect(res.subscription_event.external_id).to.eq('ex_cb_1');
+      done();
+    });
+  });
+
   it('should disable a subscription event', () => {
     nock(config.API_BASE)
       .patch('/v1/subscription_events/101/disable')
@@ -238,7 +261,9 @@ describe('SubscriptionEvent', () => {
       .reply(404, { message: 'Subscription event not found' });
 
     return SubscriptionEvent.disable(config, 999)
+      .then(() => { throw new Error('Expected rejection'); })
       .catch(e => {
+        if (e.message === 'Expected rejection') throw e;
         expect(e.status).to.equal(404);
       });
   });
@@ -249,7 +274,9 @@ describe('SubscriptionEvent', () => {
       .reply(404, { message: 'Subscription event not found' });
 
     return SubscriptionEvent.enable(config, 999)
+      .then(() => { throw new Error('Expected rejection'); })
       .catch(e => {
+        if (e.message === 'Expected rejection') throw e;
         expect(e.status).to.equal(404);
       });
   });
