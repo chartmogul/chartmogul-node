@@ -225,9 +225,10 @@ describe('SubscriptionEvent', () => {
     });
   });
 
-  it('should disable a subscription event', () => {
+  it('should disable a subscription event', async () => {
+    let requestBody;
     nock(config.API_BASE)
-      .patch('/v1/subscription_events/101/disable')
+      .patch('/v1/subscription_events/101/disabled_state', body => { requestBody = body; return true; })
       .reply(200, {
         subscription_event: {
           id: 101,
@@ -235,14 +236,15 @@ describe('SubscriptionEvent', () => {
         }
       });
 
-    return SubscriptionEvent.disable(config, 101).then(res => {
-      expect(res.subscription_event.disabled).to.eq(true);
-    });
+    const res = await SubscriptionEvent.disable(config, 101);
+    expect(res.subscription_event.disabled).to.eq(true);
+    expect(requestBody).to.deep.equal({ disabled: true });
   });
 
-  it('should enable a subscription event', () => {
+  it('should enable a subscription event', async () => {
+    let requestBody;
     nock(config.API_BASE)
-      .patch('/v1/subscription_events/101/enable')
+      .patch('/v1/subscription_events/101/disabled_state', body => { requestBody = body; return true; })
       .reply(200, {
         subscription_event: {
           id: 101,
@@ -250,14 +252,14 @@ describe('SubscriptionEvent', () => {
         }
       });
 
-    return SubscriptionEvent.enable(config, 101).then(res => {
-      expect(res.subscription_event.disabled).to.eq(false);
-    });
+    const res = await SubscriptionEvent.enable(config, 101);
+    expect(res.subscription_event.disabled).to.eq(false);
+    expect(requestBody).to.deep.equal({ disabled: false });
   });
 
   it('should reject when disabling nonexistent event', () => {
     nock(config.API_BASE)
-      .patch('/v1/subscription_events/999/disable')
+      .patch('/v1/subscription_events/999/disabled_state')
       .reply(404, { message: 'Subscription event not found' });
 
     return SubscriptionEvent.disable(config, 999)
@@ -270,7 +272,7 @@ describe('SubscriptionEvent', () => {
 
   it('should reject when enabling nonexistent event', () => {
     nock(config.API_BASE)
-      .patch('/v1/subscription_events/999/enable')
+      .patch('/v1/subscription_events/999/disabled_state')
       .reply(404, { message: 'Subscription event not found' });
 
     return SubscriptionEvent.enable(config, 999)

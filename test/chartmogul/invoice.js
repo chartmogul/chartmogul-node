@@ -284,28 +284,28 @@ describe('Invoices', () => {
   });
 
   it('should update invoice status', () => {
-    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
     /* eslint-disable camelcase */
-    const body = { status: 'void' };
+    const dsUuid = 'ds_cff3a63c-3915-435e-a675-85a8a8ef4454';
+    const invoiceExtId = 'INV0001';
+    const body = { status: 'voided' };
     const responsePayload = {
-      uuid: invoiceUuid,
-      external_id: 'INV0001',
-      status: 'void'
+      external_id: invoiceExtId,
+      status: 'voided'
     };
     /* eslint-enable camelcase */
 
     nock(config.API_BASE)
-      .patch('/v1/invoices/' + invoiceUuid)
+      .put('/v1/data_sources/' + dsUuid + '/invoices/' + invoiceExtId + '/status')
       .reply(200, responsePayload);
 
-    return Invoice.updateStatus(config, invoiceUuid, body)
+    return Invoice.updateStatus(config, dsUuid, invoiceExtId, body)
       .then(res => {
-        expect(res.uuid).to.equal(invoiceUuid);
-        expect(res.status).to.equal('void');
+        expect(res.external_id).to.equal(invoiceExtId);
+        expect(res.status).to.equal('voided');
       });
   });
 
-  it('should disable an invoice', () => {
+  it('should disable an invoice', async () => {
     const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
     /* eslint-disable camelcase */
     const responsePayload = {
@@ -317,41 +317,43 @@ describe('Invoices', () => {
     };
     /* eslint-enable camelcase */
 
+    let requestBody;
     nock(config.API_BASE)
-      .patch('/v1/invoices/' + invoiceUuid + '/disable')
+      .patch('/v1/invoices/' + invoiceUuid + '/disabled_state', body => { requestBody = body; return true; })
       .reply(200, responsePayload);
 
-    return Invoice.disable(config, invoiceUuid)
-      .then(res => {
-        expect(res.uuid).to.equal(invoiceUuid);
-        expect(res.disabled).to.equal(true);
-        expect(res.disabled_at).to.equal('2024-01-15T10:30:00.000Z');
-        expect(res.disabled_by).to.equal('user@example.com');
-      });
+    const res = await Invoice.disable(config, invoiceUuid);
+    expect(res.uuid).to.equal(invoiceUuid);
+    expect(res.disabled).to.equal(true);
+    expect(res.disabled_at).to.equal('2024-01-15T10:30:00.000Z');
+    expect(res.disabled_by).to.equal('user@example.com');
+    expect(requestBody).to.deep.equal({ disabled: true });
   });
 
   it('should update invoice status with callback', (done) => {
-    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+    const dsUuid = 'ds_cff3a63c-3915-435e-a675-85a8a8ef4454';
+    const invoiceExtId = 'INV0001';
 
     nock(config.API_BASE)
-      .patch('/v1/invoices/' + invoiceUuid)
-      .reply(200, { uuid: invoiceUuid, status: 'void' });
+      .put('/v1/data_sources/' + dsUuid + '/invoices/' + invoiceExtId + '/status')
+      .reply(200, { external_id: invoiceExtId, status: 'voided' });
 
-    Invoice.updateStatus(config, invoiceUuid, { status: 'void' }, (err, res) => {
+    Invoice.updateStatus(config, dsUuid, invoiceExtId, { status: 'voided' }, (err, res) => {
       if (err) return done(err);
-      expect(res.status).to.equal('void');
+      expect(res.status).to.equal('voided');
       done();
     });
   });
 
   it('should reject when updating invoice with invalid status', () => {
-    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+    const dsUuid = 'ds_cff3a63c-3915-435e-a675-85a8a8ef4454';
+    const invoiceExtId = 'INV0001';
 
     nock(config.API_BASE)
-      .patch('/v1/invoices/' + invoiceUuid)
+      .put('/v1/data_sources/' + dsUuid + '/invoices/' + invoiceExtId + '/status')
       .reply(422, { message: 'Status transition is not allowed' });
 
-    return Invoice.updateStatus(config, invoiceUuid, { status: 'invalid' })
+    return Invoice.updateStatus(config, dsUuid, invoiceExtId, { status: 'invalid' })
       .then(() => { throw new Error('Expected rejection'); })
       .catch(e => {
         if (e.message === 'Expected rejection') throw e;
@@ -363,7 +365,7 @@ describe('Invoices', () => {
     const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
 
     nock(config.API_BASE)
-      .patch('/v1/invoices/' + invoiceUuid + '/disable')
+      .patch('/v1/invoices/' + invoiceUuid + '/disabled_state')
       .reply(200, {
         /* eslint-disable camelcase */
         uuid: invoiceUuid,
@@ -385,7 +387,7 @@ describe('Invoices', () => {
 
     let requestBody;
     nock(config.API_BASE)
-      .patch('/v1/invoices/' + invoiceUuid + '/disable', body => { requestBody = body; return true; })
+      .patch('/v1/invoices/' + invoiceUuid + '/disabled_state', body => { requestBody = body; return true; })
       .reply(200, {
         /* eslint-disable camelcase */
         uuid: invoiceUuid,
@@ -399,12 +401,13 @@ describe('Invoices', () => {
       .then(res => {
         expect(res.disabled).to.equal(true);
         expect(requestBody).to.have.property('reason', 'duplicate');
+        expect(requestBody).to.have.property('disabled', true);
       });
   });
 
   it('should reject when disabling nonexistent invoice', () => {
     nock(config.API_BASE)
-      .patch('/v1/invoices/inv_nonexistent/disable')
+      .patch('/v1/invoices/inv_nonexistent/disabled_state')
       .reply(404, { message: 'Invoice not found' });
 
     return Invoice.disable(config, 'inv_nonexistent')
