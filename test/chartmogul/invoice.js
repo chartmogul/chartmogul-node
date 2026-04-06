@@ -583,3 +583,72 @@ describe('Invoices', () => {
     expect(invoice.has_more).to.eql(false);
   });
 });
+
+/* eslint-disable camelcase */
+const invoiceQueryParams = {
+  data_source_uuid: 'ds_fef05d54-47b4-431b-aed2-eb6b9e545430',
+  external_id: 'INV0001'
+};
+
+const invoiceQueryResponse = {
+  uuid: 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454',
+  external_id: 'INV0001',
+  date: '2026-01-01T00:00:00.000Z',
+  currency: 'USD'
+};
+/* eslint-enable camelcase */
+
+describe('Invoices query params (PIP-306)', () => {
+  it('should update an invoice by query params', async () => {
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/invoices')
+      .query(invoiceQueryParams)
+      .reply(200, (uri, body) => {
+        requestBody = body;
+        return { ...invoiceQueryResponse, currency: 'EUR' };
+      });
+
+    const res = await Invoice.update(config, {
+      qs: invoiceQueryParams,
+      currency: 'EUR'
+    });
+    expect(res.currency).to.equal('EUR');
+    expect(requestBody).to.have.property('currency', 'EUR');
+    expect(requestBody).to.not.have.property('qs');
+  });
+
+  it('should delete an invoice by query params', async () => {
+    nock(config.API_BASE)
+      .delete('/v1/invoices')
+      .query(invoiceQueryParams)
+      .reply(204, {});
+
+    const res = await Invoice.destroyByExternalId(config, { qs: invoiceQueryParams });
+    expect(res).to.be.an('object');
+  });
+
+  it('should disable an invoice by query params', async () => {
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/invoices/disabled_state', body => { requestBody = body; return true; })
+      .query(invoiceQueryParams)
+      .reply(200, { ...invoiceQueryResponse, disabled: true });
+
+    const res = await Invoice.disableByExternalId(config, invoiceQueryParams);
+    expect(res.disabled).to.equal(true);
+    expect(requestBody).to.deep.equal({ disabled: true });
+  });
+
+  it('should enable an invoice by query params', async () => {
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/invoices/disabled_state', body => { requestBody = body; return true; })
+      .query(invoiceQueryParams)
+      .reply(200, { ...invoiceQueryResponse, disabled: false });
+
+    const res = await Invoice.enableByExternalId(config, invoiceQueryParams);
+    expect(res.disabled).to.equal(false);
+    expect(requestBody).to.deep.equal({ disabled: false });
+  });
+});

@@ -36,3 +36,86 @@ describe('Transaction', () => {
       });
   });
 });
+
+/* eslint-disable camelcase */
+const queryParams = {
+  data_source_uuid: 'ds_fef05d54-47b4-431b-aed2-eb6b9e545430',
+  external_id: 'tr_ext_001'
+};
+
+const transactionResponse = {
+  uuid: 'tr_73b392ce-f141-4d14-97f0-6baf93d8bf68',
+  external_id: 'tr_ext_001',
+  type: 'payment',
+  date: '2026-01-24T09:14:29.000Z',
+  result: 'successful'
+};
+/* eslint-enable camelcase */
+
+describe('Transaction query params', () => {
+  it('should get transactions by data_source_uuid and external_id', () => {
+    nock(config.API_BASE)
+      .get('/v1/transactions')
+      .query(queryParams)
+      .reply(200, { transactions: [transactionResponse] });
+
+    return Transaction.all(config, queryParams)
+      .then(res => {
+        expect(res.transactions).to.be.an('array');
+        expect(res.transactions[0].external_id).to.equal('tr_ext_001');
+      });
+  });
+
+  it('should update a transaction by query params', async () => {
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/transactions')
+      .query(queryParams)
+      .reply(200, (uri, body) => {
+        requestBody = body;
+        return { ...transactionResponse, result: 'failed' };
+      });
+
+    const res = await Transaction.update(config, {
+      qs: queryParams,
+      result: 'failed'
+    });
+    expect(res.result).to.equal('failed');
+    expect(requestBody).to.have.property('result', 'failed');
+    expect(requestBody).to.not.have.property('qs');
+  });
+
+  it('should delete a transaction by query params', async () => {
+    nock(config.API_BASE)
+      .delete('/v1/transactions')
+      .query(queryParams)
+      .reply(204, {});
+
+    const res = await Transaction.destroy(config, { qs: queryParams });
+    expect(res).to.be.an('object');
+  });
+
+  it('should disable a transaction by query params', async () => {
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/transactions/disabled_state', body => { requestBody = body; return true; })
+      .query(queryParams)
+      .reply(200, { ...transactionResponse, disabled: true });
+
+    const res = await Transaction.disable(config, queryParams);
+    expect(res.disabled).to.equal(true);
+    expect(requestBody).to.deep.equal({ disabled: true });
+  });
+
+  it('should enable a transaction by query params', async () => {
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/transactions/disabled_state', body => { requestBody = body; return true; })
+      .query(queryParams)
+      .reply(200, { ...transactionResponse, disabled: false });
+
+    const res = await Transaction.enable(config, queryParams);
+    expect(res.disabled).to.equal(false);
+    expect(requestBody).to.deep.equal({ disabled: false });
+  });
+});
