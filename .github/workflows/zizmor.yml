@@ -1,0 +1,52 @@
+name: zizmor
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # required for changed-files
+
+      - name: Get changed workflow files
+        id: changed-files
+        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
+        with:
+          files: |
+            .github/workflows/**/*.yml
+            .github/workflows/**/*.yaml
+
+      - name: Version
+        run: |
+          python3 --version
+          python3 -c "import platform; print(platform.machine(), platform.system())"
+
+      - name: Install zizmor
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          pip install -r .github/workflows/requirements/zizmor.txt
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Set up reviewdog
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
+        with:
+          reviewdog_version: v0.21.0 # immutable tag on github
+      - name: Run zizmor
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          # shellcheck disable=SC2086
+          zizmor --format sarif $CHANGED_FILES 2>/dev/null \
+            | reviewdog -f=sarif -level=warning -reporter=github-pr-check -fail-level=warning
