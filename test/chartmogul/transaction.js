@@ -35,6 +35,83 @@ describe('Transaction', () => {
         expect(res).to.have.property('uuid');
       });
   });
+
+  it('should retrieve a transaction by UUID', () => {
+    const uuid = 'tr_73b392ce-f141-4d14-97f0-6baf93d8bf68';
+
+    /* eslint-disable camelcase */
+    nock(config.API_BASE)
+      .get(`/v1/transactions/${uuid}`)
+      .reply(200, {
+        uuid,
+        external_id: 'trans_00241',
+        type: 'refund',
+        date: '2015-12-25T18:10:00.000Z',
+        result: 'successful'
+      });
+    /* eslint-enable camelcase */
+
+    return Transaction.retrieve(config, uuid)
+      .then(res => {
+        expect(res).to.have.property('uuid', uuid);
+        expect(res.type).to.equal('refund');
+      });
+  });
+
+  it('should update a transaction by UUID', () => {
+    const uuid = 'tr_73b392ce-f141-4d14-97f0-6baf93d8bf68';
+
+    nock(config.API_BASE)
+      .patch(`/v1/transactions/${uuid}`)
+      .reply(200, {
+        uuid,
+        result: 'failed'
+      });
+
+    return Transaction.modify(config, uuid, { result: 'failed' })
+      .then(res => {
+        expect(res.result).to.equal('failed');
+      });
+  });
+
+  it('should delete a transaction by UUID', () => {
+    const uuid = 'tr_73b392ce-f141-4d14-97f0-6baf93d8bf68';
+
+    nock(config.API_BASE)
+      .delete(`/v1/transactions/${uuid}`)
+      .reply(204, {});
+
+    return Transaction.destroy(config, uuid)
+      .then(res => {
+        expect(res).to.be.an('object');
+      });
+  });
+
+  it('should disable a transaction by UUID', async () => {
+    const uuid = 'tr_73b392ce-f141-4d14-97f0-6baf93d8bf68';
+    let requestBody;
+
+    nock(config.API_BASE)
+      .patch(`/v1/transactions/${uuid}/disabled_state`, body => { requestBody = body; return true; })
+      .reply(200, { uuid, disabled: true });
+
+    const res = await Transaction.disable(config, uuid);
+    expect(res.disabled).to.equal(true);
+    expect(requestBody).to.deep.equal({ disabled: true });
+  });
+
+  it('should enable a transaction by UUID', async () => {
+    const uuid = 'tr_73b392ce-f141-4d14-97f0-6baf93d8bf68';
+    let requestBody;
+
+    nock(config.API_BASE)
+      .patch(`/v1/transactions/${uuid}/disabled_state`, body => { requestBody = body; return true; })
+      .reply(200, { uuid, disabled: false });
+
+    const res = await Transaction.enable(config, uuid);
+    expect(res.disabled).to.equal(false);
+    expect(requestBody).to.deep.equal({ disabled: false });
+  });
 });
 
 /* eslint-disable camelcase */
@@ -91,7 +168,7 @@ describe('Transaction query params', () => {
       .query(queryParams)
       .reply(204, {});
 
-    const res = await Transaction.destroy(config, { qs: queryParams });
+    const res = await Transaction.destroyByExternalId(config, { qs: queryParams });
     expect(res).to.be.an('object');
   });
 
@@ -102,7 +179,7 @@ describe('Transaction query params', () => {
       .query(queryParams)
       .reply(200, { ...transactionResponse, disabled: true });
 
-    const res = await Transaction.disable(config, queryParams);
+    const res = await Transaction.disableByExternalId(config, queryParams);
     expect(res.disabled).to.equal(true);
     expect(requestBody).to.deep.equal({ disabled: true });
   });
@@ -114,7 +191,7 @@ describe('Transaction query params', () => {
       .query(queryParams)
       .reply(200, { ...transactionResponse, disabled: false });
 
-    const res = await Transaction.enable(config, queryParams);
+    const res = await Transaction.enableByExternalId(config, queryParams);
     expect(res.disabled).to.equal(false);
     expect(requestBody).to.deep.equal({ disabled: false });
   });
