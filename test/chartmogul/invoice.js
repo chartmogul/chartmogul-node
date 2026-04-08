@@ -418,6 +418,28 @@ describe('Invoices', () => {
       });
   });
 
+  it('should update an invoice by UUID', () => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid, body => { requestBody = body; return true; })
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: invoiceUuid,
+        external_id: 'INV0001',
+        currency: 'EUR'
+        /* eslint-enable camelcase */
+      });
+
+    return Invoice.modify(config, invoiceUuid, { currency: 'EUR' })
+      .then(res => {
+        expect(res.uuid).to.equal(invoiceUuid);
+        expect(res.currency).to.equal('EUR');
+        expect(requestBody).to.have.property('currency', 'EUR');
+      });
+  });
+
   it('should retrieve an invoice', () => {
     const payload = { external_id: 'some_invoice_id' };
     nock(config.API_BASE)
