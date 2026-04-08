@@ -28,7 +28,7 @@
 
 ## Installation
 
-This library requires node.js 16.x or above.
+This library supports node.js 18.x or above.
 
 ```sh
 npm install --save chartmogul-node
