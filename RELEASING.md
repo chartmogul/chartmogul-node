@@ -3,36 +3,33 @@
 ## Prerequisites
 
 - You must have push access to the repository
+- `git`, `gh`, `jq`, `node`, and `npm` must be installed
 - Tags matching `v*` are protected by GitHub tag protection rulesets
 - Releases are immutable once published (GitHub repository setting)
 - npm [trusted publishing](https://docs.npmjs.com/trusted-publishers/) must be configured for the package (see [Repository Settings](#repository-settings-admin))
 
 ## Release Process
 
-1. Ensure all changes are merged to the `main` branch
-2. Ensure CI is green on the `main` branch
-3. Create a release branch off `main`, bump the version in `package.json`, and open a PR:
-   ```sh
-   git checkout -b release/vX.Y.Z main
-   # bump version in package.json
-   git add package.json
-   git commit -m "Update version to vX.Y.Z"
-   git push -u origin release/vX.Y.Z
-   gh pr create --title "Release vX.Y.Z" --body "Bump version to vX.Y.Z"
-   ```
-4. Merge the PR into `main`
-5. Tag the merge commit and push the tag:
-   ```sh
-   git checkout main && git pull
-   git tag vX.Y.Z
-   git push origin vX.Y.Z
-   ```
-6. The [release workflow](.github/workflows/release.yml) will automatically:
+Run the release script from the repository root:
+
+```sh
+bin/release.sh <patch|minor|major>
+```
+
+The script will:
+
+1. Verify prerequisites and that CI is green on `main`
+2. Show any open PRs targeting `main` and ask for confirmation
+3. Bump the version in `package.json` and `package-lock.json`
+4. Create a release branch, commit, push, and open a PR
+5. Wait for the PR to be merged (poll every 10s)
+6. Tag the merge commit and push the tag
+7. Wait for the [release workflow](.github/workflows/release.yml) to complete, which will:
    - Run the full test suite across Node.js 18, 20, 22, and latest
    - Verify that `package.json` version matches the tag
    - Create a GitHub Release with auto-generated release notes
    - Publish to npm via [OIDC trusted publishing](https://docs.npmjs.com/trusted-publishers/) with [provenance](https://docs.npmjs.com/generating-provenance-statements)
-7. Verify the release appears at https://github.com/chartmogul/chartmogul-node/releases and https://www.npmjs.com/package/chartmogul-node
+8. Print links to the GitHub Release and npm package
 
 ## Changelog
 
