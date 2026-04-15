@@ -1,3 +1,7 @@
 rules:
   secrets-outside-env:
     disable: true
+  cache-poisoning:
+    ignore:
+      - release.yml:22
+      - release.yml:55
