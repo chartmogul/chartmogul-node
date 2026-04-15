@@ -58,6 +58,33 @@ if [[ "$PR_COUNT" -gt 0 ]]; then
   fi
 fi
 
+# ─── Show PRs included in this release ───────────────────────────────────────────
+
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+if [[ -n "$LAST_TAG" ]]; then
+  echo ""
+  echo "PRs merged since ${LAST_TAG}:"
+  MERGED_PRS=$(gh pr list --base main --state merged --search "merged:>=$(git log -1 --format=%aI "$LAST_TAG")" --json number,title,url)
+else
+  echo ""
+  echo "PRs merged (no previous tag found, showing recent):"
+  MERGED_PRS=$(gh pr list --base main --state merged --limit 10 --json number,title,url)
+fi
+
+MERGED_COUNT=$(echo "$MERGED_PRS" | jq 'length')
+if [[ "$MERGED_COUNT" -eq 0 ]]; then
+  echo "  (none)"
+else
+  echo "$MERGED_PRS" | jq -r '.[] | "  #\(.number) \(.title)\n    \(.url)"'
+fi
+
+echo ""
+read -rp "Release these changes as ${BUMP_TYPE}? [y/N] " CONFIRM
+if [[ ! "$CONFIRM" =~ ^[yY]$ ]]; then
+  echo "Aborted."
+  exit 0
+fi
+
 # ─── Bump version ───────────────────────────────────────────────────────────────
 
 CURRENT_VERSION=$(node -p "require('./package.json').version")
