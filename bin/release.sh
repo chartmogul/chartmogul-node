@@ -26,6 +26,15 @@ for cmd in git gh jq node npm; do
 done
 
 REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+STASHED=false
+
+restore_stash() {
+  if [[ "$STASHED" == true ]]; then
+    git checkout main 2>/dev/null || true
+    git stash pop --quiet 2>/dev/null || true
+    STASHED=false
+  fi
+}
 
 # ─── Check main CI is green ─────────────────────────────────────────────────────
 
@@ -101,6 +110,10 @@ BRANCH="release/${TAG}"
 
 echo ""
 echo "Bumping version: ${CURRENT_VERSION} -> ${NEW_VERSION}"
+
+git stash --include-untracked --quiet
+STASHED=true
+
 npm version "$NEW_VERSION" --no-git-tag-version --quiet
 
 # ─── Create release branch and PR ───────────────────────────────────────────────
@@ -119,6 +132,19 @@ echo "Waiting for PR #${PR_NUMBER} to be merged..."
 
 # ─── Poll for PR merge ──────────────────────────────────────────────────────────
 
+interrupt_merge_wait() {
+  echo ""
+  echo "Interrupted. To finish the release manually:"
+  echo "  1. Merge PR: $PR_URL"
+  echo "  2. git checkout main && git pull"
+  echo "  3. git tag ${TAG} && git push origin ${TAG}"
+  echo "  4. Monitor the release workflow on GitHub Actions"
+  restore_stash
+  exit 0
+}
+
+trap interrupt_merge_wait INT
+
 while true; do
   STATE=$(gh pr view "$PR_NUMBER" --json state -q .state)
   if [[ "$STATE" == "MERGED" ]]; then
@@ -129,6 +155,8 @@ while true; do
   printf "."
   sleep 10
 done
+
+trap - INT
 
 # ─── Tag and push ───────────────────────────────────────────────────────────────
 
@@ -141,6 +169,18 @@ echo "Tag ${TAG} pushed."
 echo "Waiting for release workflow..."
 
 # ─── Poll for release CI ────────────────────────────────────────────────────────
+
+interrupt_ci_wait() {
+  echo ""
+  echo "Interrupted. The tag ${TAG} has been pushed and the release workflow is running."
+  echo "  Workflow: https://github.com/${REPO}/actions/workflows/release.yml"
+  echo "  GitHub:   https://github.com/${REPO}/releases/tag/${TAG}"
+  echo "  npm:      https://www.npmjs.com/package/chartmogul-node/v/${NEW_VERSION}"
+  restore_stash
+  exit 0
+}
+
+trap interrupt_ci_wait INT
 
 sleep 5 # give GitHub a moment to register the run
 while true; do
@@ -163,7 +203,11 @@ while true; do
   sleep 10
 done
 
+trap - INT
+
 # ─── Summary ────────────────────────────────────────────────────────────────────
+
+restore_stash
 
 echo ""
 echo "Release ${TAG} complete!"
