@@ -80,5 +80,6 @@ These will be automatically marked as pre-releases on GitHub and published to np
 These settings must be configured by a repository admin:
 
 1. **Immutable Releases**: Settings > General > Releases > Enable "Immutable releases"
-2. **Tag Protection Ruleset**: Settings > Rules > Rulesets > New ruleset targeting tags matching `v*` with deletion and force-push prevention
-3. **npm Trusted Publishing**: On npmjs.com, go to [chartmogul-node access settings](https://www.npmjs.com/package/chartmogul-node/access) and configure a trusted publisher with: repository `chartmogul/chartmogul-node`, workflow `release.yml`
+2. **Tag Protection Ruleset**: Settings > Rules > Rulesets > New ruleset targeting tags matching `v*` with deletion, force-push, and update prevention
+3. **GitHub Actions Environment**: Settings > Environments > New environment named `npm`
+4. **npm Trusted Publishing**: On npmjs.com, go to [chartmogul-node access settings](https://www.npmjs.com/package/chartmogul-node/access) and configure a trusted publisher with: repository `chartmogul/chartmogul-node`, workflow `release.yml`, environment `npm`

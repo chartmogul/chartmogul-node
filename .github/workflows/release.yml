@@ -39,6 +39,7 @@ jobs:
   publish:
     needs: [test, release]
     runs-on: ubuntu-24.04
+    environment: npm
     permissions:
       contents: read
       id-token: write
