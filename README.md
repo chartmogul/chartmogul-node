@@ -21,6 +21,8 @@
 |
 <b><a href="#contributing">Contributing</a></b>
 |
+<b><a href="#security">Security</a></b>
+|
 <b><a href="#license">License</a></b>
 </p>
 <hr>
@@ -420,12 +422,17 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/chartm
 
 ## Releasing
 
-1. You need an authorized account on npmjs.com
-2. Bump up the version in `package.json` & tag on GitHub
-3. `npm test`
-4. `npm publish`
+See [RELEASING.md](RELEASING.md) for the full release process.
 
-[Full Howto](https://docs.npmjs.com/getting-started/publishing-npm-packages)
+## Security
+
+### Verifying Releases
+
+All releases of this library are published as [immutable GitHub Releases](https://github.com/chartmogul/chartmogul-node/releases) with protected tags and as a package on [npmjs.com](https://www.npmjs.com/package/chartmogul-node).
+
+To maximize supply chain security:
+- **Commit your `package-lock.json`** to version control — it records integrity hashes (SHA-512) for all dependencies, ensuring reproducible and tamper-evident installs
+- **Use `npm ci`** in CI environments for deterministic builds from the lockfile
 
 ## License
 
