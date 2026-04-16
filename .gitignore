@@ -11,7 +11,9 @@ coverage
 .claude/todos/
 .claude/credentials.json
 CLAUDE.local.md
-.cursor/
+.cursor/chat/
+.cursor/composer/
+.cursor/mcp.json
 .windsurf/
 .cline/
 .continue/
