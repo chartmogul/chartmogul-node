@@ -1,33 +1,46 @@
 #!/bin/bash
-# SessionStart: idempotent workspace check (<1s, no network).
-# Warns about stale lockfiles and uncommitted changes.
 cd "$CLAUDE_PROJECT_DIR" || exit 0
 
-warnings=""
-
-# Check if package-lock.json is newer than package.json (stale deps)
-if [[ -f package.json && -f package-lock.json ]]; then
-  if [[ package.json -nt package-lock.json ]]; then
-    warnings="${warnings}package.json is newer than package-lock.json - run npm install\n"
-  fi
+# Generate a stable session ID and persist via CLAUDE_ENV_FILE
+# so the edit tracker and stop hook share the same file path
+SESSION_ID="$(date +%s)-$$"
+if [[ -n "$CLAUDE_ENV_FILE" ]]; then
+  echo "export CLAUDE_HOOK_SESSION_ID='$SESSION_ID'" >> "$CLAUDE_ENV_FILE"
 fi
 
-# Check for node_modules existence
+ctx=""
+
+# Warn if package-lock.json is missing or stale
+if [[ ! -f package-lock.json ]]; then
+  ctx+="package-lock.json missing - run npm install.\n"
+elif [[ package.json -nt package-lock.json ]]; then
+  ctx+="package-lock.json is stale - run npm install before testing.\n"
+fi
+
+# Warn if node_modules is missing
 if [[ ! -d node_modules ]]; then
-  warnings="${warnings}node_modules missing - run npm install\n"
+  ctx+="node_modules missing - run npm install.\n"
 fi
 
-# Check for uncommitted changes
-if git diff --quiet 2>/dev/null && git diff --cached --quiet 2>/dev/null; then
-  : # clean
-else
-  branch=$(git branch --show-current 2>/dev/null || echo "unknown")
-  warnings="${warnings}Uncommitted changes on branch: ${branch}\n"
+# Warn about uncommitted changes
+dirty=$(git diff --name-only 2>/dev/null | head -5)
+if [[ -n "$dirty" ]]; then
+  ctx+="Uncommitted changes:\n$dirty\n"
 fi
 
-if [[ -n "$warnings" ]]; then
-  jq -n --arg ctx "$(printf "$warnings")" \
-    '{"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": $ctx}}' || true
+# Report current branch
+branch=$(git branch --show-current 2>/dev/null)
+if [[ -n "$branch" ]]; then
+  ctx+="Branch: $branch\n"
+fi
+
+if [[ -n "$ctx" ]]; then
+  jq -n --arg ctx "$ctx" '{
+    "hookSpecificOutput": {
+      "hookEventName": "SessionStart",
+      "additionalContext": $ctx
+    }
+  }'
 fi
 
 exit 0
