@@ -6,6 +6,7 @@
       "Bash(npm run lint:*)",
       "Bash(npm run cover:*)",
       "Bash(npm pack:*)",
+      "Bash(npx eslint:*)",
       "Bash(node --version)",
       "Bash(git status:*)",
       "Bash(git log:*)",
@@ -38,13 +39,52 @@
         ]
       }
     ],
-    "PostToolUse": [
+    "UserPromptSubmit": [
       {
-        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "./.claude/hooks/post-edit-lint.sh"
+            "command": "./.claude/hooks/prompt-context.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.claude/hooks/pre-bash-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.claude/hooks/pre-write-guard.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.claude/hooks/post-edit-track.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.claude/hooks/post-commit-lint.sh"
           }
         ]
       }
@@ -54,7 +94,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./.claude/hooks/post-stop-validate.sh"
+            "command": "./.claude/hooks/stop-format.sh"
           }
         ]
       }
