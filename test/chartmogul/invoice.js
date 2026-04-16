@@ -277,7 +277,7 @@ describe('Invoices', () => {
       .delete('/v1/data_sources/ds_cff3a63c-3915-435e-a675-85a8a8ef4454/customers/cus_9bf6482d-01e5-4944-957d-5bc730d2cda3/invoices')
       .reply(204, {});
 
-    return Invoice.destroy_all(config, 'ds_cff3a63c-3915-435e-a675-85a8a8ef4454', 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3')
+    return Invoice.destroyAll(config, 'ds_cff3a63c-3915-435e-a675-85a8a8ef4454', 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3')
       .then(res => {
         expect(res).to.be.deep.equal({});
       });
@@ -415,6 +415,28 @@ describe('Invoices', () => {
       .catch(e => {
         if (e.message === 'Expected rejection') throw e;
         expect(e.status).to.equal(404);
+      });
+  });
+
+  it('should update an invoice by UUID', () => {
+    const invoiceUuid = 'inv_cff3a63c-3915-435e-a675-85a8a8ef4454';
+
+    let requestBody;
+    nock(config.API_BASE)
+      .patch('/v1/invoices/' + invoiceUuid, body => { requestBody = body; return true; })
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: invoiceUuid,
+        external_id: 'INV0001',
+        currency: 'EUR'
+        /* eslint-enable camelcase */
+      });
+
+    return Invoice.modify(config, invoiceUuid, { currency: 'EUR' })
+      .then(res => {
+        expect(res.uuid).to.equal(invoiceUuid);
+        expect(res.currency).to.equal('EUR');
+        expect(requestBody).to.have.property('currency', 'EUR');
       });
   });
 
