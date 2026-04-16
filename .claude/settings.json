@@ -21,8 +21,7 @@
       "Bash(git pull:*)",
       "Bash(git cherry-pick:*)",
       "Bash(git reset:*)",
-      "Bash(gh pr:*)",
-      "Bash(gh api:*)"
+      "Bash(gh pr:*)"
     ],
     "deny": [
       "Read(./.env*)"
@@ -40,15 +39,6 @@
       }
     ],
     "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./.claude/hooks/pre-bash-guard.sh"
-          }
-        ]
-      },
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [

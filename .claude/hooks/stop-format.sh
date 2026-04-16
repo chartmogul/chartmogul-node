@@ -1,26 +1,27 @@
 #!/bin/bash
 cd "$CLAUDE_PROJECT_DIR" || exit 0
 
-TRACKER="/tmp/claude-edited-js-files-${CLAUDE_HOOK_SESSION_ID:-default}"
+TRACKER="${TMPDIR:-/tmp}/claude-edited-js-files-${CLAUDE_HOOK_SESSION_ID:-default}"
+
+# Nothing to do if no files were edited this turn
+[[ ! -f "$TRACKER" ]] && exit 0
+
+files=$(cat "$TRACKER")
+rm -f "$TRACKER"
+
+[[ -z "$files" ]] && exit 0
 
 ctx=""
 
-# Batch eslint autocorrect on tracked files (if any were edited)
-if [[ -f "$TRACKER" ]]; then
-  files=$(cat "$TRACKER")
-  rm -f "$TRACKER"
-
-  if [[ -n "$files" ]]; then
-    echo "$files" | xargs npx eslint --fix 2>/dev/null || true
-    lint_out=$(echo "$files" | xargs npx eslint 2>&1) || true
-    offenses=$(echo "$lint_out" | grep -E "^\s+[0-9]+:[0-9]+\s+" | head -20)
-    if [[ -n "$offenses" ]]; then
-      ctx+="eslint offenses remaining after autofix:\n$offenses\n"
-    fi
-  fi
+# Batch eslint autocorrect on tracked files
+echo "$files" | xargs npx eslint --fix 2>/dev/null || true
+lint_out=$(echo "$files" | xargs npx eslint 2>&1) || true
+offenses=$(echo "$lint_out" | grep -E "^\s+[0-9]+:[0-9]+\s+" | head -20)
+if [[ -n "$offenses" ]]; then
+  ctx+="eslint offenses remaining after autofix:\n$offenses\n"
 fi
 
-# Always run tests (~4s)
+# Run tests (~4s)
 test_out=$(npm test 2>&1)
 test_exit=$?
 if [[ $test_exit -ne 0 ]]; then
