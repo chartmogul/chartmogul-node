@@ -431,7 +431,7 @@ See [RELEASING.md](RELEASING.md) for the full release process.
 All releases of this library are published as [immutable GitHub Releases](https://github.com/chartmogul/chartmogul-node/releases) with protected tags and as a package on [npmjs.com](https://www.npmjs.com/package/chartmogul-node).
 
 To maximize supply chain security:
-- **Commit your `package-lock.json`** to version control — it records integrity hashes (SHA-512) for all dependencies, ensuring reproducible and tamper-evident installs
+- **Commit your `package-lock.json` or `yarn.lock`** to version control — it records integrity hashes (SHA-512) for all dependencies, ensuring reproducible and tamper-evident installs
 - **Use `npm ci`** in CI environments for deterministic builds from the lockfile
 
 ## License
