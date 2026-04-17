@@ -57,8 +57,6 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm install -g npm@11.12.1
-
       - name: Verify version matches tag
         run: |
           PKG_VERSION="v$(node -p 'require("./package.json").version')"
