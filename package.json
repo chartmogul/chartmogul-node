@@ -46,7 +46,7 @@
     "eslint-plugin-standard": "",
     "mocha": "",
     "nock": "",
-    "nyc": "^15.1.0",
+    "nyc": "^18.0.0",
     "pre-commit": ""
   },
   "pre-commit": "prepare",
