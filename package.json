@@ -44,7 +44,7 @@
     "eslint-plugin-n": "",
     "eslint-plugin-promise": "",
     "eslint-plugin-standard": "",
-    "mocha": "",
+    "mocha": "^11",
     "nock": "",
     "nyc": "^18.0.0",
     "pre-commit": ""

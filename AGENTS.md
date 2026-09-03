@@ -118,7 +118,7 @@ Additional: `ConfigurationError` (invalid config), `DeprecatedParamError` (using
 
 ### CI
 
-GitHub Actions on push/PR to main. Matrix: Node.js 18, 20, 22, latest. Runs `npm run cover`.
+GitHub Actions on push/PR to main. Matrix: Node.js 18, 20, 22, 24, latest. Runs `npm run cover`.
 
 ## Code style
 
