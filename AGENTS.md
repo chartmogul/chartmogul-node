@@ -11,6 +11,18 @@ npm run lint                                       # eslint --fix
 npm run cover                                      # tests with nyc coverage
 ```
 
+### Regenerating `package-lock.json`
+
+If your npm registry is a proxy or mirror, npm records its URL in the `resolved` field of every package it re-resolves. This is a public repo installed by GitHub-hosted CI and external contributors, so the lockfile must keep the canonical `registry.npmjs.org` URLs. Normalize before committing:
+
+```bash
+sed -i "s#$(npm config get registry)#https://registry.npmjs.org/#g" package-lock.json
+npm ci                                                               # re-verifies the integrity hashes
+grep '"resolved":' package-lock.json | grep -vc registry.npmjs.org   # must print 0
+```
+
+Nothing is bypassed: the packages were already downloaded through the proxy, and machines configured for it still fetch through it because npm's default `replace-registry-host` rewrites `registry.npmjs.org` to the configured registry.
+
 Version is in `package.json`.
 
 ## Architecture
@@ -106,7 +118,7 @@ Additional: `ConfigurationError` (invalid config), `DeprecatedParamError` (using
 
 ### CI
 
-GitHub Actions on push/PR to main. Matrix: Node.js 18, 20, 22, latest. Runs `npm run cover`.
+GitHub Actions on push/PR to main. Matrix: Node.js 18, 20, 22, 24, latest. Runs `npm run cover`.
 
 ## Code style
 
