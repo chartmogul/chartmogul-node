@@ -22,7 +22,7 @@ describe('Contact', () => {
       linked_in: 'https://linkedin.com/not_found',
       twitter: 'https://twitter.com/not_found',
       notes: 'Heading\nBody\nFooter',
-      last_active_at: '2024-06-15T10:30:00Z',
+      last_seen: '2024-06-15T10:30:00Z',
       custom: [
         { key: 'Booleanz', value: false },
         { key: 'MyIntegerAttribute', value: 123 }
@@ -326,11 +326,11 @@ describe('Contact', () => {
     expect(requestBody).to.have.property('external_id').that.is.null;
   });
 
-  it('updates a contact with last_active_at and customer_external_id', async () => {
+  it('updates a contact with last_seen and customer_external_id', async () => {
     const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
 
     /* eslint-disable camelcase */
-    const patchBody = { last_active_at: '2024-06-15T10:30:00Z', customer_external_id: 'external_002' };
+    const patchBody = { last_seen: '2024-06-15T10:30:00Z', customer_external_id: 'external_002' };
     /* eslint-enable camelcase */
 
     let requestBody;
