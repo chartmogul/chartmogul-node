@@ -6,7 +6,44 @@ const expect = require('chai').expect;
 const nock = require('nock');
 const CustomerNote = ChartMogul.CustomerNote;
 
+async function captureWarnings (fn) {
+  const original = console.warn;
+  const messages = [];
+  console.warn = message => messages.push(message);
+  try {
+    await fn();
+  } finally {
+    console.warn = original;
+  }
+  return messages;
+}
+
 describe('CustomerNote', () => {
+  describe('deprecation', () => {
+    const noteUuid = 'note_00000000-0000-0000-0000-000000000000';
+    const deprecatedCalls = [
+      { method: 'all', request: () => nock(config.API_BASE).get('/v1/customer_notes'), call: () => CustomerNote.all(config, {}) },
+      { method: 'create', request: () => nock(config.API_BASE).post('/v1/customer_notes'), call: () => CustomerNote.create(config, { type: 'note' }) },
+      { method: 'retrieve', request: () => nock(config.API_BASE).get(`/v1/customer_notes/${noteUuid}`), call: () => CustomerNote.retrieve(config, noteUuid) },
+      { method: 'patch', request: () => nock(config.API_BASE).patch(`/v1/customer_notes/${noteUuid}`), call: () => CustomerNote.patch(config, noteUuid, { text: 'x' }) },
+      { method: 'destroy', request: () => nock(config.API_BASE).delete(`/v1/customer_notes/${noteUuid}`), call: () => CustomerNote.destroy(config, noteUuid) }
+    ];
+
+    deprecatedCalls.forEach(({ method, request, call }) => {
+      it(`warns that CustomerNote.${method} is deprecated and still calls /v1/customer_notes`, async () => {
+        const scope = request().reply(200, {});
+
+        const warnings = await captureWarnings(call);
+
+        expect(warnings).to.deep.equal([
+          `[DEPRECATED] CustomerNote.${method} is deprecated. Use ChartMogul.EntityNote.${method} instead.`
+        ]);
+        // eslint-disable-next-line no-unused-expressions
+        expect(scope.isDone()).to.be.true;
+      });
+    });
+  });
+
   it('creates a note from a customer', () => {
     const uuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {
