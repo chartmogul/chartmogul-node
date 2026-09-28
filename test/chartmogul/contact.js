@@ -59,6 +59,30 @@ describe('Contact', () => {
     expect(contact).to.have.property('uuid');
   });
 
+  it('creates a new contact with overrides', async () => {
+    const postBody = {
+      /* eslint-disable camelcase */
+      customer_uuid: 'cus_919d5d7c-9e23-11ed-a936-97fbf69ba02b',
+      data_source_uuid: 'ds_87832fac-ab61-11ec-a8d8-6fb18044a151',
+      title: 'CEO',
+      overrides: { title: true }
+      /* eslint-enable camelcase */
+    };
+
+    nock(config.API_BASE)
+      .post('/v1/contacts', postBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: 'con_00000000-0000-0000-0000-000000000000',
+        title: 'CEO',
+        overrides: { title: true }
+        /* eslint-enable camelcase */
+      });
+
+    const contact = await Contact.create(config, postBody);
+    expect(contact.overrides).to.eql({ title: true });
+  });
+
   it('creates a new contact with external_id as null', async () => {
     const postBody = {
       /* eslint-disable camelcase */
@@ -205,6 +229,36 @@ describe('Contact', () => {
     expect(contact).to.have.property('uuid');
   });
 
+  it('retrieves a contact with overrides and historical values', async () => {
+    const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
+    /* eslint-disable camelcase */
+    const query = {
+      with_overrides: true,
+      attributes_with_history: 'title'
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .get(`/v1/contacts/${contactUuid}`)
+      .query(query)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: contactUuid,
+        title: 'CEO',
+        overrides: { title: true },
+        historical_values: {
+          title: [
+            { value: 'CEO', update_performed_at: '2026-01-01T12:00:00Z', update_performed_by: 'adam@smith.com', initial: false }
+          ]
+        }
+        /* eslint-enable camelcase */
+      });
+
+    const contact = await Contact.retrieve(config, contactUuid, query);
+    expect(contact.overrides).to.eql({ title: true });
+    expect(contact.historical_values.title[0].value).to.equal('CEO');
+  });
+
   it('updates a contact', async () => {
     const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
 
@@ -228,6 +282,27 @@ describe('Contact', () => {
     const contact = await Contact.modify(config, contactUuid, patchBody);
     expect(contact.email).to.be.equal('test2@example.com');
     expect(contact.external_id).to.be.equal('contact_external_id_002');
+  });
+
+  it('updates a contact with overrides', async () => {
+    const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
+
+    /* eslint-disable camelcase */
+    const patchBody = { title: 'CEO', overrides: { title: true } };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .patch(`/v1/contacts/${contactUuid}`, patchBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: contactUuid,
+        title: 'CEO',
+        overrides: { title: true }
+        /* eslint-enable camelcase */
+      });
+
+    const contact = await Contact.modify(config, contactUuid, patchBody);
+    expect(contact.overrides).to.eql({ title: true });
   });
 
   it('updates a contact with external_id as null', async () => {

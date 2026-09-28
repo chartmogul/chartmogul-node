@@ -32,6 +32,30 @@ describe('CustomAttribute', () => {
       });
   });
 
+  it('should add custom attributes to a customer with overrides', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    const postBody = {
+      custom: [
+        { type: 'String', key: 'channel', value: 'Facebook' }
+      ],
+      overrides: { custom: { channel: true } }
+    };
+
+    nock(config.API_BASE)
+      .post(`/v1/customers/${customerUuid}/attributes/custom`, postBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        custom: { channel: 'Facebook' },
+        overrides: { custom: { channel: true } }
+        /* eslint-enable camelcase */
+      });
+
+    return CustomAttribute.add(config, customerUuid, postBody)
+      .then(res => {
+        expect(res.overrides).to.eql({ custom: { channel: true } });
+      });
+  });
+
   it('should add custom attributes to customers with email', () => {
     const postBody = {
       email: 'adam@smith.com',
@@ -75,6 +99,35 @@ describe('CustomAttribute', () => {
       });
   });
 
+  it('should add custom attributes to customers with email and overrides', () => {
+    const postBody = {
+      email: 'adam@smith.com',
+      custom: [
+        { type: 'Integer', key: 'CAC', value: 213 }
+      ],
+      overrides: { custom: { CAC: true } }
+    };
+
+    nock(config.API_BASE)
+      .post('/v1/customers/attributes/custom', postBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        entries: [
+          {
+            uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
+            attributes: { custom: { CAC: 213 } },
+            overrides: { attributes: { custom: { CAC: true } } }
+          }
+        ]
+        /* eslint-enable camelcase */
+      });
+
+    return CustomAttribute.add(config, postBody)
+      .then(res => {
+        expect(res.entries[0].overrides).to.eql({ attributes: { custom: { CAC: true } } });
+      });
+  });
+
   it('should update custom attributes of a customer', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const postBody = {
@@ -99,6 +152,30 @@ describe('CustomAttribute', () => {
       });
   });
 
+  it('should update custom attributes of a customer with overrides', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    const postBody = {
+      custom: {
+        channel: 'Twitter'
+      },
+      overrides: { custom: { channel: true } }
+    };
+
+    nock(config.API_BASE)
+      .put(`/v1/customers/${customerUuid}/attributes/custom`, postBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        custom: { channel: 'Twitter' },
+        overrides: { custom: { channel: true } }
+        /* eslint-enable camelcase */
+      });
+
+    return CustomAttribute.update(config, customerUuid, postBody)
+      .then(res => {
+        expect(res.overrides).to.eql({ custom: { channel: true } });
+      });
+  });
+
   it('should remove custom attributes from a customer', () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
     const postBody = {
@@ -117,6 +194,30 @@ describe('CustomAttribute', () => {
       .then(res => {
         expect(res).to.have.property('custom');
         expect(res.custom).to.not.have.property('CAC');
+      });
+  });
+
+  it('should remove custom attributes from a customer with overrides', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    const postBody = {
+      custom: ['CAC'],
+      overrides: { custom: { CAC: false } }
+    };
+
+    nock(config.API_BASE)
+      .delete(`/v1/customers/${customerUuid}/attributes/custom`, postBody)
+      .reply(202, {
+        /* eslint-disable camelcase */
+        custom: { channel: 'Twitter' },
+        overrides: {},
+        message: 'Custom attributes deleted from customer'
+        /* eslint-enable camelcase */
+      });
+
+    return CustomAttribute.remove(config, customerUuid, postBody)
+      .then(res => {
+        expect(res.overrides).to.eql({});
+        expect(res.message).to.equal('Custom attributes deleted from customer');
       });
   });
 });
