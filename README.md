@@ -115,8 +115,16 @@ ChartMogul.DataSource.destroy(config, dataSourceUuid)
 ```js
 ChartMogul.Customer.create(config, data)
 ChartMogul.Customer.retrieve(config, customerUuid)
+ChartMogul.Customer.retrieve(config, customerUuid, {
+  with_overrides: true,
+  attributes_with_history: 'company,custom.channel'
+})
 ChartMogul.Customer.all(config, { per_page: 20 })
 ChartMogul.Customer.modify(config, customerUuid, data)
+ChartMogul.Customer.modify(config, customerUuid, {
+  company: 'Pinata Technologies',
+  overrides: { company: true, attributes: { custom: { channel: true } } }
+})
 ChartMogul.Customer.destroy(config, customerUuid)
 ChartMogul.Customer.merge(config, {
   'from': {'customer_uuid': 'cus_5915ee5a-babd-406b-b8ce-d207133fb4cb'},
@@ -161,7 +169,15 @@ ChartMogul.Customer.createTask(config, customerUuid, data)
 // customer_uuid and data_source_uuid may be omitted to create a contact that is not linked to a customer
 ChartMogul.Contact.create(config, data)
 ChartMogul.Contact.retrieve(config, contactUuid)
+ChartMogul.Contact.retrieve(config, contactUuid, {
+  with_overrides: true,
+  attributes_with_history: 'title'
+})
 ChartMogul.Contact.modify(config, contactUuid, data)
+ChartMogul.Contact.modify(config, contactUuid, {
+  title: 'CEO',
+  overrides: { title: true }
+})
 ChartMogul.Contact.destroy(config, contactUuid)
 ChartMogul.Contact.merge(config, intoUuid, fromUuid);
 ChartMogul.Contact.all(config, {
@@ -353,6 +369,10 @@ ChartMogul.Customer.search(config, { email: 'bob@example.com' })
 
 ```js
 ChartMogul.Customer.attributes(config, customerUuid)
+ChartMogul.Customer.attributes(config, customerUuid, {
+  with_overrides: true,
+  attributes_with_history: 'custom.channel'
+})
 ```
 
 #### [Tags](https://dev.chartmogul.com/reference/customers/tags/)
@@ -392,6 +412,13 @@ ChartMogul.CustomAttribute.update(config, customerUuid, {
 });
 ChartMogul.CustomAttribute.remove(config, customerUuid, {
   'custom': ['CAC']
+});
+
+ChartMogul.CustomAttribute.add(config, customerUuid, {
+  'custom': [
+    { 'type': 'String', 'key': 'channel', 'value': 'Facebook' }
+  ],
+  'overrides': { 'custom': { 'channel': true } }
 });
 ```
 
