@@ -71,7 +71,7 @@ describe('Contact', () => {
 
     nock(config.API_BASE)
       .post('/v1/contacts', postBody)
-      .reply(200, {
+      .reply(201, {
         /* eslint-disable camelcase */
         uuid: 'con_00000000-0000-0000-0000-000000000000',
         title: 'CEO',

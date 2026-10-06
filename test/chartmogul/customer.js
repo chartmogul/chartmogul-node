@@ -56,7 +56,7 @@ describe('Customer', () => {
 
     nock(config.API_BASE)
       .post('/v1/customers', postBody)
-      .reply(200, {
+      .reply(201, {
         /* eslint-disable camelcase */
         uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
         external_id: 'cus_0002',
@@ -195,7 +195,7 @@ describe('Customer', () => {
 
     nock(config.API_BASE)
       .post(`/v1/customers/${customerUuid}/contacts`, postBody)
-      .reply(200, {
+      .reply(201, {
         /* eslint-disable camelcase */
         uuid: 'con_653af916-dea0-11ed-845b-3be1ac0039ac',
         title: 'CEO',
