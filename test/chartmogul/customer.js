@@ -44,6 +44,33 @@ describe('Customer', () => {
       });
   });
 
+  it('should create a new customer with overrides', () => {
+    /* eslint-disable camelcase */
+    const postBody = {
+      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+      external_id: 'cus_0002',
+      company: 'Pinata Technologies',
+      overrides: { company: true, attributes: { custom: { channel: true } } }
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .post('/v1/customers', postBody)
+      .reply(201, {
+        /* eslint-disable camelcase */
+        uuid: 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3',
+        external_id: 'cus_0002',
+        company: 'Pinata Technologies',
+        overrides: { company: true, attributes: { custom: { channel: true } } }
+        /* eslint-enable camelcase */
+      });
+
+    return Customer.create(config, postBody)
+      .then(res => {
+        expect(res.overrides).to.eql({ company: true, attributes: { custom: { channel: true } } });
+      });
+  });
+
   it('throws DeprecatedParamError if using old pagination parameter', async () => {
     const query = {
       page: 1
@@ -154,6 +181,30 @@ describe('Customer', () => {
 
     const customer = await Customer.createContact(config, customerUuid, postBody);
     expect(customer).to.have.property('uuid');
+  });
+
+  it('creates a new contact from a customer with overrides', async () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    /* eslint-disable camelcase */
+    const postBody = {
+      data_source_uuid: 'ds_e243129a-12c0-4e29-8f54-07da7905fbd1',
+      title: 'CEO',
+      overrides: { title: true }
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .post(`/v1/customers/${customerUuid}/contacts`, postBody)
+      .reply(201, {
+        /* eslint-disable camelcase */
+        uuid: 'con_653af916-dea0-11ed-845b-3be1ac0039ac',
+        title: 'CEO',
+        overrides: { title: true }
+        /* eslint-enable camelcase */
+      });
+
+    const contact = await Customer.createContact(config, customerUuid, postBody);
+    expect(contact.overrides).to.eql({ title: true });
   });
 
   it('gets all contacts from a customer', () => {
@@ -419,6 +470,45 @@ describe('Enrichment#Customer', () => {
       });
   });
 
+  it('should retrieve a customer with overrides and historical values', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    /* eslint-disable camelcase */
+    const query = {
+      with_overrides: true,
+      attributes_with_history: 'company,custom.channel'
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .get(`/v1/customers/${customerUuid}`)
+      .query(query)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: customerUuid,
+        overrides: { company: true, attributes: { custom: { channel: true } } },
+        historical_values: {
+          company: [
+            { value: 'Pinata Technologies', update_performed_at: '2026-01-01T12:00:00Z', update_performed_by: 'adam@smith.com', initial: false }
+          ],
+          attributes: {
+            custom: {
+              channel: [
+                { value: 'Facebook', update_performed_at: null, update_performed_by: null, initial: true }
+              ]
+            }
+          }
+        }
+        /* eslint-enable camelcase */
+      });
+
+    return Customer.retrieve(config, customerUuid, query)
+      .then(res => {
+        expect(res.overrides).to.eql({ company: true, attributes: { custom: { channel: true } } });
+        expect(res.historical_values.company[0].value).to.equal('Pinata Technologies');
+        expect(res.historical_values.attributes.custom.channel[0].initial).to.equal(true);
+      });
+  });
+
   it('should list all customers with pagination', () => {
     nock(config.API_BASE)
       .get('/v1/customers')
@@ -482,6 +572,54 @@ describe('Enrichment#Customer', () => {
       });
   });
 
+  it('should retrieve customer attributes with overrides and historical values', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    /* eslint-disable camelcase */
+    const query = {
+      with_overrides: true,
+      attributes_with_history: 'custom.channel'
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .get(`/v1/customers/${customerUuid}/attributes`)
+      .query(query)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        tags: ['foo'],
+        custom: { channel: 'Facebook' },
+        overrides: { custom: { channel: true } },
+        historical_values: {
+          custom: {
+            channel: [
+              { value: 'Facebook', update_performed_at: null, update_performed_by: null, initial: true }
+            ]
+          }
+        }
+        /* eslint-enable camelcase */
+      });
+
+    return Customer.attributes(config, customerUuid, query)
+      .then(res => {
+        expect(res.overrides).to.eql({ custom: { channel: true } });
+        expect(res.historical_values.custom.channel).to.have.lengthOf(1);
+      });
+  });
+
+  it('should retrieve customer attributes with a callback as the third argument', (done) => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+
+    nock(config.API_BASE)
+      .get(`/v1/customers/${customerUuid}/attributes`)
+      .reply(200, { tags: ['foo'] });
+
+    Customer.attributes(config, customerUuid, (err, res) => {
+      if (err) return done(err);
+      expect(res).to.have.property('tags');
+      done();
+    });
+  });
+
   it('should update a customer', () => {
     const customerUuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
 
@@ -505,6 +643,32 @@ describe('Enrichment#Customer', () => {
     return Customer.patch(config, customerUuid, postBody)
       .then(res => {
         expect(res).to.have.property('uuid');
+      });
+  });
+
+  it('should update a customer with overrides', () => {
+    const customerUuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
+
+    /* eslint-disable camelcase */
+    const postBody = {
+      company: 'Pinata Technologies',
+      overrides: { company: true }
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .patch(`/v1/customers/${customerUuid}`, postBody)
+      .reply(200, {
+        /* eslint-disable camelcase */
+        uuid: customerUuid,
+        company: 'Pinata Technologies',
+        overrides: { company: true }
+        /* eslint-enable camelcase */
+      });
+
+    return Customer.modify(config, customerUuid, postBody)
+      .then(res => {
+        expect(res.overrides).to.eql({ company: true });
       });
   });
 
