@@ -140,8 +140,13 @@ ChartMogul.Customer.disconnectSubscriptions(config, customerUuid, {
 ChartMogul.Customer.contacts(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createContact(config, customerUuid, data)
 
+// DEPRECATED: Use ChartMogul.Customer.entityNotes instead
 ChartMogul.Customer.notes(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
+// DEPRECATED: Use ChartMogul.Customer.createEntityNote instead
 ChartMogul.Customer.createNote(config, customerUuid, data)
+
+ChartMogul.Customer.entityNotes(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
+ChartMogul.Customer.createEntityNote(config, customerUuid, data)
 
 ChartMogul.Customer.opportunities(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createOpportunity(config, customerUuid, data)
@@ -153,24 +158,66 @@ ChartMogul.Customer.createTask(config, customerUuid, data)
 #### [Contacts](https://dev.chartmogul.com/reference/contacts/)
 
 ```js
+// customer_uuid and data_source_uuid may be omitted to create a contact that is not linked to a customer
 ChartMogul.Contact.create(config, data)
 ChartMogul.Contact.retrieve(config, contactUuid)
-ChartMogul.Contact.modify(config, contactUuid)
+ChartMogul.Contact.modify(config, contactUuid, data)
 ChartMogul.Contact.destroy(config, contactUuid)
 ChartMogul.Contact.merge(config, intoUuid, fromUuid);
-ChartMogul.Contact.all(config, { per_page: 10, cursor: 'cursor==' })
+ChartMogul.Contact.all(config, {
+  per_page: 10,
+  cursor: 'cursor==',
+  customer_uuid: customerUuid,
+  data_source_uuid: dataSourceUuid,
+  email: 'jane@example.com',
+  customer_external_id: 'customer_001',
+  external_id: 'contact_001'
+})
 
+ChartMogul.Contact.tasks(config, contactUuid, { per_page: 10, cursor: 'cursor==' })
+ChartMogul.Contact.createTask(config, contactUuid, data)
+
+ChartMogul.Contact.entityNotes(config, contactUuid, { per_page: 10, cursor: 'cursor==' })
+ChartMogul.Contact.createEntityNote(config, contactUuid, data)
 ```
 
-#### [Customer Notes](https://dev.chartmogul.com/reference/notes-and-call-logs/)
+#### [Notes and Call Logs](https://dev.chartmogul.com/reference/notes-and-call-logs/)
+
+Notes and call logs can be attached to a customer or a contact. Pass `customer_uuid` for a customer, or `associated_object_identifier` for either.
 
 ```js
+ChartMogul.EntityNote.create(config, { customer_uuid: customerUuid, type: 'note', text: 'Text' })
+ChartMogul.EntityNote.create(config, {
+  associated_object_identifier: { associated_object: 'contact', method: 'uuid', value: contactUuid },
+  type: 'call',
+  call_duration: 120
+})
+ChartMogul.EntityNote.retrieve(config, noteUuid)
+ChartMogul.EntityNote.patch(config, noteUuid, data) // resolves to {} when the API answers 304 Not Modified
+ChartMogul.EntityNote.destroy(config, noteUuid)
+ChartMogul.EntityNote.all(config, {
+  per_page: 10,
+  cursor: 'cursor==',
+  customer_uuid: customerUuid,
+  contact_uuid: contactUuid,
+  type: 'note',
+  author_email: 'jane@example.com'
+})
+```
+
+#### Customer Notes (deprecated)
+
+```js
+// DEPRECATED: Use ChartMogul.EntityNote instead
 ChartMogul.CustomerNote.create(config, data)
 ChartMogul.CustomerNote.retrieve(config, noteUuid)
 ChartMogul.CustomerNote.patch(config, noteUuid, data)
 ChartMogul.CustomerNote.destroy(config, noteUuid)
 ChartMogul.CustomerNote.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
 
+// Recommended: Use the Notes and Call Logs API above
+ChartMogul.EntityNote.create(config, data)
+ChartMogul.EntityNote.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid })
 ```
 
 #### [Opportunities](https://dev.chartmogul.com/reference/opportunities/)
@@ -186,11 +233,26 @@ ChartMogul.Opportunity.all(config, { per_page: 10, cursor: 'cursor==', customer_
 #### [Tasks](https://dev.chartmogul.com/reference/tasks/)
 
 ```js
-ChartMogul.Task.create(config, data)
+ChartMogul.Task.create(config, { customer_uuid: customerUuid, task_details: 'Text', assignee: 'jane@example.com', due_date: '2025-04-30T00:00:00Z' })
+ChartMogul.Task.create(config, {
+  associated_object_identifier: { associated_object: 'contact', method: 'uuid', value: contactUuid },
+  task_details: 'Text',
+  assignee: 'jane@example.com',
+  due_date: '2025-04-30T00:00:00Z'
+})
 ChartMogul.Task.retrieve(config, taskUuid)
-ChartMogul.Task.patch(config, taskUuid, data)
+ChartMogul.Task.patch(config, taskUuid, data) // resolves to {} when the API answers 304 Not Modified
 ChartMogul.Task.destroy(config, taskUuid)
-ChartMogul.Task.all(config, { per_page: 10, cursor: 'cursor==', customer_uuid: customerUuid})
+ChartMogul.Task.all(config, {
+  per_page: 10,
+  cursor: 'cursor==',
+  customer_uuid: customerUuid,
+  contact_uuid: contactUuid,
+  assignee: 'jane@example.com',
+  due_date_on_or_after: '2025-04-01',
+  due_date_on_or_before: '2025-04-30',
+  completed: false
+})
 ```
 
 

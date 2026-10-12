@@ -6,6 +6,18 @@ const expect = require('chai').expect;
 const nock = require('nock');
 const Customer = ChartMogul.Customer;
 
+async function captureWarnings (fn) {
+  const original = console.warn;
+  const messages = [];
+  console.warn = message => messages.push(message);
+  try {
+    await fn();
+  } finally {
+    console.warn = original;
+  }
+  return messages;
+}
+
 describe('Customer', () => {
   it('should create a new customer', () => {
     const postBody = {
@@ -231,6 +243,79 @@ describe('Customer', () => {
     expect(customer.entries).to.be.instanceof(Array);
   });
 
+  it('warns that Customer.notes and Customer.createNote are deprecated', async () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+    nock(config.API_BASE).get(`/v1/customer_notes?customer_uuid=${customerUuid}`).reply(200, { entries: [] });
+    nock(config.API_BASE).post('/v1/customer_notes').reply(200, {});
+
+    const warnings = await captureWarnings(async () => {
+      await Customer.notes(config, customerUuid);
+      await Customer.createNote(config, customerUuid, { type: 'note', text: 'x' });
+    });
+
+    expect(warnings).to.deep.equal([
+      '[DEPRECATED] Customer.notes is deprecated. Use Customer.entityNotes instead.',
+      '[DEPRECATED] Customer.createNote is deprecated. Use Customer.createEntityNote instead.'
+    ]);
+  });
+
+  it('creates a new entity note for a customer', async () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+    const postBody = {
+      type: 'note',
+      author_email: 'john@example.com',
+      text: 'This is a note'
+    };
+
+    let requestBody;
+    nock(config.API_BASE)
+      .post('/v1/notes', body => { requestBody = body; return true; })
+      .reply(201, {
+        uuid: 'note_00000000-0000-0000-0000-000000000000',
+        customer_uuid: customerUuid,
+        associated_object: 'customer',
+        associated_object_uuid: customerUuid,
+        type: 'note',
+        text: 'This is a note',
+        call_duration: 0,
+        author: 'John Doe (john@example.com)',
+        created_at: '2026-08-22T09:00:00.000Z',
+        updated_at: '2026-08-22T09:00:00.000Z'
+      });
+
+    const note = await Customer.createEntityNote(config, customerUuid, postBody);
+    expect(requestBody).to.deep.equal({ ...postBody, customer_uuid: customerUuid });
+    expect(note.uuid).to.equal('note_00000000-0000-0000-0000-000000000000');
+    expect(note.customer_uuid).to.equal(customerUuid);
+  });
+
+  it('gets all entity notes for a customer', async () => {
+    const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
+
+    nock(config.API_BASE)
+      .get(`/v1/notes?per_page=10&customer_uuid=${customerUuid}`)
+      .reply(200, {
+        entries: [{
+          uuid: 'note_00000000-0000-0000-0000-000000000000',
+          customer_uuid: customerUuid,
+          type: 'note',
+          text: 'This is a note',
+          call_duration: 0,
+          author: 'John Doe (john@example.com)',
+          created_at: '2026-08-22T09:00:00.000Z',
+          updated_at: '2026-08-22T09:00:00.000Z'
+        }],
+        cursor: 'MjAyNi0wOC0yMlQwOTowMDowMFo=',
+        has_more: false
+      });
+
+    const notes = await Customer.entityNotes(config, customerUuid, { per_page: 10 });
+    expect(notes.entries).to.have.lengthOf(1);
+    expect(notes.entries[0].customer_uuid).to.equal(customerUuid);
+    expect(notes.cursor).to.equal('MjAyNi0wOC0yMlQwOTowMDowMFo=');
+    expect(notes.has_more).to.equal(false);
+  });
+
   it('creates a new opportunity from a customer', async () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {
@@ -327,7 +412,7 @@ describe('Customer', () => {
     nock(config.API_BASE)
       .post('/v1/tasks', postBody)
       .reply(200, {
-        uuid: '00000000-0000-0000-0000-000000000000',
+        task_uuid: '00000000-0000-0000-0000-000000000000',
         customer_uuid: customerUuid,
         assignee: 'customer@example.com',
         task_details: 'This is some task details text.',
@@ -338,7 +423,7 @@ describe('Customer', () => {
       });
 
     const task = await Customer.createTask(config, customerUuid, postBody);
-    expect(task.uuid).to.equal('00000000-0000-0000-0000-000000000000');
+    expect(task.task_uuid).to.equal('00000000-0000-0000-0000-000000000000');
     expect(task.customer_uuid).to.equal(customerUuid);
     expect(task.assignee).to.equal('customer@example.com');
     expect(task.task_details).to.equal('This is some task details text.');
@@ -353,7 +438,7 @@ describe('Customer', () => {
       .get(`/v1/tasks?customer_uuid=${customerUuid}`)
       .reply(200, {
         entries: [{
-          uuid: '00000000-0000-0000-0000-000000000000',
+          task_uuid: '00000000-0000-0000-0000-000000000000',
           customer_uuid: customerUuid,
           assignee: 'customer@example.com',
           task_details: 'This is some task details text.',

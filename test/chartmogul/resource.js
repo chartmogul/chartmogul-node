@@ -77,6 +77,17 @@ describe('Resource', () => {
       });
   });
 
+  it('should resolve with an empty object on 304 Not Modified', async () => {
+    nock(config.API_BASE)
+      .patch('/')
+      .reply(304);
+
+    const resource = await Resource.request(config, 'PATCH', '/', {});
+    // eslint-disable-next-line no-unused-expressions
+    expect(resource).to.be.empty;
+    expect(resource).to.be.instanceof(Object);
+  });
+
   it('should strip undefined values from POST request body', async () => {
     let requestBody;
     nock(config.API_BASE)
