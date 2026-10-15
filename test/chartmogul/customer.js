@@ -691,18 +691,32 @@ describe('Enrichment#Customer', () => {
       });
   });
 
-  it('should retrieve customer attributes with a callback as the third argument', (done) => {
+  it('should retrieve customer attributes with a callback as the third argument', async () => {
     const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
 
     nock(config.API_BASE)
       .get(`/v1/customers/${customerUuid}/attributes`)
       .reply(200, { tags: ['foo'] });
 
-    Customer.attributes(config, customerUuid, (err, res) => {
-      if (err) return done(err);
-      expect(res).to.have.property('tags');
-      done();
+    const res = await new Promise((resolve, reject) => {
+      Customer.attributes(config, customerUuid, (err, body) => (err ? reject(err) : resolve(body)));
     });
+    expect(res).to.have.property('tags');
+  });
+
+  it('should retrieve customer attributes with params and a callback', async () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+
+    nock(config.API_BASE)
+      .get(`/v1/customers/${customerUuid}/attributes`)
+      .query({ with_overrides: 'true' })
+      .reply(200, { tags: ['foo'], overrides: { custom: { channel: true } } });
+
+    const res = await new Promise((resolve, reject) => {
+      Customer.attributes(config, customerUuid, { with_overrides: true },
+        (err, body) => (err ? reject(err) : resolve(body)));
+    });
+    expect(res.overrides).to.eql({ custom: { channel: true } });
   });
 
   it('should update a customer', () => {
