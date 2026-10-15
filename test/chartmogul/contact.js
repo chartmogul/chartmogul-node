@@ -384,6 +384,28 @@ describe('Contact', () => {
     expect(contact.overrides).to.eql({ title: true });
   });
 
+  it('rejects overrides on contact custom attributes', async () => {
+    const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
+    /* eslint-disable camelcase */
+    const patchBody = { overrides: { custom: { channel: true } } };
+    const errorBody = {
+      errors: { 'overrides[custom]': 'is not an overridable attribute' },
+      error_details: [{ param: 'overrides[custom]', code: 'not_overridable', message: 'is not an overridable attribute' }]
+    };
+    /* eslint-enable camelcase */
+
+    nock(config.API_BASE)
+      .patch(`/v1/contacts/${contactUuid}`, patchBody)
+      .reply(422, errorBody);
+
+    const err = await Contact.modify(config, contactUuid, patchBody).then(
+      () => { throw new Error('expected rejection'); },
+      e => e
+    );
+    expect(err.status).to.equal(422);
+    expect(err.response.body).to.eql(errorBody);
+  });
+
   it('updates a contact with external_id as null', async () => {
     const contactUuid = 'con_00000000-0000-0000-0000-000000000000';
 
