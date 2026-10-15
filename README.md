@@ -176,6 +176,9 @@ ChartMogul.Contact.retrieve(config, contactUuid, {
   attributes_with_history: 'title'
 })
 ChartMogul.Contact.modify(config, contactUuid, data)
+// Contact custom attribute overrides are not yet implemented by the API, so
+// contact overrides cover standard fields only; custom attribute keys in
+// contact overrides are rejected with a 422
 ChartMogul.Contact.modify(config, contactUuid, {
   title: 'CEO',
   overrides: { title: true }
