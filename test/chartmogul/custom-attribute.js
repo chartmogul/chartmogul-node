@@ -220,4 +220,26 @@ describe('CustomAttribute', () => {
         expect(res.message).to.equal('Custom attributes deleted from customer');
       });
   });
+
+  it('keeps an overridden custom attribute on remove and reports it in message', () => {
+    const customerUuid = 'cus_9bf6482d-01e5-4944-957d-5bc730d2cda3';
+    const postBody = { custom: ['CAC'] };
+
+    nock(config.API_BASE)
+      .delete(`/v1/customers/${customerUuid}/attributes/custom`, postBody)
+      .reply(202, {
+        /* eslint-disable camelcase */
+        custom: { CAC: 213 },
+        overrides: { custom: { CAC: true } },
+        message: 'Custom attributes are overridden and were not deleted from customer: CAC'
+        /* eslint-enable camelcase */
+      });
+
+    return CustomAttribute.remove(config, customerUuid, postBody)
+      .then(res => {
+        expect(res.custom).to.have.property('CAC');
+        expect(res.overrides).to.eql({ custom: { CAC: true } });
+        expect(res.message).to.equal('Custom attributes are overridden and were not deleted from customer: CAC');
+      });
+  });
 });
