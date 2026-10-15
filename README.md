@@ -115,8 +115,17 @@ ChartMogul.DataSource.destroy(config, dataSourceUuid)
 ```js
 ChartMogul.Customer.create(config, data)
 ChartMogul.Customer.retrieve(config, customerUuid)
+ChartMogul.Customer.retrieve(config, customerUuid, {
+  with_overrides: true,
+  // attributes_with_history must be a comma-separated string, not an array
+  attributes_with_history: 'company,custom.channel'
+})
 ChartMogul.Customer.all(config, { per_page: 20 })
 ChartMogul.Customer.modify(config, customerUuid, data)
+ChartMogul.Customer.modify(config, customerUuid, {
+  company: 'Pinata Technologies',
+  overrides: { company: true, attributes: { custom: { channel: true } } }
+})
 ChartMogul.Customer.destroy(config, customerUuid)
 ChartMogul.Customer.merge(config, {
   'from': {'customer_uuid': 'cus_5915ee5a-babd-406b-b8ce-d207133fb4cb'},
@@ -161,7 +170,19 @@ ChartMogul.Customer.createTask(config, customerUuid, data)
 // customer_uuid and data_source_uuid may be omitted to create a contact that is not linked to a customer
 ChartMogul.Contact.create(config, data)
 ChartMogul.Contact.retrieve(config, contactUuid)
+ChartMogul.Contact.retrieve(config, contactUuid, {
+  with_overrides: true,
+  // attributes_with_history must be a comma-separated string, not an array
+  attributes_with_history: 'title'
+})
 ChartMogul.Contact.modify(config, contactUuid, data)
+// Contact custom attribute overrides are not yet implemented by the API, so
+// contact overrides cover standard fields only; custom attribute keys in
+// contact overrides are rejected with a 422
+ChartMogul.Contact.modify(config, contactUuid, {
+  title: 'CEO',
+  overrides: { title: true }
+})
 ChartMogul.Contact.destroy(config, contactUuid)
 ChartMogul.Contact.merge(config, intoUuid, fromUuid);
 ChartMogul.Contact.all(config, {
@@ -353,6 +374,11 @@ ChartMogul.Customer.search(config, { email: 'bob@example.com' })
 
 ```js
 ChartMogul.Customer.attributes(config, customerUuid)
+ChartMogul.Customer.attributes(config, customerUuid, {
+  with_overrides: true,
+  // attributes_with_history must be a comma-separated string, not an array
+  attributes_with_history: 'custom.channel'
+})
 ```
 
 #### [Tags](https://dev.chartmogul.com/reference/customers/tags/)
@@ -392,6 +418,35 @@ ChartMogul.CustomAttribute.update(config, customerUuid, {
 });
 ChartMogul.CustomAttribute.remove(config, customerUuid, {
   'custom': ['CAC']
+});
+
+// Note the overrides shape here is { custom: { ... } } — on Customer.create and
+// Customer.modify the same flags nest under attributes:
+// { attributes: { custom: { ... } } }
+ChartMogul.CustomAttribute.add(config, customerUuid, {
+  'custom': [
+    { 'type': 'String', 'key': 'channel', 'value': 'Facebook' }
+  ],
+  'overrides': { 'custom': { 'channel': true } }
+});
+
+// By email the request uses the same direct shape, while each entries[].overrides
+// in the response uses the customer shape with the attributes wrapper
+ChartMogul.CustomAttribute.add(config, {
+  'email': 'adam@example.com',
+  'custom': [
+    { 'type': 'String', 'key': 'channel', 'value': 'Facebook' }
+  ],
+  'overrides': { 'custom': { 'channel': true } }
+});
+
+// A flag set to false removes an override: on update the attribute is restored
+// to its most recent edit-history value; on create it is a no-op. Overridden
+// attributes are kept on remove unless the same call removes their override —
+// the response `message` names any that were kept
+ChartMogul.CustomAttribute.remove(config, customerUuid, {
+  'custom': ['channel'],
+  'overrides': { 'custom': { 'channel': false } }
 });
 ```
 
