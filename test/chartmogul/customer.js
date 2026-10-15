@@ -573,7 +573,7 @@ describe('Enrichment#Customer', () => {
         overrides: { company: true, attributes: { custom: { channel: true } } },
         historical_values: {
           company: [
-            { value: 'Pinata Technologies', update_performed_at: '2026-01-01T12:00:00Z', update_performed_by: 'adam@smith.com', initial: false }
+            { value: 'Pinata Technologies', update_performed_at: '2026-01-01T12:00:00Z', update_performed_by: 'API', initial: false }
           ],
           attributes: {
             custom: {
