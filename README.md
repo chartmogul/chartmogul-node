@@ -117,6 +117,7 @@ ChartMogul.Customer.create(config, data)
 ChartMogul.Customer.retrieve(config, customerUuid)
 ChartMogul.Customer.retrieve(config, customerUuid, {
   with_overrides: true,
+  // attributes_with_history must be a comma-separated string, not an array
   attributes_with_history: 'company,custom.channel'
 })
 ChartMogul.Customer.all(config, { per_page: 20 })
@@ -171,6 +172,7 @@ ChartMogul.Contact.create(config, data)
 ChartMogul.Contact.retrieve(config, contactUuid)
 ChartMogul.Contact.retrieve(config, contactUuid, {
   with_overrides: true,
+  // attributes_with_history must be a comma-separated string, not an array
   attributes_with_history: 'title'
 })
 ChartMogul.Contact.modify(config, contactUuid, data)
@@ -371,6 +373,7 @@ ChartMogul.Customer.search(config, { email: 'bob@example.com' })
 ChartMogul.Customer.attributes(config, customerUuid)
 ChartMogul.Customer.attributes(config, customerUuid, {
   with_overrides: true,
+  // attributes_with_history must be a comma-separated string, not an array
   attributes_with_history: 'custom.channel'
 })
 ```
