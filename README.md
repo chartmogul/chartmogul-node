@@ -436,6 +436,15 @@ ChartMogul.CustomAttribute.add(config, {
   ],
   'overrides': { 'custom': { 'channel': true } }
 });
+
+// A flag set to false removes an override: on update the attribute is restored
+// to its most recent edit-history value; on create it is a no-op. Overridden
+// attributes are kept on remove unless the same call removes their override —
+// the response `message` names any that were kept
+ChartMogul.CustomAttribute.remove(config, customerUuid, {
+  'custom': ['channel'],
+  'overrides': { 'custom': { 'channel': false } }
+});
 ```
 
 ### [Metrics API](https://dev.chartmogul.com/reference/metrics/)
