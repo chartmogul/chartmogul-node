@@ -417,7 +417,20 @@ ChartMogul.CustomAttribute.remove(config, customerUuid, {
   'custom': ['CAC']
 });
 
+// Note the overrides shape here is { custom: { ... } } — on Customer.create and
+// Customer.modify the same flags nest under attributes:
+// { attributes: { custom: { ... } } }
 ChartMogul.CustomAttribute.add(config, customerUuid, {
+  'custom': [
+    { 'type': 'String', 'key': 'channel', 'value': 'Facebook' }
+  ],
+  'overrides': { 'custom': { 'channel': true } }
+});
+
+// By email the request uses the same direct shape, while each entries[].overrides
+// in the response uses the customer shape with the attributes wrapper
+ChartMogul.CustomAttribute.add(config, {
+  'email': 'adam@example.com',
   'custom': [
     { 'type': 'String', 'key': 'channel', 'value': 'Facebook' }
   ],
