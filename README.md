@@ -127,7 +127,8 @@ ChartMogul.Customer.modify(config, customerUuid, {
   overrides: { company: true, attributes: { custom: { channel: true } } }
 })
 ChartMogul.Customer.destroy(config, customerUuid)
-// Also adds the customer to the exclude list so it isn't re-imported
+// Also adds the customer to the exclude list so it isn't re-imported.
+// `exclude` is ignored when the account doesn't have the exclude customers feature.
 ChartMogul.Customer.destroy(config, customerUuid, { exclude: true })
 ChartMogul.Customer.merge(config, {
   'from': {'customer_uuid': 'cus_5915ee5a-babd-406b-b8ce-d207133fb4cb'},
@@ -168,11 +169,14 @@ ChartMogul.Customer.createTask(config, customerUuid, data)
 
 #### Excluded Customers
 
+These endpoints return 404 when the account doesn't have the exclude customers feature.
+
 ```js
 ChartMogul.ExcludedCustomer.all(config, { per_page: 20, cursor: 'cursor==' })
 // Removes the customer from the exclude list; resolves with { customer_uuid, status },
-// where status is 'reimporting' or 'manual_reimport_required'
-ChartMogul.ExcludedCustomer.destroy(config, customerUuid)
+// where status is 'reimporting' or 'manual_reimport_required'.
+// Rejects with a 404 when the customer isn't excluded.
+ChartMogul.ExcludedCustomer.reinclude(config, customerUuid)
 ```
 
 #### [Contacts](https://dev.chartmogul.com/reference/contacts/)

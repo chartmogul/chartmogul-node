@@ -171,6 +171,21 @@ describe('Customer', () => {
     });
   });
 
+  it('deletes a customer with exclude and a callback', (done) => {
+    const uuid = 'cus_7e4e5c3d-832c-4fa4-bf77-6fdc8c6e14bc';
+
+    nock(config.API_BASE)
+      .delete(`/v1/customers/${uuid}`)
+      .query({ exclude: true })
+      .reply(202, { message: 'deleted' });
+
+    Customer.destroy(config, uuid, { exclude: true }, (err, res) => {
+      expect(err).to.equal(null);
+      expect(res.message).to.equal('deleted');
+      done();
+    });
+  });
+
   it('creates a new contact from a customer', async () => {
     const customerUuid = 'cus_00000000-0000-0000-0000-000000000000';
     const postBody = {

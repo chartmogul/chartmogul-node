@@ -58,8 +58,24 @@ describe('ExcludedCustomer', () => {
       .delete(`/v1/excluded_customers/${uuid}`)
       .reply(202, { customer_uuid: uuid, status: 'reimporting' });
 
-    const res = await ExcludedCustomer.destroy(config, uuid);
+    const res = await ExcludedCustomer.reinclude(config, uuid);
     expect(res.customer_uuid).to.equal(uuid);
     expect(res.status).to.equal('reimporting');
+  });
+
+  it('rejects with a 404 when re-including a customer that is not excluded', () => {
+    const uuid = 'cus_00000000-0000-0000-0000-000000000001';
+
+    nock(config.API_BASE)
+      .delete(`/v1/excluded_customers/${uuid}`)
+      .reply(404, { code: 404, message: `Excluded customer "${uuid}" does not exist`, param: 'customer_uuid' });
+
+    return ExcludedCustomer.reinclude(config, uuid)
+      .then(() => { throw new Error('Expected rejection'); })
+      .catch(e => {
+        if (e.message === 'Expected rejection') throw e;
+        expect(e.status).to.equal(404);
+        expect(e.response.body.param).to.equal('customer_uuid');
+      });
   });
 });
