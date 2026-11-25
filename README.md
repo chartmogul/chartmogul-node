@@ -127,6 +127,8 @@ ChartMogul.Customer.modify(config, customerUuid, {
   overrides: { company: true, attributes: { custom: { channel: true } } }
 })
 ChartMogul.Customer.destroy(config, customerUuid)
+// Also adds the customer to the exclude list so it isn't re-imported
+ChartMogul.Customer.destroy(config, customerUuid, { exclude: true })
 ChartMogul.Customer.merge(config, {
   'from': {'customer_uuid': 'cus_5915ee5a-babd-406b-b8ce-d207133fb4cb'},
   'into': {'customer_uuid': 'cus_2123290f-09c8-4628-a205-db5596bd58f7'}
@@ -162,6 +164,15 @@ ChartMogul.Customer.createOpportunity(config, customerUuid, data)
 
 ChartMogul.Customer.tasks(config, customerUuid, { per_page: 10, cursor: 'cursor==' })
 ChartMogul.Customer.createTask(config, customerUuid, data)
+```
+
+#### Excluded Customers
+
+```js
+ChartMogul.ExcludedCustomer.all(config, { per_page: 20, cursor: 'cursor==' })
+// Removes the customer from the exclude list; resolves with { customer_uuid, status },
+// where status is 'reimporting' or 'manual_reimport_required'
+ChartMogul.ExcludedCustomer.destroy(config, customerUuid)
 ```
 
 #### [Contacts](https://dev.chartmogul.com/reference/contacts/)
